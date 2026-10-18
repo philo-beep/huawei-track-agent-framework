@@ -94,3 +94,13 @@ QA 已复读更新后 README sdk=docker、Docker 单文件 COPY、平台状态�
 QA 另行无凭据只读请求 `https://philosophia-promotion-agent.ms.show/` 与 `/healthz`，请求头为 User-Agent Mozilla/5.0、Referer https://modelscope.cn/：两者均返回 200。首页实际含中文模拟说明、未接模型与无实际 Agent 声明；健康 JSON 实际为 simulation=true、model_connected=false、training=false、actual_agents_running=false。该观察验证的是当时已运行的远端基线服务；主控将其对应至 2d53f05e 基线，QA 未据此声称本机新候选已推送或部署。
 
 重新结论：更新后的 Docker 根候选无未关闭 QA 阻塞，可以由 E 对这一候选重新实际审阅签字。旧 Gradio 候选签字仍不可使用；后续推送和重新构建须核对实际提交与线上结果。
+
+## 两平台首次实际发布后独立核验
+
+2026-10-18，QA 独立执行只读 Git ls-remote：GitHub master 为 `534dfbda9302dd8159e59bd37e6619de666a1a27`，ModelScope master 为 `9abe1203d26af3680410017cd2da95edcd4f55ff`，均与主控首次发布记录一致。ModelScope 构建日志 payload 独立读取，包含新提交 `9abe1203` 与 SUCCESS；该证据结合远端提交核对，不将相同静态页面单独作为版本切换证明。
+
+切换中 QA 曾实测 runtime Building、首页 404，如实记录为部署窗口；随后留出间隔再查。2026-10-18T06:07:24Z，官方 SDK 实测 runtime Running、active_config 为 Docker 与免费 CPU platform/2v-cpu-8g-mem，运行创建时间为 2026-10-18T06:06:31Z。
+
+在该 Running 状态下，QA 无凭据、使用浏览器 User-Agent 与 ModelScope Referer 请求 `https://philosophia-promotion-agent.ms.show/`：200，含中文模拟说明；`/healthz`：200，status=ok、simulation=true、model_connected=false、training=false、actual_agents_running=false。此前部署窗口 404 已不再复现。
+
+首次实际发布核验通过：两平台远端提交已核对，魔搭新提交构建日志成功，运行状态及首页/健康响应正常。此结论只涉及只读框架展示，不证明销售业务、模型或训练已实现。主控随后更新平台状态和本报告时，最终文档候选仍须 E 实际重签并再次同步；两平台提交 ID 不要求相同，但公开候选文件内容须核对一致。QA 不把尚未同步的最终文档更新表述为已经发布。
