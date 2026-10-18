@@ -1,5 +1,7 @@
 # 公开云演示
 
+云端内容现在按客户最先明确且有证据的一个规格选择原文，无偏好显著标“通用资料，非适配推荐”；无证据需求显著列未覆盖，不能用默认参数替答。规则范围、否定/冲突处理及既有字段位置见 `docs/backend/cloud-fact-selection.md`。
+
 运行要求 Node 24，无 npm/Python/模型依赖。入口 `node backend/marketing/cloud-server.js`；`PORT=7860`，绑定 `0.0.0.0`；`PUBLIC_ORIGIN` 必须为实际唯一公网 origin（例如魔搭 `.ms.show` 地址，不带路径）。`/healthz`、`/health`、`/api/health` 支持容器loopback探针；其他业务要求配置Host，POST要求同源Origin、独立会话cookie与CSRF，不信代理头推导来源。
 
 魔搭反代会改写容器所见Host。正式部署可显式设置 `PLATFORM_PROXY_HOST=1`，仅关闭Host与公网域名等值判断，默认未配置仍严格校验。公网平台负责域名路由，应用始终使用固定 `PUBLIC_ORIGIN` 解析路径、验证Origin和POST、配置Secure cookie，不采用 `X-Forwarded-Host` 或 `Forwarded` 改写可信来源。其他CSRF、会话隔离、大小、限流与路径边界保持原样；直接访问非平台部署应保留默认严格模式。

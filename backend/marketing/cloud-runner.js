@@ -3,6 +3,7 @@
 const { runFourSteps, renderMarkdown } = require('./fourstep');
 const { loadOfficialReference, officialKnowledge } = require('./official');
 const { PipelineError } = require('./support');
+const { selectCloudFact, selectionDiagnostics } = require('./cloud-fact-selector');
 
 const PRODUCTS = ['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024'];
 const ENGINE = Object.freeze({ mode: 'rules', model: null, model_status: 'disabled', notice: '云端规则准备稿；未调用本地7B或云端模型。仅使用公开官网有效快照与明确合成政策。' });
@@ -45,13 +46,29 @@ function examples() {
 
 async function runCloud(body) {
     const input = validateCloudInput(body);
+    let selection;
     if (!officialKnowledge(loadOfficialReference(input.marketing_input.product))) throw new PipelineError('OFFICIAL_SNAPSHOT_UNAVAILABLE', '官网公开快照缺失、过期或核验未通过，云端不回退私有知识库；请维护者刷新公开快照');
     const result = await runFourSteps(input.marketing_input, input.demo_pricing ? pricingInput(input.marketing_input.product) : undefined, { marketingOptions: {
         reasonStrategy: async request => ({ topic: `${request.audience}：${request.scenario}`, platform_rules: { length: '规则核对清单', tone: '克制且保留限制' }, model_analysis: { focus: '核对客户已明确任务', rationale: '规则引擎按明确输入准备核对问题，未知预算、身份和决策权保持待确认；未调用模型', outline: ['确认实际任务与软件版本', '核对官网资料与脚注', '安排人工演示和下一步'] }, analysis_status: 'rules_not_model', model: null, elapsed_ms: 0 }),
-        generateCopy: async (request, strategy, facts) => ({ model: 'rules_not_model', value: { fact_ids: [facts[0].id] } }),
+        generateCopy: async (request, strategy, facts) => {
+            selection = selectCloudFact(input.marketing_input, facts);
+            strategy.fact_selection = { status: selection.status, focus: selection.focus, evidence: selection.evidence, uncovered: selection.uncovered, deferred: selection.deferred, notice: selection.notice };
+            strategy.model_analysis.focus = selection.focus ? `核对${selection.focus.label}` : '通用原文参考，非适配推荐';
+            strategy.model_analysis.rationale = selection.notice;
+            if (!selection.fact_ids.length) throw new PipelineError('CLOUD_FACT_NEEDS_CLARIFICATION', selection.notice);
+            return { model: 'rules_not_model', value: { fact_ids: selection.fact_ids } };
+        },
     } });
     result.runtime_engine = { ...ENGINE };
     result.content.narrative_status = 'rules_programmatic_preparation';
+    if (selection) {
+        result.marketing_result.diagnostics.push(...selectionDiagnostics(selection));
+        if (!selection.fact_ids.length) {
+            result.marketing_result.status = 'needs_clarification';
+            result.marketing_result.clarification_questions.push({ field: 'scenario', question: selection.notice, blocks: 'content' });
+        }
+        if (result.content.marketing_content) result.content.marketing_content.body = `${selection.notice}\n\n${result.content.marketing_content.body}`;
+    }
     if (result.content.marketing_content) result.content.marketing_content.body = result.content.marketing_content.body.replace('模型只选择事实ID', '规则只选择事实ID').replace('这不代表模型自由文案质量已通过', '当前未调用模型，不构成模型文案能力证明');
     result.marketing_result.diagnostics = result.marketing_result.diagnostics.filter(item => !['LOCAL_MODEL_USED', 'MODEL_NARRATIVE_CONSTRAINED', 'IMA_REPLACED_BY_LOCAL_OFFICIAL'].includes(item.code));
     result.marketing_result.diagnostics.push({ code: 'RULE_PREPARATION_USED', message: ENGINE.notice, retryable: false });
