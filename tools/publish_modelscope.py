@@ -17,7 +17,7 @@ from modelscope_hub.errors import HubError
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from framework.runtime import FrameworkError, Workspace
-from install_workspace import source_files
+from tools.public_release import public_files
 
 
 def credential_helper(operation):
@@ -74,7 +74,7 @@ def publish(repo_id, expected_head, push=False, expected_sdk="docker"):
         rb"sk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}|"
         rb"(?:AKIA|ASIA)[A-Z0-9]{16}|"
         rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")
-    candidates = list(source_files(ROOT))
+    candidates = list(public_files(ROOT))
     for path, relative in candidates:
         content = path.read_bytes()
         if forbidden.search(content):
@@ -97,7 +97,7 @@ def publish(repo_id, expected_head, push=False, expected_sdk="docker"):
         if git(staging, "diff", "--cached", "--name-only"):
             git(staging, "-c", "user.name=Framework Publisher", "-c",
                 "user.email=framework-publisher@users.noreply.github.com", "commit", "-m",
-                "Publish reviewed framework to existing sales assistant space")
+                "Publish reviewed interactive store growth assistant")
         git(staging, "push", "origin", f"HEAD:{branch}", authenticated=True, repo_id=repo_id)
         record["commit"] = git(staging, "rev-parse", "HEAD")
         remote = git(staging, "ls-remote", "origin", f"refs/heads/{branch}",

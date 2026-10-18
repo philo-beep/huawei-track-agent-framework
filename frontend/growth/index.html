@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>华销智策 —— 针对华为的销售智能体 · 本地工作台</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header><h1>华销智策 —— 针对华为的销售智能体</h1><p>本地工作台：读懂客户 → 写出内容 → 算报价与准备方案 → 推进成交</p></header>
+  <main>
+    <section aria-labelledby="guide-title">
+      <h2 id="guide-title">怎么使用</h2>
+      <ol><li>选择一个合成示例，或点击“新客户”后填写客户原话、目标产品、受众及场景。</li><li>确认平台、采购数量及预算；不清楚的字段留空，系统保留待确认。</li><li>点击“运行四步”调用本机模型。生成期间请等待，四步结果会自动出现。</li><li>核对来源与限制，再复制或下载结果。推进动作由销售人工确认执行。</li></ol>
+      <p><kbd>Alt</kbd> + <kbd>1 / 2 / 3</kbd> 只填充示例；<kbd>Ctrl</kbd> + <kbd>Enter</kbd> 开始运行。也可使用下方按钮。</p>
+      <p class="notice">IMA 已由本地知识库 + 华为官网替代，来源标注保留。官网价格仅作带时间与配置限制的公开参考；四级政策为明确假设，非真实交易报价。当前优先交互和功能，前端美化后续迭代。</p>
+    </section>
+    <section aria-labelledby="input-title">
+      <h2 id="input-title">输入客户信息</h2>
+      <div class="toolbar"><button type="button" id="example-1" disabled>示例1 · Alt+1</button><button type="button" id="example-2" disabled>示例2 · Alt+2</button><button type="button" id="example-3" disabled>示例3 · Alt+3</button><button type="button" id="new-customer">新客户 · 清空客户信息</button></div>
+      <p id="example-note">正在读取本地示例与安全令牌……</p>
+      <form id="growth-form">
+        <fieldset id="input-fields"><legend>只填写已知信息</legend>
+          <label>客户原话或对话（推荐）<textarea id="raw-request" rows="3" maxlength="6000" placeholder="例如：客户希望先确认常用软件兼容性，还没确定预算。"></textarea></label>
+          <div class="fields"><label>产品完整型号 / 代际<input id="product" maxlength="200" placeholder="请使用资料中可核对的完整名称"></label><label>受众 / 客户描述<input id="audience" maxlength="600" placeholder="未知可留空"></label><label>接触场景 / 本次目标<input id="scenario" maxlength="1000" placeholder="例如：首次选型，核对软件与采购限制"></label><label>内容渠道<select id="platform"><option>公众号</option><option>小红书</option><option>朋友圈</option></select></label><label>已确认采购数量（台，可留空）<input id="quantity" type="number" min="1" max="1000000" step="1"></label><label>已确认总预算上限（元，可留空）<input id="budget" type="number" min="0" step="0.01"></label></div>
+          <details><summary>可选：客户结构化信息（JSON，全部可见）</summary><p>仅填写客户明确提供的身份、行业、需求等。修改客户原话或受众会自动清空这里与数量预算，防止沿用旧客户信息。数量、总预算以表单为准。</p><textarea id="customer-json" rows="7" spellcheck="false">{}</textarea></details>
+          <details open><summary>四级价格演示配置与假设边界</summary><p>下方是合成演算输入，不是官方售价。空采购数量仅沿用示例的合成数量，不作为客户事实。改变产品或数量可能导致政策不匹配 / 资格待确认，系统应阻塞金额，不会自动背书。</p><label><input id="enable-pricing" type="checkbox" checked>附带四级假设政策演算（真实报价仍需授权）</label><pre id="policy-summary">请选择示例以载入演算政策。</pre><details><summary>查看 / 替换完整合成报价输入 JSON</summary><p>可配置四级规则；金额单位为分，保留来源和假设声明。禁止输入真实密钥或文件路径。</p><textarea id="pricing-json" rows="12" spellcheck="false"></textarea></details></details>
+        </fieldset>
+        <div class="toolbar"><button type="submit" id="run-button" disabled>运行四步 · Ctrl+Enter</button><button type="button" id="stop-polling" disabled>暂停结果查询</button><button type="button" id="resume-polling" hidden>继续结果查询</button></div>
+      </form>
+      <p id="run-status" role="status" aria-live="polite">尚未运行。</p>
+    </section>
+    <section id="results" hidden aria-labelledby="result-title">
+      <h2 id="result-title">四步结果</h2><p id="result-summary" class="notice"></p>
+      <div class="toolbar"><button type="button" id="copy-markdown">复制完整 Markdown</button><a id="download-json" download>下载 JSON</a><a id="download-markdown" download>下载 Markdown</a></div><p id="export-status" role="status"></p>
+      <h3>① 读懂客户</h3><div id="profile"></div><div id="clarifications"></div>
+      <h3>② 写出内容</h3><p>以下为有来源的内容准备稿，须人工审阅；不保证平台曝光或咨询转化。</p><div id="content"></div><p id="image-status"></p>
+      <h3>③ 算报价与准备方案</h3><p class="notice">四级假设政策演算，非华为官方政策、非真实交易报价；公开价格参考不替代成交授权。</p><div id="pricing"></div><div id="plan"></div>
+      <h3>④ 推进成交</h3><p>以下为人工推进建议，不会自动发送消息或联系客户。</p><div id="actions"></div>
+      <h3>资料与图片来源</h3><p>保留知识库条目、官网页面、原文、时间及指纹；未核实处不会补造。</p><div id="official-reference"></div><div id="sources"></div>
+      <h3>诊断与交付限制</h3><div id="diagnostics"></div>
+      <details><summary>完整 Markdown（纯文本，含全部脚注）</summary><pre id="full-markdown"></pre></details>
+    </section>
+  </main>
+  <footer>客户信息仅提交至本机服务。请使用脱敏资料；关闭页面不会取消正在执行的后台任务。</footer>
+</body>
+</html>

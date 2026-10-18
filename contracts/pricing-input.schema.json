@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:pricing-input:1.0",
+  "title": "四级报价扩展输入 v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "product", "sku", "quantity", "currency", "as_of"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "mode": {"enum": ["demo_only", "real"]},
+    "product": {"type": "string", "minLength": 1},
+    "sku": {"type": "string", "minLength": 1},
+    "quantity": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "currency": {"const": "CNY"},
+    "as_of": {"type": "string", "format": "date"},
+    "budget_total_cents": {"$ref": "#/$defs/nonnegativeSafeInteger"},
+    "confirmed_eligibility": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy": {"$ref": "#/$defs/policy"}
+  },
+  "allOf": [
+    {"if": {"properties": {"mode": {"const": "demo_only"}}}, "then": {"required": ["policy"], "not": {"required": ["policy_id"]}}},
+    {"if": {"properties": {"mode": {"const": "real"}}}, "then": {"required": ["policy_id"], "not": {"required": ["policy"]}}}
+  ],
+  "$defs": {
+    "nonnegativeSafeInteger": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "entry", "description"],
+      "properties": {
+        "kind": {"const": "synthetic_fixture"},
+        "title": {"type": "string", "minLength": 1},
+        "entry": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "operation", "value", "source"],
+      "properties": {
+        "level": {"type": "integer", "minimum": 1, "maximum": 4},
+        "operation": {"enum": ["fixed_discount_cents", "discount_basis_points"]},
+        "value": {"$ref": "#/$defs/nonnegativeSafeInteger"},
+        "cap_discount_cents": {"$ref": "#/$defs/nonnegativeSafeInteger"},
+        "exclusion_group": {"type": "string", "minLength": 1},
+        "required_eligibility": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "source": {"$ref": "#/$defs/source"}
+      },
+      "allOf": [
+        {"if": {"properties": {"operation": {"const": "discount_basis_points"}}}, "then": {"properties": {"value": {"maximum": 10000}}}}
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "product", "sku", "currency", "base_unit_cents", "valid_from", "valid_to", "region", "calculation_scope", "rounding", "tax_treatment", "source", "rules"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "product": {"type": "string", "minLength": 1},
+        "sku": {"type": "string", "minLength": 1},
+        "currency": {"const": "CNY"},
+        "base_unit_cents": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "valid_from": {"type": "string", "format": "date"},
+        "valid_to": {"type": "string", "format": "date"},
+        "region": {"type": "string", "minLength": 1},
+        "calculation_scope": {"const": "per_unit_then_quantity"},
+        "rounding": {"const": "half_up_to_cent_each_level"},
+        "tax_treatment": {"const": "base_includes_tax_no_additional_tax"},
+        "source": {"$ref": "#/$defs/source"},
+        "rules": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/rule"}}
+      }
+    }
+  }
+}

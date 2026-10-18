@@ -1,8 +1,11 @@
-FROM python:3.12-slim
+FROM node:24-bookworm-slim
 WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=7860
-COPY backend/studio/app.py /app/app.py
-USER 1000:1000
+ENV NODE_ENV=production PORT=7860 PUBLIC_ORIGIN=https://philosophia-promotion-agent.ms.show
+COPY --chown=node:node backend/marketing /app/backend/marketing
+COPY --chown=node:node contracts /app/contracts
+COPY --chown=node:node frontend/cloud /app/frontend/cloud
+COPY --chown=node:node data/official /app/data/official
+USER node
 EXPOSE 7860
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7860/healthz', timeout=3).read()"
-CMD ["python", "app.py"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 CMD node -e "fetch('http://127.0.0.1:7860/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+CMD ["node", "backend/marketing/cloud-server.js"]

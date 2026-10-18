@@ -17,3 +17,7 @@ tests/*verification*/
 SHA256SUMS.json
 /*.zip
 /*.pdf
+/outputs/D/sessions/
+/outputs/D/synthetic-stage2/
+/outputs/D/stage2-live*.json
+/outputs/D/.ima-runtime/

@@ -1,64 +1,78 @@
 ---
-title: 销售助手 · 协作框架预览
+title: 华销智策 —— 针对华为的销售智能体
 sdk: docker
 app_port: 7860
 ---
 
-# 华为赛道项目 · Agent 协作框架
+# 华销智策 —— 针对华为的销售智能体
 
-按原始 `agent.md` 搭建：主 Agent 调度，A 前端、B 接口契约、C 数据、D 后端与 Qwen、E 产品说明，QA 独立验收。当前提供协作框架与可部署的只读介绍站，不含具体赛题产品、模型接入或训练。
+华销智策 —— 针对华为的销售智能体，为华为销售顾问提供四步工作流：**读懂客户 → 写出内容 → 给出方案 → 推进成交**。先整理客户明确说过的信息，再按渠道生成带来源的内容准备稿，演示四级价格计算与现场演示计划，最后列出待确认问题和跟进动作。
 
-## 开始使用
+> 当前公开版是可交互的**规则准备稿演示**，不调用云大模型；本机增强版可调用免费本地千问。准备稿需销售审核，尚未验证咨询转化。演示报价使用人为合成政策，**不是华为现价、授权优惠或成交报价**。缺少真实价格依据时，正式报价金额为空。
 
-Python 3.11+，仅标准库，无需安装依赖或提供 API Key。在本项目目录执行：
+## 评委入口与阅读顺序
 
-```powershell
-python -m framework init
-python -m framework show
-python -m framework validate
-python -m unittest discover -s tests -v
-python -m framework demo --output demo-workspace
-python -m framework snapshot
+- GitHub独立公开仓库：https://github.com/philo-beep/huawei-track-agent-framework
+- 魔搭空间：https://modelscope.cn/studios/philosophia/promotion-agent
+- 交互演示：https://philosophia-promotion-agent.ms.show
+- 完整说明书：[华为销售顾问产品使用说明书](docs/product/华为销售顾问产品使用说明书.md)
+- 提交材料：[黑客松提交清单](docs/product/黑客松提交清单.md)
+- 部署与核验记录：[SUBMISSION.md](SUBMISSION.md)
+
+最终部署状态以提交记录为准，历史框架介绍页不等于本版业务演示已上线。
+
+## 打开后怎么操作
+
+1. 选择一个完整产品型号和发布平台，可选公众号、小红书、朋友圈。
+2. 填写脱敏后的客户描述和具体使用场景。只输入客户已表达的情况，不填真实姓名、电话、公司机密。也可以按案例按钮或快捷键填入合成样例。
+3. 选择是否查看假设价格演算，再点击运行，等待四步结果。信息不足时先阅读追问，不把“待确认”当成已知事实。
+4. 查看画像、内容准备稿、报价与演示计划、跟进动作；逐条检查资料来源及限制。云演示使用固定5台合成采购数量，不能套用到真实客户。
+5. 下载完整JSON或Markdown结果供复核；修改客户描述、场景或平台可重新运行。
+
+快捷键：`Alt+1`、`Alt+2`、`Alt+3`填入不同案例；`Ctrl+Enter`开始运行。案例只填表，不自动执行。浏览器或系统若占用快捷键，直接点页面按钮即可。
+
+## 本地运行公开演示版
+
+需要Node.js 24，无额外npm依赖，不需要账号、API Key或模型下载。
+
+```bash
+git clone https://github.com/philo-beep/huawei-track-agent-framework.git
+cd huawei-track-agent-framework
+node backend/marketing/cloud-server.js
 ```
 
-demo 在独立空目录中模拟指派、交付、打回、修复和复验，不调用模型，不污染正式看板。重复演示需指定新的空目录。正式任务先按 `templates/user-requirement.md` 明确需求，再创建任务并通过 JSON 消息流转：
+按终端显示的本地地址打开。云端使用 `PORT=7860` 和 `PUBLIC_ORIGIN=https://philosophia-promotion-agent.ms.show`，监听 `0.0.0.0`；本地配置见 [云端后端说明](docs/backend/cloud-demo.md)。Dockerfile启动同一服务；公开演示使用官网快照及合成配置，不读取私有知识库、不调用IMA。
 
-```powershell
-python -m framework task --id SAMPLE-A --owner A --title "输入页" --acceptance "按已明确需求验证输入与异常提示"
-python -m framework send --file templates/message.assign.example.json
-```
+官网规格按抓取时点及完整型号核验，快照超过7天会阻止继续使用。维护者可运行 `python data/fetch_official.py` 更新官网资料，再核验有效字段和来源并重新部署。不能以旧快照冒充实时价格；华为商城动态价格暂未取得完整可用证据，价格保持待核实。
 
-`--root 路径` 放在子命令前，可操作其他项目工作区。`block/cancel/resume --id ID --reason 原因` 记录主控管理操作；业务状态通过 assign/fix/deliver/reject/review 消息推进。
+## 本机千问增强版
 
-## 文件导航
+在用户原工作区，双击 `启动网页助手.cmd`，访问 `http://127.0.0.1:8767/`。修复后真实运行17.092秒通过35项复核。当前本机模型为Ollama `qwen2.5vl:7b`，不是最新千问，不需要付费API。本机版使用任德耀本地知识库和官网资料；独立公开版不包含私有知识库文件。
 
-| 位置 | 用途 |
-| --- | --- |
-| `AGENTS.md`、`agents/` | 后续会话入口、7 个角色的提示词和边界 |
-| `docs/architecture.md` | 文字和 Mermaid 消息流、依赖与职责 |
-| `docs/protocol.md`、`schemas/` | JSON 消息、看板结构和状态机 |
-| `framework/`、`tests/` | 可运行本地调度状态工具与关键回归测试 |
-| `templates/` | 需求模板、消息样例、完整端到端示例和发布核对 |
-| `frontend/`、`contracts/`、`data/`、`backend/`、`models/` | A/B/C/D 的未来业务产出 |
-| `docs/product/`、`reviews/` | E 产品说明与 QA 审查记录 |
-| `.collaboration/` | 真实任务表、消息与事件、自动备份、本机快照；不公开上传 |
+从公开仓库重建本机增强版时，需自行准备合法的知识库ZIP，运行 `python data/build_local_index.py build`，安装Ollama及该模型，再运行 `node backend/marketing/web-server.js --port 8767`。没有知识库和模型时请先使用公开规则版。CLI入口 `main.js`、`fourstep.js` 保留，输入契约见 `contracts/` 与 `docs/api/`。
 
-路径边界由交付检查和角色工作指令约束，不是操作系统沙箱。角色字段不能证明实际执行者身份。运行器负责状态和记录，不会自行向 LLM 发请求，也不会自动创建远程仓库。
+## 已实现与边界
 
-## 发布与恢复
+| 能力 | 当前结果 | 尚需完善 |
+| --- | --- | --- |
+| 客户画像 | 十一维拆解，区分明确输入、推断、待确认；输出追问 | 更广行业实测及复杂决策链识别 |
+| 内容准备 | 三平台结构、事实引用、限制条件、咨询引导 | 自然可发布软文、正式配图、真实转化验证 |
+| 报价方案 | 四级假设模型，整数分计算、顺序、封顶、资格及日期校验；演示计划 | 真实授权政策、精确SKU现价、现场半小时计时 |
+| 销售跟进 | 缺失问题、条件式下一步行动 | 客户管理系统、提醒、成交效果跟踪 |
+| 交互留源 | 网页操作、来源核对、双格式导出；云会话隔离 | 商务风格设计、图片审核流程 |
 
-`release-approve --by E --summary 结论` 记录 E 实际审阅，`release-check` 检查 QA 任务与交付指纹，并要求至少一个 E 产品说明任务通过 QA；新增任务、状态变化或文件变化会阻止旧候选发布。已完成产出需变更时，QA 用 reject 将原任务退回，责任人修复、重交、复验；相关下游也须按依赖指纹重新复验，历史消息保留。取消任务保留记录，仍不能跳过已有依赖。
+四级演示政策采用“客户类型→采购数量→产品配置→区域”。**此为基于行业惯例与赛题推断的合理假设，待官方确认**；分类、系数均为项目人为配置，不代表已有行业或华为政策认证。公开演示规则位于 `backend/marketing/cloud-runner.js` 的 `pricingInput`，完整来源复查见 [价格政策来源与假设清单](outputs/B/价格政策来源与假设清单.md)。
 
-每次状态修改前在 `.collaboration/backups/` 保存前一版本；`snapshot` 保存状态、文件 SHA-256 清单与工作区 ZIP。快照为本机恢复用途，可能包含本地数据，不直接公开。恢复前先保存当前版本，确保无活跃写入，再从备份或快照恢复并运行 validate；文件内容应与对应状态版本匹配。异常留下 write.lock 时，确认没有写入进程后才能清理。
+IMA已由本地知识库 + 华为官网替代，资料来源标注已保留；正式图片当前未完成核验，不展示伪造配图。此替代来自用户产品要求，不能视为赛事手册IMA要求已被修改。严格规则自评尚未达到60分，不承诺初赛晋级；手册也没有初赛固定60分及格线。
 
-公开 GitHub 与魔搭部署方法见 `docs/deployment.md`，实际进展与已验证链接见 `docs/platform-status.md`。沿用用户现有“销售助手”空间 `philosophia/promotion-agent`，当前 Docker 入口展示协作框架，销售业务功能尚未实现。本机运行 `python -m backend.studio.app`，默认端口 7860；Docker 仅复制该标准库服务单文件。可选 Gradio 适配安装 `requirements.txt` 后运行 `python app.py`，不代表线上当前使用 Gradio。
+当前版本已完成核心功能完整实现（四步闭环可运行、可演示），前端UI属于后续优化项，将在功能稳定后迭代美化。这里的“完整实现”限于已披露的准备稿、合成报价和行动建议流程，不代表真实交易政策、正式图文与转化效果已实现。
 
-## 主工作区与迁入
+## 来源、公开范围与复现
 
-2026-10-18 已将框架迁入 `C:\Users\pop\Desktop\华为项目`，此目录为后续唯一主工作区；原 `agent.md` 已保留并校验。之前临时目录是历史备份。下列工具用于将初始框架安全安装到其他空目标，拒绝覆盖不同内容的现存文件：
+- 官网资料：`data/official/manifest.json`记录页面、抓取时间、型号、限制和SHA-256；`data/official/raw/`保留匹配字节。
+- 本机知识库：两个ZIP经比对字节相同，以任德耀版本为主别名去重；公开仓库不含ZIP、索引、受控条目摘录或客户会话。
+- 公开文件由 `tools/public_release.py` 明确白名单并扫描凭据，不使用整目录上传。
+- 本地独立验收与真实运行证据保留在受控工作区，不随仓库公开。公网验收摘要见 `SUBMISSION.md`。
+- 多Agent协作框架保留在 `framework/`、`agents/`。可用 `python -m unittest discover -s tests -v` 验证公开框架测试；真实任务看板不公开。
 
-```powershell
-python install_workspace.py --target "C:\Users\pop\Desktop\华为项目"
-```
-
-当前桌面看板及历史已经迁入，直接运行 `python -m framework validate` 检查。复制工具排除测试临时产物、本地看板与备份、原始数据和模型权重；它不是完整发布工具，正式发布按文件候选清单进行。
+复赛尚需真实运行录屏及不少于3组、覆盖至少2场景和2平台的优秀结果，须保留资料与图片来源；不能用静态页面或固定结果代替实际运行。

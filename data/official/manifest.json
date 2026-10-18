@@ -1,0 +1,444 @@
+{
+  "schema_version": 1,
+  "mode": "official_public_snapshot",
+  "ima_required": false,
+  "ima_requests": 0,
+  "generated_at": "2026-10-18T08:03:08.216369+00:00",
+  "entries": [
+    {
+      "id": "vmall-home",
+      "source_type": "vmall_official",
+      "url": "https://www.vmall.com/",
+      "final_url": "https://www.vmall.com/",
+      "fetched_at": "2026-10-18T08:00:38.759497+00:00",
+      "fetch_status": "ok",
+      "http_status": 200,
+      "raw_path": "data/official/raw/vmall-home-b9ac21836c1ef7d3.html",
+      "raw_sha256": "b9ac21836c1ef7d3eddf8d2d43635b8b4f8709728d9f457121ebafb7be36934f",
+      "text_path": "data/official/raw/vmall-home-b9ac21836c1ef7d3.txt",
+      "text_sha256": "f5b59b46f763373143eb9ad7c976619d4803b867a13e674e41382ab076174c6f",
+      "product": null,
+      "product_family": null,
+      "model_identity_verified": false,
+      "sku": null,
+      "configuration": {},
+      "text": "华为商城VMALL",
+      "fields": [],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "ok",
+          "at": "2026-10-18T08:00:38.759497+00:00"
+        }
+      ],
+      "content_type": "text/html",
+      "title": "华为商城VMALL"
+    },
+    {
+      "id": "matebook-14-2024",
+      "source_type": "huawei_official",
+      "url": "https://consumer.huawei.com/cn/laptops/matebook-14-2024/",
+      "final_url": "https://consumer.huawei.com/cn/laptops/matebook-14-2024/",
+      "fetched_at": "2026-10-18T08:00:38.767296+00:00",
+      "fetch_status": "ok",
+      "http_status": 200,
+      "raw_path": "data/official/raw/matebook-14-2024-6a3d1b958dcc5eec.html",
+      "raw_sha256": "6a3d1b958dcc5eec4edca56b1ae1eb5fa246ac50e2aaa5f7b71f6096a334fd0d",
+      "text_path": "data/official/raw/matebook-14-2024-6a3d1b958dcc5eec.txt",
+      "text_sha256": "b5988dd38ff6c05e197cf93bf2d46178f30cd959b6186e6473e0763bba2b36be",
+      "product": "HUAWEI MateBook 14 2024",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": true,
+      "sku": null,
+      "configuration": {},
+      "text": "HUAWEI MateBook 14 酷睿 Ultra - 华为官网\nHUAWEI MateBook 14 酷睿 Ultra\n我们使用cookie来确保您的高速浏览体验。继续浏览本站，即表示您同意我们使用cookie。\n详情\n消费者业务网站\n关闭\n个人用户\n手机，PC和平板，穿戴设备等个人及家用产品\n集团网站\n公司信息，社会责任，新闻，展会活动，行业洞察等等\n企业用户\n企业商用产品、解决方案和云服务\n运营商用户\n运营商网络解决方案、产品及服务\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n全屋智能\n路由器\nHarmonyOS 7\n服务支持\n零售店\n商用\n华为商城\n华为商城\n商城\n搜索\n简介\n登录\n注册\n我的服务\n我的个人信息\n退出\n打开菜单\n关闭\nsearch\n搜索\n关闭\n热门产品\nHUAWEI Mate 90 Pro Max\nHUAWEI Mate 90 RS 非凡大师\nHUAWEI Mate 90 Pro\nHUAWEI Mate 90\n华为智慧屏 Mate TV 2\nHUAWEI FreeBuds Neo\n快速预览\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n配件\n查找零售店\n热门搜索\n推荐搜索\n请键入更多关键词\nAfrica\nAsia Pacific\nEurope\nLatin America\nMiddle East\nNorth America\nGlobal\nHUAWEI MateBook 14 酷睿 Ultra\n功能特征\n规格参数\n服务支持\n功能特征\n规格参数\n服务支持\n2.8K OLED 触控手写屏\n1\n丨\n轻薄灵动机身\n2\n丨\n英特尔®酷睿™ Ultra 处理器\n3\n*本页面所示内容（包括但不限于产品外观、功能及 UI 界面）\n为搭载 Windows 操作系统的版本，另有第三方 Linux 版本可选，\n部分内容支持情况存在差异。请以实际销售版本\n为准。\n2.8K OLED\n触控手写屏\n1\n轻薄灵动\n机身，清新登场\n2\n英特尔®酷睿™\nUltra 处理器\n3\n19 小时\n连续观影\n4\n70 Wh\n大\n电\n池\n更丰富的\nAI 能力\nAI 概要\n5\nAI 生态\n25\n超级终端\n6\n，\n超级创造力\nOLED 好屏,\n一眼色彩分明\n全新\n14.2 英寸\n7\nOLED 显示屏登场\n，屏幕色彩表现跃迁至新高度。超⁠高对比度让画面的暗部更深邃，亮部更通透。支持 sRGB、P3、Adobe RGB 等多色域模式切换，无论是视频还是图⁠片都亮丽生动，时刻出⁠彩。即使进行专业设⁠计，也能准确显示不偏色，让你尽情施展\n创意。\nLCD\nOLED\nΔE < 1\n高色准逐台校色\n8\n10.7 亿色彩\n9\nsRGB/P3/Adobe RGB\n多色域模式\n1000000:1\n超高对比度\n10\n2.8K 高刷全面屏，\n细节栩栩如生\n2.8K 超高清分辨率\n1\n，显示效果更加清晰细腻，细节纤毫毕现。搭配\n120 Hz 高刷新率\n11\n，游戏、视频画面更加生⁠动流畅。舒适的 3:2 生产力屏幕，91% 高屏占比\n12\n，让双眼遨游于开阔视界。还支持\n刷新率自适应调节\n，动态画面流畅度拉满的同时，也会根据显示内容实时调节刷新率，让画面既流畅，又\n节能。\n2880 × 1920\n高清分辨率\n1\n120 Hz\n高刷新率\n11\n91%\n高屏占比\n12\n指尖灵动，\n丝滑触控\n屏幕支持 10 点触控，一点、一触，即时响应，丝滑流畅。绘⁠图或浏览网页时，可随手放大缩小，使用超\n便捷。\n10 点触控\n可圈可点\n13\n，\n随心批注\n支持 HUAWEI M-Pencil 套装（第三代）\n13\n，会议屏幕共享，讲演内容可标注可圈点，主讲重点一目\n了然。\n*需搭配 HUAWEI M-Pencil 充电器（第三代）\n使用。\n护眼有道，\n舒适可靠\n这块屏幕不仅出彩，还带来更舒适的用眼体验。屏幕通过硬件级低蓝光测试，并获得莱茵 TÜV Eye Comfort 认证。有效减轻蓝光对眼睛的伤害，且屏幕不泛黄。\n1920 Hz 高频调光\n14\n，低亮度环境使用时可降低视觉疲劳感，提供舒适观看\n体验。\n1920 Hz 高频调光\n14\n暗光更护眼\n莱茵 TÜV Eye Comfort 认证\n硬件级低蓝光，护眼不偏色\n新面貌，\n一见清新\n全新 HUAWEI MateBook 14，\n轻约 1.31⁠ ⁠千⁠克⁠\n15\n⁠，薄至 14.5⁠ ⁠毫米\n15\n，便携随行。超顺微弧曲线与楔形设计结合，机⁠身形体更加轻盈、流畅、灵⁠动⁠。\n原野绿\n深空灰\n皓月银\n清新治愈，充满自然生机。\n低调沉稳，尽显高级质感。\n简约纯粹，演绎时尚优雅。\n无边设计，\n漂亮不止一面\n全新无界一体键盘\n，打破边界，才能挥洒自如。\n14.2 英寸全面屏\n16\n，采用整面玻璃盖板，通透无边，浑然天成。背部波点开孔设计，反正都好⁠看⁠。\n观看完整视频\n超强内芯，\n露一手绝活\n搭载英特尔®酷睿™ Ultra 处理器\n17\n，性能再突破，算力更强大稳定。图像性能突破瓶颈，游戏运载轻轻松松，体⁠验感拉满。还能同时打开多个视频进行剪辑，做你的视频创作好帮手。游戏娱乐、重度办公、视觉设计、编程建模……强大生产力统统胜⁠任⁠。\nCPU 性能提升约 23.7%\n18\n全新 7 nm Intel 4 工艺\nGPU 性能提升约 88.9%\n18\n全新英特尔®锐炫™ 显卡\nSuper Turbo，\n效率提升快人一步\nSuper Turbo 开启后，即可畅享快人一步的超凡体验。1 秒即可疾速启动\n19\n。App 与文件，\n秒开秒运行，让笔记本跟随灵感随机应变。\n打开大型 PPT\n速度提升\n20\nSuper Turbo 开\n22.8%\nSuper Turbo 关\n打开大型 Excel\n速度提升\n21\nSuper Turbo 开\n14.9%\nSuper Turbo 关\n冷静出手，\n散热一把好手\n全新双鲨鱼鳍风扇排布设计，102 片超薄扇叶，配备 AI 参与设计的流线型增压风扇，\n风量提升\n40％\n22\n。背部近 5000 个波点散热开孔，\n进风有效面积增加 10%\n22\n，高效降⁠温⁠。\n能量满满，\n奉陪到底\n满血运转，从早到晚。\n70 Wh 大电池\n23\n，续航长达 19 小时\n4\n。开启全新省电模式，为你再续 90 分钟的额外使用时⁠长⁠\n24\n⁠。\n70 Wh\n大电池\n23\n19 小时\n本地 1080P 视频播放\n4\n90 分钟\n省电模式续航提升\n24\n释放你的\n超能力\n华为电脑管家内置 AI 空间\n25\n，畅享海量 AI 服务。精选 100+ 智能体，覆盖学习、办公等多个场景。不管\n是编程开发，还是文案创作，HUAWEI MateBook 14 都能随时为你助⁠力⁠。\n内容重点\n一键 get\nAI 概要\n5\n借助盘古大模型强大的 AI 能力，HUAWEI MateBook 14 能从音视频或实时纪要的海量信息中，\n快速精准地提炼关键点，生成摘要，帮你节省大量时间掌握会议、课程要⁠点⁠。\n更多 AI 功能，更爱用\nAI 纪要\n26\n你只管思绪飞扬，精彩由它全记录。\nAI 字幕\n27\n实时翻译，轻松开国际会议。\nAI 慧眼\n28\n懂你的镜头，让你很上镜。\nAI 纪要\nAI 字幕\nAI 慧眼\n梦幻联动，\n设备组个团\n手机协同\n29\n电脑不仅可打开多达 3 个手机应用窗口，现在还全新支持横屏大窗口和平行视界，更广阔的手机界面尽在眼⁠前⁠。\n平板协同\n29\n你还可以将笔记本电脑屏幕镜像到平板上，平板化身画板，搭配\nHUAWEI M-Pencil 手写笔，随意写绘灵⁠感⁠。\n显示器协同\n29\n笔记本电脑可通过无线连接的方式投屏至显示器上，高清投屏画质，低时延数据传输，放大画面的同时减少影⁠像模⁠⁠糊⁠⁠。\n智慧屏协同\n29\n笔记本电脑的桌面可延伸扩展到智慧屏，线上会议时，一块屏幕实时共享画面，一块屏幕做纪要，效率加⁠倍⁠。\n超材料天线，\n满格信号撑你赢\n华为超材料天线，随时随地稳定办公。拥有超强抗干扰与穿墙能力，无论屋里屋外、楼上楼下，好信号都能给你满满安全⁠感⁠。\n双通道大内存，\n运行飞快\n至高配备\n32 GB 超大内存\n，双通道高速率传输。最高可配合\n1 TB PCIe 高速固态硬盘\n，多任务切换流畅自如，存取文件轻松无压⁠力⁠。\n32 GB\n大内存\n1 TB\nPCIe 高速固态硬盘\n丰富接口，\n应有尽有\n五大接口，支持与多种设备链接搭配，无限拓展灵⁠感⁠。\nUSB-C 接口\nUSB 3.2 Gen 1 接口\nHDMI 接口\n3.5 mm 耳机孔\nUSB 3.2 Gen 1 接口\n品质，\n精益求精\n千锤百炼，方能铸就不凡。整机通过多项严苛的耐久测试，能从容应对各种严酷环境考验，经久耐⁠用。精益求精的好品质，带给你长久的陪⁠伴⁠。\n高温高湿工作测试\nUSB-C 接口耐久测试\n指纹按键耐久测试\n键盘耐久测试\n触控板点击测试\n铰链开合耐久测试\n2.8K 指屏幕分辨率为 2880 × 1920。显示屏支持多点触控功能，且适配 HUAWEI M-Pencil（第三代），需搭配 HUAWEI M-Pencil 套装（第三代）体验。HUAWEI M-Pencil 套装（第三代）非标配，需单独购买。仅电脑管家 14.0.3.300 及以上版本的部分华为笔记本支持手写功能。需使用 HUAWEI M-Pencil 充电器（第三代）完成手写笔和笔记本的配对后方可实现手写功能。不支持星闪连接及压感，体验与平板可能有差异，请以实际为⁠准⁠。\n受产品配置和制造工艺、测量方法的影响，实际重量和厚度或有差异，请以实物为⁠准⁠。\n有搭载英特尔®酷睿™ Ultra 5 处理器和英特尔®酷睿™ Ultra 7 处理器的配置可⁠选⁠。\n数据来源于华为实验室，在约 150 尼特亮度条件下，通过微软默认播放器进行本地 1080P 视频播放，不同配置的播放时间会有差异，请以实际使用情况为⁠准⁠。\n仅部分电脑管家 14.0.3.200 及以上版本的华为笔记本支持该功能，为限时限次尝鲜功能。使用该功能需电脑保持联网状态，实际效果受内容、网络环境等因素影响或有差异，后期可能涉及付费使用，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n仅部分华为手机、平板、显示器、智慧屏、耳机等终端设备，与部分电脑管家 13.0.2.300 及以上版本的华为笔记本互联支持该功能。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n屏幕采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略⁠小⁠）⁠。\n屏幕色准达到平均 ΔE ＜ 1，出厂校色精准还原实物颜⁠色⁠。\n实现 10.7 亿色效果需打开 HDR 模式，并配合支持 10⁠ ⁠bit 的内容源显⁠⁠示⁠⁠。\n典型值，数据来源于华为实验⁠室⁠。\n刷新率出厂设置为 60 Hz，支持切换为最高 120 Hz。在不同应用界面下刷新率可能存在差异，请以实际体验为⁠准⁠。\n数据来源于华为实验室，测量数据标准以屏幕可视区域尺寸对屏幕尺寸计算屏幕占比，请以实物为⁠准⁠。\n仅电脑管家 14.0.3.300 及以上版本的部分华为笔记本支持该功能。HUAWEI M-Pencil 套装（第三代）非标配，需单独购买。需使用 HUAWEI M-Pencil 充电器（第三代）完成手写笔和笔记本的配对后方可实现手写功能。不支持星闪连接及压感，体验与平板可能有差异，请以实际为⁠准⁠。\n屏幕支持 1920 Hz 高频 PWM 调光，在低亮度场景下生效，请以实际体验为准。本产品非医疗器械，不具有治疗功⁠能⁠。\n数据来源于华为实验室。实际数据依配置、制造工艺、测量方法的不同可能有所差⁠⁠异⁠。\n全面屏笔记本是业界通用概念，通常认为是窄边框和高屏占比的笔记本电⁠脑⁠。\n有搭载英特尔®酷睿™ Ultra 5 处理器和 英特尔⁠®⁠酷睿⁠™ Ultra 7 处理器的配置可⁠选⁠。\n数据来源于华为实验室，性能提升数据为搭载英特尔⁠®⁠酷睿⁠™ Ultra 7 处理器的 HUAWEI MateBook 14 对比上一代搭载第 13 代英特尔®酷睿™ i7-1360P 的 HUAWEI MateBook 14 的对比结⁠⁠果⁠。\n数据来源于华为实验室，测试开机后 logo 点亮屏幕的时间。请以实际体验为⁠准⁠。\n数据来源于华为实验室，测试搭载英特尔®酷睿™ Ultra 5 处理器的 HUAWEI MateBook 14 打开 150 页（1 GB）大型 PPT 所需的时间。可能受使用场景、环境等因素的影响，实际数据请以实物为⁠准⁠。\n数据来源于华为实验室，测试搭载英特尔®酷睿™ Ultra 5 处理器的 HUAWEI MateBook 14 打开 50 万行（50 MB）大型 Excel 所需的时间。可能受使用场景、环境等因素的影响，实际数据请以实物为⁠准⁠。\n数据来源于华为实验室，提升数据为对比上一代 HUAWEI MateBook 14 的对比结⁠⁠果⁠。\n电池容量为额定值。\n数据来源于华为实验室。数据为在满电状态下分别开启和关闭省电模式，开启五个 Word 文档与五个 Excel 文档循环进行滑动浏览、左键单击、字符录入等操作的续航时间。实际体验随后台应用，使用场景等因素不同，可能略有差异，请以实际使用情况为⁠准⁠。\nOTA 升级支持，界面请以实际体验为准。部分内容由第三方 AI 模型生成，功能可能因合作、授权、商务或技术条件的变化而变化，不再单独通知。部分功能需付费使用。部分功能使用需电脑保持联网状态，实际效果受内容、网络环境等因素影响或有差异，如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n仅部分电脑管家 14.0.3.200 及以上版本的部分型号华为笔记本支持该功能，使用该功能需电脑保持联网状态，支持最长连续 5 小时纪要，支持中文（普通话）和中英自由说两种语言模式。纪要效果受语速、口音、环境等因素影响或有差异，后期可能涉及付费套餐调整，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n仅部分电脑管家 14.0.3.200 及以上版本的华为笔记本支持此功能，该功能需电脑保持联网状态，AI 字幕音源支持媒体音和麦克风输入，实际使用中可能因使用习惯、环境因素等不同，可能略有差异，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n仅部分电脑管家 14.0.3.200 及以上版本的华为笔记本支持此功能，此功能默认关闭，需在控制中心中打开功能。实际使用中可能因使用习惯、环境因素等不同，效果略有差异，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n仅电脑管家 13.0.3.390 及以上版本的部分华为笔记本、HarmonyOS 3.0.0.160 及以上版本的部分华为手机与 HarmonyOS 3.1.0.122 及以上版本的部分华为平板支持该功能。使用该功能时，手机、平板、PC 需登录同一华为账号，并打开蓝牙和 Wi-Fi 开关。仅部分应用和文件支持该功能。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（⁠9⁠5⁠0⁠8⁠0⁠0⁠）⁠。\n以上页面中的产品图片、视频及屏幕内容仅作示意，实物产品效果（包括但不限于外观、颜色、尺寸）和屏幕显示内容（包括但不限于背景、UI、配图、视频）可能略有差异，请以实物为准。\n以上页面中的数据为理论值，均来自华为内部实验室，于特定测试环境下所得（请见各项具体说明），实际使用中可能因产品个体差异、软件版本、使用条件和环境因素不同略有不同，请以实际使用的情况为准。\n由于产品批次和生产供应因素实时变化，为尽可能提供准确的产品信息、规格参数、产品特性，华为可能实时调整和修订以上页面中的文字表述、图片效果等内容，以求与实际产品性能、规格、指数、零部件等信息相匹配。\n如遇确有进行上述修改和调整必要的情形，恕不专门通知。\n主页\n笔记本\nHUAWEI MateBook 14 酷睿 Ultra\n购买产品\n手机\n穿戴\n鸿蒙电脑\n笔记本\n显示器\n打印机\n平板\n智慧屏\n耳机音箱\n路由器\n配件\n商用产品\n教育商店\n服务支持\n保修政策\n上门安装\n维修服务\n保修期及权益查询\n维修备件价格\n服务进度查询\n联系我们\n服务隐私声明\n商用服务\n应用与下载\n终端云服务\n华为商城 APP\n我的华为 APP\n华为手机助手\n华为电脑管家\nHarmonyOS 7\n预置应用公示\nHUAWEI HiCar\nHUAWEI HiPlay\n新闻中心\n华为新闻\n华为活动\n线下支持\n服务店查询\n零售店查询\n关于我们\n关于我们\n可持续发展\n隐私\n华为商城\nHarmonyOS 开发者\n华为云\n企业业务\n运营商网络\n华为集团\n加入华为\n内容举报\n在线支持\n消费者服务热线\n950800\n7*24小时 | 普通话\n在线客服 | 7*24小时\n关注我们\n版权所有 © 华为终端有限公司 1998-2026。保留一切权利。\n粤A2-20044005号\n网站地图\n使用条款\n隐私声明\n关于cookies\n法律信息\nChina - 简体中文\nChina - 简体中文\n即将离开consumer.huawei.com\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n继续访问\n取消",
+      "fields": [],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "ok",
+          "at": "2026-10-18T08:00:38.767296+00:00"
+        }
+      ],
+      "content_type": "text/html; charset=UTF-8",
+      "title": "HUAWEI MateBook 14 酷睿 Ultra - 华为官网"
+    },
+    {
+      "id": "matebook-14-2024-specs",
+      "source_type": "huawei_official",
+      "url": "https://consumer.huawei.com/cn/laptops/matebook-14-2024/specs/",
+      "final_url": "https://consumer.huawei.com/cn/laptops/matebook-14-2024/specs/",
+      "fetched_at": "2026-10-18T08:00:38.767605+00:00",
+      "fetch_status": "ok",
+      "http_status": 200,
+      "raw_path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.html",
+      "raw_sha256": "142fb4df127357049f7d8f4c22d4e7656157478f3145a9308ef67e33d6f6e201",
+      "text_path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+      "text_sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+      "product": "HUAWEI MateBook 14 2024",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": true,
+      "sku": null,
+      "configuration": {},
+      "text": "HUAWEI MateBook 14 酷睿 Ultra 规格参数 - 华为官网\nHUAWEI MateBook 14 酷睿 Ultra 规格参数\n我们使用cookie来确保您的高速浏览体验。继续浏览本站，即表示您同意我们使用cookie。\n详情\n消费者业务网站\n关闭\n个人用户\n手机，PC和平板，穿戴设备等个人及家用产品\n集团网站\n公司信息，社会责任，新闻，展会活动，行业洞察等等\n企业用户\n企业商用产品、解决方案和云服务\n运营商用户\n运营商网络解决方案、产品及服务\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n全屋智能\n路由器\nHarmonyOS 7\n服务支持\n零售店\n商用\n华为商城\n华为商城\n商城\n搜索\n简介\n登录\n注册\n我的服务\n我的个人信息\n退出\n打开菜单\n关闭\nsearch\n搜索\n关闭\n热门产品\nHUAWEI Mate 90 Pro Max\nHUAWEI Mate 90 RS 非凡大师\nHUAWEI Mate 90 Pro\nHUAWEI Mate 90\n华为智慧屏 Mate TV 2\nHUAWEI FreeBuds Neo\n快速预览\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n配件\n查找零售店\n热门搜索\n推荐搜索\n请键入更多关键词\nAfrica\nAsia Pacific\nEurope\nLatin America\nMiddle East\nNorth America\nGlobal\nHUAWEI MateBook 14 酷睿 Ultra\n功能特征\n规格参数\n服务支持\n功能特征\n规格参数\n服务支持\nHUAWEI MateBook 14 酷睿 Ultra\n原野绿，皓月银，深空灰\n操作系统\nWindows 11 家庭版\nLinux V20 版\n尺寸与重量\n宽度\n312.6 mm\n深度\n226.8 mm\n高度\n14.5 mm\n重量\n1.31 kg\n*实际尺寸和重量依配置、制造工艺、测量方法的不同可能有所差异。\n屏幕\n尺寸\n14.2 英寸\n类型\nOLED\n屏占比\n91%\n屏幕比例\n3:2\n分辨率\n2880 × 1920，243 ppi\n亮度\n450 尼特\n色域\nWindows 版：Adobe RGB / P3 / sRGB\nLinux V20 版：P3\n对比度\n1000000:1\n触摸屏\n多点触控触摸屏，最多支持 10 点触控\n*十点触控仅限 Windows 版本产品支持，Linux V20 版仅支持五点触控。\n*屏幕亮度、色域、对比度等数据为典型值。\n处理器\n英特尔® 酷睿™ Ultra 7 155H 处理器\n*仅限 Windows 版本产品搭载。\n英特尔® 酷睿™ Ultra 5 125H 处理器\n存储\n1 TB NVMe PCIe SSD\n*硬盘格式化之后的实际容量可能较小。\n显卡\n英特尔锐炫™显卡\n内存\n16 GB / 24 GB / 32 GB\n无线连接\nWLAN\nIEEE 802.11a/b/g/n/ac/ax，160 MHz\n2.4 GHz 和 5 GHz\n2 × 2 MIMO\n支持 WPA/WPA2/WPA3\n蓝牙\nWindows 版：蓝牙 5.1\nLinux V20 版：蓝牙 4.2\n电池\n材料\n锂聚合物\n容量\n70 Wh（额定容量）\n接口\nUSB-C 接口 × 1（全功能）\nUSB3.2 Gen1 × 2\nHDMI × 1\n3.5 mm 耳机 & 麦克风二合一接口 × 1\n键盘和触控板\n全尺寸背光键盘\n*快捷键功能仅限 Windows 版本产品支持。\n大尺寸触控板，支持多点触控\n电源键\n指纹电源键\n*Linux V20 版：仅支持电源键功能，不支持指纹识别。\n摄像头\n1080P 高清摄像头\n音频\n麦克风 × 2\n扬声器 × 2\n特色应用\n超级终端*\nAI 概要\nAI 空间\nSuper Turbo\n华为电脑管家\n华为应用市场\n华为浏览器\n高能模式/省电模式：热键 Fn + P 开启\n华为 F10 一键还原\n显示管理（护眼模式）\n*以上功能仅限 Windows 版本产品支持。\n包装清单\nPC × 1\nUSB-C 电源适配器(适配器和充电线一体式连接) × 1\n快速指南 × 1\n以上页面中的产品图片、视频及屏幕内容仅作示意，实物产品效果（包括但不限于外观、颜色、尺寸）和屏幕显示内容（包括但不限于背景、UI、配图、视频）可能略有差异，请以实物为准。\n以上页面中的数据为理论值，均来自华为内部实验室，于特定测试环境下所得（请见各项具体说明），实际使用中可能因产品个体差异、软件版本、使用条件和环境因素不同略有不同，请以实际使用的情况为准。\n由于产品批次和生产供应因素实时变化，为尽可能提供准确的产品信息、规格参数、产品特性，华为可能实时调整和修订以上页面中的文字表述、图片效果等内容，以求与实际产品性能、规格、指数、零部件等信息相匹配。\n如遇确有进行上述修改和调整必要的情形，恕不专门通知。\n主页\n笔记本\nHUAWEI MateBook 14 酷睿 Ultra\nHUAWEI MateBook 14 酷睿 Ultra 规格参数\n购买产品\n手机\n穿戴\n鸿蒙电脑\n笔记本\n显示器\n打印机\n平板\n智慧屏\n耳机音箱\n路由器\n配件\n商用产品\n教育商店\n服务支持\n保修政策\n上门安装\n维修服务\n保修期及权益查询\n维修备件价格\n服务进度查询\n联系我们\n服务隐私声明\n商用服务\n应用与下载\n终端云服务\n华为商城 APP\n我的华为 APP\n华为手机助手\n华为电脑管家\nHarmonyOS 7\n预置应用公示\nHUAWEI HiCar\nHUAWEI HiPlay\n新闻中心\n华为新闻\n华为活动\n线下支持\n服务店查询\n零售店查询\n关于我们\n关于我们\n可持续发展\n隐私\n华为商城\nHarmonyOS 开发者\n华为云\n企业业务\n运营商网络\n华为集团\n加入华为\n内容举报\n在线支持\n消费者服务热线\n950800\n7*24小时 | 普通话\n在线客服 | 7*24小时\n关注我们\n版权所有 © 华为终端有限公司 1998-2026。保留一切权利。\n粤A2-20044005号\n网站地图\n使用条款\n隐私声明\n关于cookies\n法律信息\nChina - 简体中文\nChina - 简体中文\n即将离开consumer.huawei.com\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n继续访问\n取消",
+      "fields": [
+        {
+          "name": "display_resolution",
+          "value": "2880 × 1920",
+          "unit": null,
+          "excerpt": "分辨率\n2880 × 1920，243 ppi",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+            "sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+            "start": 851,
+            "end": 874
+          }
+        },
+        {
+          "name": "memory_options",
+          "value": [
+            16,
+            24,
+            32
+          ],
+          "unit": "GB",
+          "excerpt": "内存\n16 GB / 24 GB / 32 GB",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+            "sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+            "start": 1166,
+            "end": 1190
+          }
+        },
+        {
+          "name": "storage",
+          "value": "1 TB NVMe PCIe SSD",
+          "unit": null,
+          "excerpt": "存储\n1 TB NVMe PCIe SSD\n*硬盘格式化之后的实际容量可能较小。",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+            "sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+            "start": 1113,
+            "end": 1153
+          }
+        },
+        {
+          "name": "processor_options",
+          "value": [
+            "Intel Core Ultra 7 155H",
+            "Intel Core Ultra 5 125H"
+          ],
+          "unit": null,
+          "excerpt": "处理器\n英特尔® 酷睿™ Ultra 7 155H 处理器\n*仅限 Windows 版本产品搭载。\n英特尔® 酷睿™ Ultra 5 125H 处理器",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+            "sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+            "start": 1037,
+            "end": 1112
+          }
+        },
+        {
+          "name": "operating_system_options",
+          "value": [
+            "Windows 11 家庭版",
+            "Linux V20 版"
+          ],
+          "unit": null,
+          "excerpt": "操作系统\nWindows 11 家庭版\nLinux V20 版",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-2024-specs-142fb4df12735704.txt",
+            "sha256": "a346e880f2c27d89ba83341ab737fc64427f802349b80b168906a2c15b6afb5f",
+            "start": 696,
+            "end": 727
+          }
+        }
+      ],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。",
+        "参数为2024酷睿Ultra产品系列选项，不能将各选项任意排列成已在售SKU；Linux与Windows版本功能存在差异。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "ok",
+          "at": "2026-10-18T08:00:38.767605+00:00"
+        }
+      ],
+      "content_type": "text/html; charset=UTF-8",
+      "title": "HUAWEI MateBook 14 酷睿 Ultra 规格参数 - 华为官网"
+    },
+    {
+      "id": "vmall-matebook-14-2024",
+      "source_type": "vmall_official",
+      "url": "https://www.vmall.com/product/comdetail/index.html?prdId=10086627212823&cid=278821",
+      "final_url": null,
+      "fetched_at": "2026-10-18T08:00:41.838392+00:00",
+      "fetch_status": "failed",
+      "http_status": null,
+      "raw_path": null,
+      "raw_sha256": null,
+      "text_path": null,
+      "text_sha256": null,
+      "product": "HUAWEI MateBook 14 2024",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": false,
+      "sku": null,
+      "configuration": {},
+      "text": "",
+      "fields": [],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed",
+          "at": "2026-10-18T08:00:38.976781+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        },
+        {
+          "attempt": 2,
+          "status": "failed",
+          "at": "2026-10-18T08:00:41.838392+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        }
+      ]
+    },
+    {
+      "id": "matebook-14-harmonyos",
+      "source_type": "huawei_official",
+      "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+      "final_url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+      "fetched_at": "2026-10-18T08:02:24.513092+00:00",
+      "fetch_status": "ok",
+      "http_status": 200,
+      "raw_path": "data/official/raw/matebook-14-harmonyos-0f0c0880c53fb3e1.html",
+      "raw_sha256": "0f0c0880c53fb3e1da27f9943726e36176439180c732de5b1b60f0f0cf856b34",
+      "text_path": "data/official/raw/matebook-14-harmonyos-0f0c0880c53fb3e1.txt",
+      "text_sha256": "f2fb2f2108f7c6413e0e6d5416b7ef03be15888b6ded7c92ed1c5ab3f6ed1aa9",
+      "product": "HUAWEI MateBook 14 鸿蒙版",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": true,
+      "sku": null,
+      "configuration": {},
+      "text": "HUAWEI MateBook 14 - 华为官网\nHUAWEI MateBook 14\n我们使用cookie来确保您的高速浏览体验。继续浏览本站，即表示您同意我们使用cookie。\n详情\n消费者业务网站\n关闭\n个人用户\n手机，PC和平板，穿戴设备等个人及家用产品\n集团网站\n公司信息，社会责任，新闻，展会活动，行业洞察等等\n企业用户\n企业商用产品、解决方案和云服务\n运营商用户\n运营商网络解决方案、产品及服务\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n全屋智能\n路由器\nHarmonyOS 7\n服务支持\n零售店\n商用\n华为商城\n华为商城\n商城\n搜索\n简介\n登录\n注册\n我的服务\n我的个人信息\n退出\n打开菜单\n关闭\nsearch\n搜索\n关闭\n热门产品\nHUAWEI Mate 90 Pro Max\nHUAWEI Mate 90 RS 非凡大师\nHUAWEI Mate 90 Pro\nHUAWEI Mate 90\n华为智慧屏 Mate TV 2\nHUAWEI FreeBuds Neo\n快速预览\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n配件\n查找零售店\n热门搜索\n推荐搜索\n请键入更多关键词\nAfrica\nAsia Pacific\nEurope\nLatin America\nMiddle East\nNorth America\nGlobal\nHUAWEI MateBook 14\n功能特征\n规格参数\n服务支持\n购买\n功能特征\n规格参数\n服务支持\n¥ 6599\n*\n起\n立即购买\n灵感开场，天生不安分。\n圆点在狂欢，\nAI 默契配合，\n创意野蛮生长。\n续航不掉链子\n1\n，\n陪你疯玩到尽兴。\n观看完整视频\n波点艺术设计\n2\n有圆点，更有亮点\n2.8K OLED 云晰柔光屏\n3\n好屏，亮眼更养眼\n鸿蒙 AI 生而智能\n4\n琐事，变易事\n21 小时超长续航\n1\n续航，妥妥的\n40 W 静音散热\n5\n冷静干大事\n鸿蒙全场景连接\n6\n一碰⁠\n6\n，就合拍\n圆\n的，\n敲\n敲\n敲\n顺\n手\n“圆”气选手，\n自带舒适圈\n有圆点，更有亮点。\n大弧度键帽，\n贴合你⁠的每一次指尖起落；\n全尺寸方向键，\n让⁠每一次走位都精准到位。上手即顺手，把奇思妙想敲出轻快小⁠调。\n给你，不止一种好看\n天生出色，各有态度。轻约\n1.33 千克，\n单⁠手即可随意拎起，能轻松塞进背包，陪⁠你穿梭写字楼与咖啡馆，灵感随时打⁠包带⁠走⁠\n7\n。\n薄至\n7\n14.5\nmm\n轻约\n7\n1.33\nkg\n樱粉金\n原野绿\n深空灰\n*仅广告示意，请以实物为准。\n这块屏，\n真的有眼缘\n越看，越顺眼\n护眼\n8\n云晰柔光屏\n3\n，\n搭配纳米磁控光⁠学镀膜，减少眩光干扰，轻松应对各种复杂光线环境。无论是脑洞创作，还是快⁠乐追剧，眼睛依然轻松舒⁠适。\n1920 Hz 高频调光\n9\n暗光更舒适\n莱茵全局护眼认证\n硬件级低蓝光，护眼不偏色\n出彩，更入戏\n14.2 英寸 2.8K OLED 屏，\n色彩精准还原你⁠的每一个灵感，更接得住你的情绪大⁠片；120 Hz 高刷\n10\n丝滑入戏，不管是追⁠剧还是看电影，帧帧入⁠心。\n分辨率\n2880 × 1920\n高刷新率\n10\n120 Hz\n专业级色准\n11\nΔE < 1\n高对比度\n12\n1,000,000:1\n屏占比\n13\n91%\n这一笔，很有戏\n搭配 HUAWEI M-Pen 3 多功能笔的空鼠模式，隔空操控，会议控场。文档上翻下翻随心自如，长按光⁠标精准聚焦，指哪点哪，控场力拉⁠满。\n光标精准聚焦\n续航，\n妥妥的\n无需随时寻找电源插座，\n70 Wh\n电池提供持久续航\n14\n，足以支撑长达\n21 小时\n1\n的本⁠地视频播放。66 W 反向超级快充\n15\n，支⁠持 SCP，PD，UFCS 协议，支撑你清晨到深⁠夜的创意迸发，始终保持状态，底气十⁠足地应对全天任⁠务。\n21\n小时\n本地视频播放\n1\n20\n小时\n在线视频播放\n16\n15\n小时\n在线语音会议\n17\n快人一步，\n满足好胜心\n速度，上不封顶\n搭载\n麒麟X90 处理器，\n配合 AI 预加载与底层算法优化，应用启动更快，大文件秒⁠开秒解压，多任务切换行云流水，让流⁠畅体验全面进⁠阶。\n1 GB\nPPT 提升至\n18\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n.\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n倍\n1 GB 大文件\n解压缩速度提升至\n18\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n.\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n倍\nWPS 应用\n打开速度提升至\n18\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n.\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n0\n1\n2\n3\n4\n5\n倍\nHUAWEI MateBook 14 酷睿 Ultra（基准）\n冷静干大事\n波点艺术排风孔设计，将功能藏于美学。\n双鲨鱼鳍风扇\n排布搭配流线型增压设计，带来\n20 dB\n的耳语般静音表现\n19\n，安静运⁠转，专注感从头到尾都在⁠线。\n安静办公\n19\n20\ndB\n通透视界，\n让\n让\n灵感自由呼吸\n想要朦胧感还是清透感？HUAWEI MateBook 14 带来全新 UI 设计，让桌面换新衣，你的电脑，你来定⁠义。\n观看完整视频\nAI 开工，\n默契助攻\n小艺深度研究\n20\n，更有讲究\n直连万方数据、财联社等 6 大专业知⁠识⁠库，由小艺帮你整合权威信息，输⁠出逻辑严谨的研究报⁠告。\n知识闪卡\n21\n，记忆开挂\n基于科学记忆法，把学习资料变身趣味闪卡。填空、选择、问答灵活练，答案一键溯源，知识点过目不⁠忘。\n小艺深度解题\n21\n，思路带⁠你⁠飞\n考研考公的硬核助攻。截屏即问，小艺为你拆解逻辑，\n梳理链路。更有引导探⁠索，让你举一反⁠三。\n小艺慧记\n22\n，自动托管\n会议记录的救星。会后纪要智能生成，支持分屏摘要，重⁠要观点一搜即得，复盘无压⁠力。\n好搭档组队，\n效率翻倍\n一碰⁠\n6\n，就合拍\n无需配对，碰一下，创意瞬间跨屏闪送。资料\n一碰即传\n6\n，\n手机上没忙完的想法，\n无缝流转\n到电脑，灵感不中断。华为分享支持一对四同时\n极速分享\n23\n，\n协作一拍即⁠合，默契不掉队，快乐不排⁠队。\nWi-Fi 7+，\n灵感不掉线\n全新\nWi-Fi 7+\n连接\n24\n，让创作节奏时刻在线。视频会议、多任务协作、大文件传输同时进行，也依然流畅不断。网络如影随形，稳稳接住你的每一个灵感节⁠点。\n超远高速连接⁠\n25\n700\n米\n稳定连接⁠\n25\n360°\n速率提升⁠\n26\n25\n%\n连接稳稳，找回准准\n星闪™技术⁠\n27\n，有效抗干扰，HUAWEI\nM-Pen 3 多功能笔、鼠标连接快速到位，让创作节奏不中断。支持星闪™查找⁠\n28\n，电⁠脑关机也能被锁定坐标，快速找回⁠\n29\n。给⁠你的每一件装备，都配上稳稳的安全⁠感。\n安全感，一直在\n底气，来自底层\n从系统内核到应用生态，星盾架构为你构建全⁠方位防护，让你的数字世界既清爽又安⁠全。\nAI 换脸检测\n30\n，\n很认“真”\nAI 防诈能力，采用智能算法，本地识⁠别视频通话中 AI 换脸的诈骗手段，守护你的通信安⁠全。\n全盘加密，安全无界\n芯片级全盘加密，即便硬盘丢失，数⁠据也无法被读取。支持外发文档加⁠密分⁠享，重要资料在传递中也安⁠全。\n多接口，更顺手\n多种接口覆盖日常所需，让设备连接更直⁠接。办公扩展、数据传输、外设接入一⁠步到位，减少转换与等待，工作节奏自⁠然衔⁠接。\nUSB-C 接口\nUSB 3.2 Gen 1 接口\nHDMI 接口\n3.5 mm 耳机孔\nUSB 3.2 Gen 1 接口\n数据来源于华为实验室，在约 150 尼特亮度条件下，进行本地 1080P 视频播放，不同配置的播放时间可能会有差异，请以实际使用情况为⁠准⁠。\n另有方键盘版本可选。\n仅 HUAWEI MateBook 14 柔光版支持。云晰柔光屏是华为对屏幕设计的定义，屏幕形成漫反射，减轻灯光、阳光等光照的影响，让屏幕观感更舒适；不同使用条件、环境下体验可能略有差异，请以实际为⁠⁠准。\n鸿蒙，是指产品搭载鸿蒙操作系统；AI，是指产品具备小艺智能体、小艺慧记、小艺搜索等 AI 功⁠能。\n稳态最大性能对应的热设计功耗为 40 W。数据来源于华为实验室，实际性能依环境、测量方法不同有所差异，请以实际体验为⁠准。\n画面仅供示意，具体支持的设备、机型、服务和界面以实际为准。仅支持与 HarmonyOS 6 及以上版本的设备碰一碰传送，需要登录同一华为账号体验。华为畅享系列不支持此功⁠⁠能。\n数据来源于华为实验室。实际数据依配置、制造工艺、测量方法的不同可能有所差⁠异⁠。1.33 千克为圆键盘版本，方键盘版本重量为 1.32 千克。\n本产品非医疗器械，不具有治疗功效。\n屏幕支持 1920 Hz 高频 PWM 调光，在低亮度场景下生效，请以实际体验为准。\n刷新率出厂设置为智能模式，支持最高 120 Hz。在不同应用界面下刷新率可能存在差异，请以实际体验为⁠准⁠。\n数据来源于华为实验室，屏幕色准达到平均 ΔE ＜ 1⁠。\n数据来源于华为实验室，典型值。\n数据来源于华为实验室，测量数据标准以屏幕可视区域尺寸对屏幕尺寸计算屏幕占比，请以实物为⁠准⁠。\n电池容量为额定值。\n仅关机状态支持 SCP、UFCS 协议至高 66 W 对外充电，PD 协议支持至高 40 W 对外充电；开机及睡眠状态支持至高 10 W 对外充⁠⁠⁠电。\n数据来源于华为实验室，在约 150 尼特亮度条件下，通过爱奇艺客户端关闭弹幕在线播放 1080P 视频使用时间。不同环境、视频软件使用可能会有差异，请以实际使用情况为⁠⁠⁠准⁠。\n数据来源于华为实验室，在约 150 尼特亮度条件下，通过腾讯会议客户端进行语音会议，不开启摄像头的会议使用时间。不同环境、会议软件使用可能会有差异，请以实际使用情况为⁠准⁠。\n数据来源于华为实验室，在插电测试的条件下，为搭载 HarmonyOS 6.1 版本的 24G HUAWEI MateBook 14 鸿蒙版对比搭载 Windows 11 版本的 HUAWEI MateBook 14 酷睿 Ultra 得出，请以实际体验为准。WPS 后台运行/未运行时（不含宏编辑），72 小时内下载接收等场景操作常规的 PPT/PPTX 可被秒级打开（不包括保密文件）一次性打开文件解析所占用内存总不超过空闲内存的 30%，单个文件不超过 2G，同步支持文件数不超过 15 个。\n数据来源于华为实验室，为 HUAWEI MateBook 14 鸿蒙版（32 GB + 麒麟X90）配置，在不插电使用 WPS 无后台时模拟人耳位置的噪音。不同使用条件、环境下噪音可能略有差异，请以实际为⁠⁠准。\n画面仅供示意，具体支持的设备、机型、服务和界⾯以实际为准。此功能目前适用于鸿蒙电脑、小艺网页版。生成速度根据实际情况可能存在差异。AI 生成内容仅供参⁠考。\n仅部分搭载 HarmonyOS 6.1 及以上的鸿蒙电脑支持该功能。使用该功能需电脑保持联网状态，效果受文档文件、系统版本等因素不同或有差异，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（950800）。\nAI 生成内容仅供参考。使用该功能需电脑保持联网状态，效果受文档文件、系统版本等因素不同或有差异，请以实际体验为准。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（950800）。\n仅部分搭载 HarmonyOS 5 及以上的华为手机、平板、电脑支持该功能，使用该功能时，手机、平板、电脑需打开蓝牙和 Wi-Fi 开关。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（950800）。\n需配合支持 Wi-Fi 7+ 的路由器使用。\n数据来源于华为实验室，在路由器和笔记本间无遮挡的 700 米空旷环境中，连接 5 GHz 频段 Wi-Fi，笔记本放置于调速转台上进行 360° 水平旋转，B 站 1080P 视频播放的最远距离。实际使用根据环境、设备等因素的不同而有所不同，请以实际体验为⁠准。\n需配合支持 Wi-Fi 7+ 的路由器使用，数据来源于华为实验室，为搭载 Wi-Fi 7+ 的 HUAWEI MateBook 14 鸿蒙版对比上一代产品 HUAWEI MateBook 14 酷睿 Ultra，连接同一 Wi-Fi 7+ 路由器，在家庭弱信号下进行对⁠比。\n星闪指星闪无线通信技术，是一种无线短距离通信技术，用于承载智能终端、智能家居、智能汽车以及智能制造等领域应用场景的数据交互。“星闪”是国际星闪无线短距通信联盟的注册商⁠标。\n配合部分支持星闪™精确查找功能的华为手机等设备，登录华为账号并启动查找功能。如在选购或使用时对功能体验、使用限制、支持机型等有疑问，请咨询华为客服（950800）。\n电池满电状态下最高可支持关机后 30 天内找回，具体找回时间依据电量、环境有所不同，请以实际为⁠准。\n该功能需手动开启。AI 换脸检测目前仅支持畅连、QQ⁠、微信视频通话和钉钉；基于 AI 技术提供的辅助预警通话风险的功能，仅作为风险提示参考，不构成任何安全承诺和保证，请结合实际情况甄别核⁠⁠⁠⁠⁠实。\n价格仅供参考，具体价格请以华为商城展示为⁠⁠准。\n以上页面中的产品图片、视频及屏幕内容仅作示意，实物产品效果（包括但不限于外观、颜色、尺寸）和屏幕显示内容（包括但不限于背景、UI、配图、视频）可能略有差异，请以实物为准。\n以上页面中的数据为理论值，均来自华为内部实验室，于特定测试环境下所得（请见各项具体说明），实际使用中可能因产品个体差异、软件版本、使用条件和环境因素不同略有不同，请以实际使用的情况为准。\n由于产品批次和生产供应因素实时变化，为尽可能提供准确的产品信息、规格参数、产品特性，华为可能实时调整和修订以上页面中的文字表述、图片效果等内容，以求与实际产品性能、规格、指数、零部件等信息相匹配。\n如遇确有进行上述修改和调整必要的情形，恕不专门通知。\n主页\n鸿蒙电脑\nHUAWEI MateBook 14\n购买产品\n手机\n穿戴\n鸿蒙电脑\n笔记本\n显示器\n打印机\n平板\n智慧屏\n耳机音箱\n路由器\n配件\n商用产品\n教育商店\n服务支持\n保修政策\n上门安装\n维修服务\n保修期及权益查询\n维修备件价格\n服务进度查询\n联系我们\n服务隐私声明\n商用服务\n应用与下载\n终端云服务\n华为商城 APP\n我的华为 APP\n华为手机助手\n华为电脑管家\nHarmonyOS 7\n预置应用公示\nHUAWEI HiCar\nHUAWEI HiPlay\n新闻中心\n华为新闻\n华为活动\n线下支持\n服务店查询\n零售店查询\n关于我们\n关于我们\n可持续发展\n隐私\n华为商城\nHarmonyOS 开发者\n华为云\n企业业务\n运营商网络\n华为集团\n加入华为\n内容举报\n在线支持\n消费者服务热线\n950800\n7*24小时 | 普通话\n在线客服 | 7*24小时\n关注我们\n版权所有 © 华为终端有限公司 1998-2026。保留一切权利。\n粤A2-20044005号\n网站地图\n使用条款\n隐私声明\n关于cookies\n法律信息\nChina - 简体中文\nChina - 简体中文\n即将离开consumer.huawei.com\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n继续访问\n取消",
+      "fields": [],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "ok",
+          "at": "2026-10-18T08:02:24.513092+00:00"
+        }
+      ],
+      "content_type": "text/html; charset=UTF-8",
+      "title": "HUAWEI MateBook 14 - 华为官网"
+    },
+    {
+      "id": "matebook-14-harmonyos-specs",
+      "source_type": "huawei_official",
+      "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+      "final_url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+      "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+      "fetch_status": "ok",
+      "http_status": 200,
+      "raw_path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+      "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+      "text_path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+      "text_sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+      "product": "HUAWEI MateBook 14 鸿蒙版",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": true,
+      "sku": null,
+      "configuration": {},
+      "text": "HUAWEI MateBook 14 规格参数 - 华为官网\nHUAWEI MateBook 14 规格参数\n我们使用cookie来确保您的高速浏览体验。继续浏览本站，即表示您同意我们使用cookie。\n详情\n消费者业务网站\n关闭\n个人用户\n手机，PC和平板，穿戴设备等个人及家用产品\n集团网站\n公司信息，社会责任，新闻，展会活动，行业洞察等等\n企业用户\n企业商用产品、解决方案和云服务\n运营商用户\n运营商网络解决方案、产品及服务\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n全屋智能\n路由器\nHarmonyOS 7\n服务支持\n零售店\n商用\n华为商城\n华为商城\n商城\n搜索\n简介\n登录\n注册\n我的服务\n我的个人信息\n退出\n打开菜单\n关闭\nsearch\n搜索\n关闭\n热门产品\nHUAWEI Mate 90 Pro Max\nHUAWEI Mate 90 RS 非凡大师\nHUAWEI Mate 90 Pro\nHUAWEI Mate 90\n华为智慧屏 Mate TV 2\nHUAWEI FreeBuds Neo\n快速预览\n手机\n穿戴\n电脑\n平板\n智慧屏\n耳机音箱\n配件\n查找零售店\n热门搜索\n推荐搜索\n请键入更多关键词\nAfrica\nAsia Pacific\nEurope\nLatin America\nMiddle East\nNorth America\nGlobal\nHUAWEI MateBook 14\n功能特征\n规格参数\n服务支持\n购买\n功能特征\n规格参数\n服务支持\nHUAWEI MateBook 14\n原野绿，樱粉金，深空灰\n操作系统\nHarmonyOS 6\n尺寸与重量\n长度\n312.6 mm\n宽度\n226.8 mm\n厚度\n14.5 mm\n重量\n约 1.33 kg（圆键盘含电池）\n约 1.32 kg（方键盘含电池）\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n屏幕\n尺寸\n14.2 英寸\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n类型\nOLED（抗反射屏）\n屏占比\n91%\n屏幕比例\n3:2\n分辨率\n2880 × 1920，243 PPI\n刷新率\n静态刷新率：60 Hz / 120 Hz\n动态刷新率：智能动态调节（默认）\n亮度\n标准版：\n典型亮度：450 nits\n峰值亮度：500 nits\n柔光版：\n典型亮度：500 nits\n峰值亮度：600 nits\n色域\n100% sRGB（典型值）、P3 广色域（典型值）\n色准\n平均 DeltaE < 1，支持多屏同色显示\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n对比度\n1000000:1（典型值）\n可视角度\n178°（典型值）\n触摸屏\n支持 10 点触控\n处理器\nCPU\n麒麟 X90\n存储\n512 GB / 1 TB\n内存\n24 GB / 32 GB\n无线连接\nWLAN\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n2.4 GHz 和 5 GHz 双频\n支持 WPA、WPA2、WPA3\n星闪\n支持，星闪 E1.0\n蓝牙\n蓝牙 6.0\n电池\n材料\n锂聚合物\n容量\n70 Wh（额定容量）\n接口\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n右侧：USB-A × 1；\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n键盘和触控板\n全尺寸背光键盘\n触控板支持 5 点触控\n电源键\n指纹电源键\n摄像头\n1080P 高清摄像头\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n音频\n扬声器\n扬声器 × 2\n麦克风\n麦克风 × 2\n包装清单\nPC × 1\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n快速指南 × 1\n贴纸 × 1\n抛光布 × 1（仅柔光屏支持）\n以上页面中的产品图片、视频及屏幕内容仅作示意，实物产品效果（包括但不限于外观、颜色、尺寸）和屏幕显示内容（包括但不限于背景、UI、配图、视频）可能略有差异，请以实物为准。\n以上页面中的数据为理论值，均来自华为内部实验室，于特定测试环境下所得（请见各项具体说明），实际使用中可能因产品个体差异、软件版本、使用条件和环境因素不同略有不同，请以实际使用的情况为准。\n由于产品批次和生产供应因素实时变化，为尽可能提供准确的产品信息、规格参数、产品特性，华为可能实时调整和修订以上页面中的文字表述、图片效果等内容，以求与实际产品性能、规格、指数、零部件等信息相匹配。\n如遇确有进行上述修改和调整必要的情形，恕不专门通知。\n主页\n鸿蒙电脑\nHUAWEI MateBook 14\nHUAWEI MateBook 14 规格参数\n购买产品\n手机\n穿戴\n鸿蒙电脑\n笔记本\n显示器\n打印机\n平板\n智慧屏\n耳机音箱\n路由器\n配件\n商用产品\n教育商店\n服务支持\n保修政策\n上门安装\n维修服务\n保修期及权益查询\n维修备件价格\n服务进度查询\n联系我们\n服务隐私声明\n商用服务\n应用与下载\n终端云服务\n华为商城 APP\n我的华为 APP\n华为手机助手\n华为电脑管家\nHarmonyOS 7\n预置应用公示\nHUAWEI HiCar\nHUAWEI HiPlay\n新闻中心\n华为新闻\n华为活动\n线下支持\n服务店查询\n零售店查询\n关于我们\n关于我们\n可持续发展\n隐私\n华为商城\nHarmonyOS 开发者\n华为云\n企业业务\n运营商网络\n华为集团\n加入华为\n内容举报\n在线支持\n消费者服务热线\n950800\n7*24小时 | 普通话\n在线客服 | 7*24小时\n关注我们\n版权所有 © 华为终端有限公司 1998-2026。保留一切权利。\n粤A2-20044005号\n网站地图\n使用条款\n隐私声明\n关于cookies\n法律信息\nChina - 简体中文\nChina - 简体中文\n即将离开consumer.huawei.com\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n继续访问\n取消",
+      "fields": [
+        {
+          "name": "display_resolution",
+          "value": "2880 × 1920",
+          "unit": null,
+          "excerpt": "分辨率\n2880 × 1920，243 PPI",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 887,
+            "end": 910
+          }
+        },
+        {
+          "name": "memory_options",
+          "value": [
+            24,
+            32
+          ],
+          "unit": "GB",
+          "excerpt": "内存\n24 GB / 32 GB",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1244,
+            "end": 1260
+          }
+        },
+        {
+          "name": "storage_options",
+          "value": [
+            "512 GB",
+            "1 TB"
+          ],
+          "unit": null,
+          "excerpt": "存储\n512 GB / 1 TB",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1227,
+            "end": 1243
+          }
+        },
+        {
+          "name": "processor",
+          "value": "麒麟 X90",
+          "unit": null,
+          "excerpt": "处理器\nCPU\n麒麟 X90",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1212,
+            "end": 1226
+          }
+        },
+        {
+          "name": "operating_system",
+          "value": "HarmonyOS 6",
+          "unit": null,
+          "excerpt": "操作系统\nHarmonyOS 6",
+          "scope": "model",
+          "sku": null,
+          "configuration": {},
+          "source_pointer": {
+            "path": "data/official/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 663,
+            "end": 679
+          }
+        }
+      ],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。",
+        "参数仅为本页产品系列选项，不能将各选项任意排列成已在售SKU；不同操作系统与销售版本功能可能存在差异。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "ok",
+          "at": "2026-10-18T08:03:04.673129+00:00"
+        }
+      ],
+      "content_type": "text/html; charset=UTF-8",
+      "title": "HUAWEI MateBook 14 规格参数 - 华为官网"
+    },
+    {
+      "id": "vmall-matebook-14-harmonyos",
+      "source_type": "vmall_official",
+      "url": "https://www.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196907&cid=381499",
+      "final_url": null,
+      "fetched_at": "2026-10-18T08:03:07.050910+00:00",
+      "fetch_status": "failed",
+      "http_status": null,
+      "raw_path": null,
+      "raw_sha256": null,
+      "text_path": null,
+      "text_sha256": null,
+      "product": "HUAWEI MateBook 14 鸿蒙版",
+      "product_family": "HUAWEI MateBook 14",
+      "model_identity_verified": false,
+      "sku": null,
+      "configuration": {},
+      "text": "",
+      "fields": [],
+      "price": null,
+      "images": [],
+      "starting_price": null,
+      "is_current_transaction_quote": false,
+      "limitations": [
+        "仅为获取时点的公开网页快照，不代表实时库存或可成交价格；正式报价需精确SKU与配置、有效期、适用条件。"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed",
+          "at": "2026-10-18T08:03:04.673418+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        },
+        {
+          "attempt": 2,
+          "status": "failed",
+          "at": "2026-10-18T08:03:07.050910+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        }
+      ]
+    }
+  ],
+  "primary_local_archive": "任德耀新建华为PC知识库.zip",
+  "pricing_status": "needs_exact_sku_verification",
+  "text_normalization": "UTF-8 bytes, LF; source offsets are Unicode code points in text"
+}
