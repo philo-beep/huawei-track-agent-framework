@@ -1,0 +1,12 @@
+{
+  "task_id": "SAMPLE-A",
+  "from_agent": "Orchestrator",
+  "to_agent": "A",
+  "type": "assign",
+  "payload": {
+    "summary": "仅模拟：交付一份明确标记的框架演示文本，不代表真实产品功能。",
+    "acceptance": "演示文件标明模拟，并记录交付及复验依据。"
+  },
+  "status": "assigned",
+  "timestamp": "2026-10-18T10:00:00+08:00"
+}

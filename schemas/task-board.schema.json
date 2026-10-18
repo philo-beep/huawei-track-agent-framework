@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revision", "tasks", "messages", "events", "release_approval"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "revision": {"type": "integer", "minimum": 0},
+    "tasks": {"type": "object", "additionalProperties": {"$ref": "#/$defs/task"}},
+    "messages": {"type": "array", "items": {"$ref": "message.schema.json"}},
+    "events": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["revision", "type", "timestamp", "payload"], "properties": {"revision": {"type": "integer", "minimum": 1}, "type": {"enum": ["task_created", "message_processed", "task_blocked", "task_cancelled", "task_resumed", "release_approved"]}, "timestamp": {"type": "string", "format": "date-time"}, "payload": {"type": "object"}}}},
+    "release_approval": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": false, "required": ["by", "summary", "timestamp", "fingerprint"], "properties": {"by": {"const": "E"}, "summary": {"type": "string", "minLength": 1}, "timestamp": {"type": "string", "format": "date-time"}, "fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}}]}
+  },
+  "$defs": {
+    "task": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_id", "owner", "title", "acceptance", "dependencies", "status", "artifacts", "artifact_hashes", "dependency_fingerprints", "issues", "created_at", "updated_at"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "owner": {"enum": ["A", "B", "C", "D", "E"]},
+        "title": {"type": "string", "minLength": 1},
+        "acceptance": {"type": "string", "minLength": 1},
+        "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status": {"enum": ["pending", "assigned", "in_progress", "in_review", "changes_requested", "blocked", "done", "cancelled"]},
+        "resume_status": {"enum": ["pending", "assigned", "in_progress", "in_review", "changes_requested"]},
+        "artifacts": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "artifact_hashes": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+        "dependency_fingerprints": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+        "issues": {"type": "array", "items": {"$ref": "message.schema.json#/$defs/issue"}},
+        "created_at": {"type": "string", "format": "date-time"},
+        "updated_at": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}
