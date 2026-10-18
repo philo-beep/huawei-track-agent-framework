@@ -1,6 +1,6 @@
 FROM node:24-bookworm-slim
 WORKDIR /app
-ENV NODE_ENV=production PORT=7860 PUBLIC_ORIGIN=https://philosophia-promotion-agent.ms.show
+ENV NODE_ENV=production PORT=7860 PUBLIC_ORIGIN=https://philosophia-promotion-agent.ms.show PLATFORM_PROXY_HOST=1
 COPY --chown=node:node backend/marketing /app/backend/marketing
 COPY --chown=node:node contracts /app/contracts
 COPY --chown=node:node frontend/cloud /app/frontend/cloud
