@@ -18,6 +18,13 @@
       <p class="notice">公开云端演示采用官网可公开资料，不上传本地知识库原文。IMA 非必需且不调用。四级价格是可配置合成假设，非华为官方政策，非真实交易报价。内容为待人工审核的准备稿，不保证曝光或咨询转化。正式图片当前为 0 张。</p>
       <p>云端与本机 7B 模型版能力不同。当前优先核心交互，前端 UI 将在功能稳定后继续优化。</p>
     </section>
+    <section aria-labelledby="source-status-title">
+      <h2 id="source-status-title">资料状态</h2>
+      <p id="source-status-summary" role="status" aria-live="polite">资料尚未核验，暂不能运行。</p>
+      <div class="toolbar"><button id="refresh-source-status" type="button">重新核验资料状态</button></div>
+      <p>以下核验已有官网快照的型号、指纹及7天有效期，不会重新联网抓取。到期需维护者更新并验收资料；进程在线不代表资料可用。规格可用也不代表售价、真实交易报价或图片已核实。</p>
+      <div id="source-status-products"></div>
+    </section>
     <section>
       <h2>输入客户信息</h2>
       <div class="toolbar"><button id="example-1" type="button" disabled>示例1 · Alt+1</button><button id="example-2" type="button" disabled>示例2 · Alt+2</button><button id="example-3" type="button" disabled>示例3 · Alt+3</button><button id="new-customer" type="button">新客户</button></div>

@@ -6,6 +6,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { ROOT, PipelineError } = require('./support');
 const { ENGINE, examples, validateCloudInput, runCloud, cloudMarkdown } = require('./cloud-runner');
+const { getSourceStatus, sourceReadiness } = require('./source-health');
 
 const TTL = 20 * 60 * 1000;
 const BODY_LIMIT = 4096;
@@ -43,7 +44,11 @@ function createCloudServer(options = {}) {
         if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '不接受外部代理地址');
         purge();
         try {
-            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: null, model_ready: 'disabled', ima_enabled: false, public_demo: true, source_manifest_available: fs.existsSync(path.join(ROOT, 'data/official/manifest.json')) });
+            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: null, model_ready: 'disabled', ima_enabled: false, public_demo: true, source_manifest_available: fs.existsSync(path.join(ROOT, 'data/official/manifest.json')), source_readiness: sourceReadiness(getSourceStatus()) });
+            if (request.method === 'GET' && url.pathname === '/api/source-status') {
+                if (url.search) return fail(response, 400, 'SOURCE_QUERY_FORBIDDEN', '来源状态不接受参数或更新指令');
+                return send(response, 200, getSourceStatus());
+            }
             const sessionId = (request.headers.cookie || '').split(';').map(item => item.trim()).find(item => item.startsWith('huawei_demo='))?.slice('huawei_demo='.length);
             let session = sessions.get(sessionId);
             if (request.method === 'GET' && url.pathname === '/api/examples') {

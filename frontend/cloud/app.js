@@ -1,10 +1,14 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', startedAt: 0 };
+const state = { examples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
+const sourceProducts = ['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024'];
+const sourceHosts = new Set(['consumer.huawei.com', 'www.vmall.com', 'vmall.com', 'm.vmall.com', 'item.vmall.com']);
+const sourceWindow = 7 * 86400000;
+const statusWindow = 5 * 60000;
 
 function element(tagName, text) {
     const created = document.createElement(tagName);
@@ -34,10 +38,105 @@ function engineStatus(engine) {
 function setRunning(running) {
     state.running = running;
     byId('input-fields').disabled = running;
-    byId('run-button').disabled = running || !state.csrf;
+    byId('run-button').disabled = running || !state.csrf || state.sourceLoading || !selectedSourceReady();
+    byId('refresh-source-status').disabled = running || state.sourceLoading;
     byId('new-customer').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
     if (!running) byId('resume-polling').hidden = true;
+}
+
+function selectedSource() {
+    return state.sourceStatus?.products?.find(product => product.product === byId('product').value);
+}
+
+function sourceTime(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) return NaN;
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) && new Date(parsed).toISOString() === value ? parsed : NaN;
+}
+
+function sourceUrl(value) {
+    if (typeof value !== 'string' || !/^https:\/\//i.test(value) || /[\s\\\u0000-\u001f\u007f]/.test(value)) return false;
+    try {
+        const url = new URL(value);
+        return url.protocol === 'https:' && !url.username && !url.password && (!url.port || url.port === '443') && sourceHosts.has(url.hostname);
+    } catch { return false; }
+}
+
+function checkedRecently(value) {
+    const checked = sourceTime(value);
+    return Number.isFinite(checked) && checked <= Date.now() + 60000 && Date.now() - checked <= statusWindow;
+}
+
+function validSourceProduct(product, checkedAt) {
+    if (!product || Array.isArray(product) || !sourceProducts.includes(product.product) || !['ready', 'needs_update'].includes(product.status) || product.checked_at !== checkedAt || !checkedRecently(product.checked_at) || product.source_mode !== 'official_public_snapshot' || product.price_status !== 'unknown' || product.public_price_reference !== null || product.actual_transaction_quote !== false || product.formal_image_count !== 0 || !Array.isArray(product.sources) || !Number.isInteger(product.valid_source_count) || product.valid_source_count !== product.sources.length || !Array.isArray(product.diagnostics) || !product.diagnostics.every(item => item && typeof item.code === 'string' && typeof item.message === 'string')) return false;
+    if (!product.sources.length) return product.status === 'needs_update' && product.oldest_fetched_at === null && product.expires_at === null;
+    const checked = sourceTime(checkedAt);
+    for (const source of product.sources) {
+        if (!source || Array.isArray(source) || !sourceUrl(source.url)) return false;
+        const fetched = sourceTime(source.fetched_at);
+        const expires = sourceTime(source.expires_at);
+        if (!Number.isFinite(fetched) || !Number.isFinite(expires) || fetched > checked || expires - fetched !== sourceWindow || expires < checked) return false;
+    }
+    const oldest = Math.min(...product.sources.map(source => sourceTime(source.fetched_at)));
+    return sourceTime(product.oldest_fetched_at) === oldest && sourceTime(product.expires_at) === oldest + sourceWindow;
+}
+
+function sourceReady(product) {
+    return validSourceProduct(product, state.sourceStatus?.checked_at) && product.status === 'ready' && product.sources.length > 0 && sourceTime(product.expires_at) > Date.now();
+}
+
+function selectedSourceReady() {
+    return sourceReady(selectedSource());
+}
+
+function renderSourceStatus() {
+    if (state.sourceTimer !== null) clearTimeout(state.sourceTimer);
+    state.sourceTimer = null;
+    byId('source-status-products').replaceChildren();
+    const checked = state.sourceStatus?.checked_at || '尚未成功核验';
+    const product = selectedSource();
+    const ready = selectedSourceReady();
+    byId('source-status-summary').textContent = state.sourceLoading ? '正在重新核验已有官网资料，请稍候……' : state.sourceError ? `资料状态未确认：${state.sourceError}。暂不能运行，请点击重新核验；若持续失败，请维护者检查服务和资料。` : `当前型号：${byId('product').value}；${ready ? '资料可用（ready）' : '需要更新或复核（needs_update），暂不能运行'}。\n最近核验：${checked}。真实价格：待核实（unknown / null）。`;
+    for (const item of state.sourceStatus?.products || []) {
+        const lines = [
+            `规格状态：${sourceReady(item) ? '资料可用（ready）' : '需要更新或复核（needs_update）'}`,
+            `核验时间：${item.checked_at || checked}`,
+            `最早有效抓取时间：${item.oldest_fetched_at || '无有效来源，待更新'}`,
+            `到期需复核时间：${item.expires_at || '无有效来源，待更新'}`,
+            `有效来源：${item.valid_source_count ?? 0}条；真实价格：待核实（unknown / null）；真实交易报价未启用；正式图片0张。`,
+            ...(item.sources || []).map(source => `来源：${source.url}\n抓取：${source.fetched_at}\n到期需复核：${source.expires_at}`),
+            ...(item.diagnostics || []).map(diagnostic => `提示：${diagnostic.message}（${diagnostic.code}）`),
+        ];
+        card('source-status-products', item.product, lines.join('\n'));
+    }
+    if (ready) state.sourceTimer = setTimeout(() => { renderSourceStatus(); setRunning(state.running); }, Math.min(sourceTime(product.expires_at), sourceTime(product.checked_at) + statusWindow) - Date.now() + 1);
+    setRunning(state.running);
+}
+
+async function refreshSourceStatus() {
+    if (state.sourceLoading) return false;
+    state.sourceLoading = true;
+    state.sourceError = '';
+    renderSourceStatus();
+    try {
+        const response = await api('/api/source-status');
+        if (!response || !['ready', 'needs_update'].includes(response.status) || !checkedRecently(response.checked_at) || response.source_mode !== 'official_public_snapshot' || response.freshness_window_seconds !== sourceWindow / 1000 || response.price_status !== 'unknown' || response.public_price_reference !== null || response.formal_image_count !== 0 || !Array.isArray(response.products) || response.products.length !== sourceProducts.length || !sourceProducts.every(name => response.products.filter(product => product?.product === name).length === 1)) throw new Error('服务返回的资料状态不完整或核验时间已失效');
+        const products = response.products.map(product => validSourceProduct(product, response.checked_at) ? product : {
+            product: product.product, status: 'needs_update', checked_at: response.checked_at, source_mode: 'official_public_snapshot',
+            oldest_fetched_at: null, expires_at: null, valid_source_count: 0, sources: [],
+            price_status: 'unknown', public_price_reference: null, actual_transaction_quote: false, formal_image_count: 0,
+            diagnostics: [{ code: 'SOURCE_STATUS_INVALID_RESPONSE', message: '该型号来源状态不完整或日期关系无效，未采用返回的来源与时间；请维护者检查后重新核验。' }],
+        });
+        state.sourceStatus = { ...response, products };
+    } catch (error) {
+        state.sourceStatus = null;
+        state.sourceError = error.message;
+    } finally {
+        state.sourceLoading = false;
+        renderSourceStatus();
+    }
+    return selectedSourceReady();
 }
 
 function clearResult() {
@@ -55,6 +154,7 @@ function fillExample(index) {
     byId('policy-summary').textContent = example.pricing_input ? JSON.stringify(example.pricing_input, null, 2) : '固定合成规则由服务端提供；本次结果将保留完整政策与计算过程。';
     byId('example-note').textContent = `已填合成示例：${example.label}。尚未提交；5台演算仅为假设，不代表客户真实需求。`;
     clearResult();
+    renderSourceStatus();
     status('示例已填充，可修改后运行。');
 }
 
@@ -94,10 +194,16 @@ async function startRun(event) {
     let request;
     try { request = collectInput(); } catch (error) { status(error.message, true); return; }
     clearResult();
-    state.startedAt = Date.now();
     setRunning(true);
-    status('正在执行四步流程，请等待；不会自动联系客户。');
+    status('正在重新核验当前型号的资料有效期……');
     try {
+        if (!await refreshSourceStatus()) {
+            setRunning(false);
+            status('当前型号资料未就绪、已到期或暂时无法核验，未提交生成。请重新核验，或选择资料可用的型号；到期资料需维护者更新并验收。', true);
+            return;
+        }
+        state.startedAt = Date.now();
+        status('资料核验通过，正在执行四步流程；不会自动联系客户。');
         const job = await api('/api/runs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(request) });
         state.jobId = job.id;
         state.polling = true;
@@ -198,6 +304,11 @@ for (const identifier of ['raw-request', 'audience', 'product']) byId(identifier
     byId('example-note').textContent = '客户描述或产品已变更，合成演算已关闭，避免继承示例假设。';
     byId('policy-summary').textContent = '旧示例配置预览已清除。如重新勾选，后端将按当前完整型号生成固定5台合成政策，以本次结果为准。';
     clearResult();
+    renderSourceStatus();
+});
+byId('refresh-source-status').addEventListener('click', async () => {
+    if (state.running || state.sourceLoading) return;
+    await refreshSourceStatus();
 });
 byId('resume-polling').addEventListener('click', () => { byId('resume-polling').hidden = true; state.polling = true; pollRun(); });
 byId('copy-markdown').addEventListener('click', async () => {
@@ -221,6 +332,7 @@ async function initialize() {
         state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${example.label} · Alt+${index + 1}`; });
         setRunning(false);
         if (state.examples.length) fillExample(0);
+        await refreshSourceStatus();
     } catch (error) { status(`服务初始化失败：${error.message}。请稍后刷新页面。`, true); }
 }
 

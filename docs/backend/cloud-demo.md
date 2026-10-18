@@ -4,6 +4,8 @@
 
 魔搭反代会改写容器所见Host。正式部署可显式设置 `PLATFORM_PROXY_HOST=1`，仅关闭Host与公网域名等值判断，默认未配置仍严格校验。公网平台负责域名路由，应用始终使用固定 `PUBLIC_ORIGIN` 解析路径、验证Origin和POST、配置Secure cookie，不采用 `X-Forwarded-Host` 或 `Forwarded` 改写可信来源。其他CSRF、会话隔离、大小、限流与路径边界保持原样；直接访问非平台部署应保留默认严格模式。
 
+GET `/api/source-status` 返回两代官网公开资料的只读有效期摘要，不接受查询参数或更新命令，不需要客户会话；health额外 `source_readiness` 区分进程存活与资料ready。每次实际复用原官网核验器，7天时效、型号与内容指纹规则不变；详情见 `docs/backend/source-health.md`。摘要不公开文件路径、原文或私库内容。
+
 当前引擎 `runtime_engine.mode=rules/model=null/model_status=disabled`，云端没有调用7B、Qwen小模型或外部API。采用免费规则画像、已核验官网公开快照、严格事实核验与程序化准备稿；真实本地Qwen证据与此云端版本分开。曾核官方Qwen2.5-0.5B-Instruct模型卡（0.49B、Apache-2.0），但本次时间盒为保证可交互而未下载/部署，不声称这是最新模型或完成CPU模型实测。
 
 静态资源仅 `frontend/cloud/index.html`、`app.js`、`styles.css`。API保留本地异步形状：GET `/api/examples` 返回3组合成例、engine与会话csrf；POST `/api/runs` 只接受 `{marketing_input:{product,audience?,scenario?,raw_request?,platform},demo_pricing:boolean}`，可选schema_version1.0/mode local。产品仅 `HUAWEI MateBook 14 鸿蒙版` 与 `HUAWEI MateBook 14 2024`；自由字段各800字、请求4096字节，不接收任意customer、policy、文件路径或URL。用户只应输入合成/脱敏描述。
