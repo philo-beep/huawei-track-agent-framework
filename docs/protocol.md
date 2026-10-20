@@ -1,5 +1,7 @@
 # 结构化消息与协作协议
 
+2026-10-20扩展：业务owner除A/B/C/D/E外增加M1/M2/M3/M4/M5，对应`modules/customer/evidence/strategy/writing/quality`五个互斥目录及各自outputs子目录。以下原路由的“任务owner”同样适用于M1—M5，消息Schema已同步。所有真实消息只由主工作区运行器入账；成员worktree不维护第二份真实看板。生产交接接口与本状态消息是两套不同协议。
+
 ## 必填信封
 
 消息为 UTF-8 JSON 对象，机器约束见 `schemas/message.schema.json`。

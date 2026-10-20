@@ -15,6 +15,11 @@ OWNERS = {
     "C": ("data", "docs/data", "outputs/C"),
     "D": ("backend", "models", "docs/backend", "outputs/D"),
     "E": ("docs/product", "outputs/E"),
+    "M1": ("modules/customer", "outputs/M1"),
+    "M2": ("modules/evidence", "outputs/M2"),
+    "M3": ("modules/strategy", "outputs/M3"),
+    "M4": ("modules/writing", "outputs/M4"),
+    "M5": ("modules/quality", "outputs/M5"),
 }
 STATUSES = {"pending", "assigned", "in_progress", "in_review", "changes_requested", "blocked", "done", "cancelled"}
 TRANSITIONS = {
@@ -109,7 +114,7 @@ class Workspace:
 
     def add_task(self, task_id, owner, title, acceptance, dependencies=None):
         require(nonempty(task_id), "task_id 必须是非空字符串")
-        require(isinstance(owner, str) and owner in OWNERS, "owner 必须是 A/B/C/D/E")
+        require(isinstance(owner, str) and owner in OWNERS, "owner 必须是 A/B/C/D/E 或 M1/M2/M3/M4/M5")
         require(nonempty(title) and nonempty(acceptance), "标题和验收标准不得为空")
         dependencies = [] if dependencies is None else dependencies
         require(isinstance(dependencies, list), "dependencies 必须是数组")

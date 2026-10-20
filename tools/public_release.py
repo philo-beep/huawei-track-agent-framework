@@ -21,7 +21,16 @@ EXACT = {
     'docs/product/华为销售顾问产品使用说明书.md',
     'docs/product/黑客松提交清单.md',
     'tools/public_release.py', 'tools/publish_modelscope.py',
+    'tools/team_workspace.py', 'framework/team-layout.json', 'framework/test_team_workspace.py',
+    'modules/README.md', 'modules/AGENTS.md',
+    '协作工作区/目录预览说明.md', '协作工作区/协作开发与合并说明.md',
+    '协作工作区/00_主控协调/分工与文件归属.md',
+    '协作工作区/共享规范/接口草案/交接约定.md',
 }
+for module_name in ('customer', 'evidence', 'strategy', 'writing', 'quality'):
+    EXACT.add(f'modules/{module_name}/README.md')
+    for module_directory in ('src', 'prompts', 'tests', 'fixtures', 'docs'):
+        EXACT.add(f'modules/{module_name}/{module_directory}/.gitkeep')
 PATTERNS = (
     'agents/*.md', 'framework/*.py', 'schemas/*.json', 'templates/*.json',
     'templates/*.md', 'backend/studio/*.py', 'backend/marketing/*.js',

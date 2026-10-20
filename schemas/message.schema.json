@@ -6,21 +6,21 @@
   "required": ["task_id", "from_agent", "to_agent", "type", "payload", "status", "timestamp"],
   "properties": {
     "task_id": {"type": "string", "minLength": 1},
-    "from_agent": {"enum": ["Orchestrator", "A", "B", "C", "D", "E", "QA"]},
-    "to_agent": {"enum": ["Orchestrator", "A", "B", "C", "D", "E", "QA"]},
+    "from_agent": {"enum": ["Orchestrator", "A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5", "QA"]},
+    "to_agent": {"enum": ["Orchestrator", "A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5", "QA"]},
     "type": {"enum": ["assign", "deliver", "review", "reject", "fix"]},
     "payload": {"type": "object"},
     "status": {"enum": ["assigned", "in_progress", "in_review", "changes_requested", "done"]},
     "timestamp": {"type": "string", "format": "date-time", "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"}
   },
   "allOf": [
-    {"if": {"properties": {"type": {"const": "assign"}}}, "then": {"properties": {"from_agent": {"const": "Orchestrator"}, "to_agent": {"enum": ["A", "B", "C", "D", "E"]}, "status": {"const": "assigned"}}}},
-    {"if": {"properties": {"type": {"const": "fix"}}}, "then": {"properties": {"from_agent": {"enum": ["A", "B", "C", "D", "E"]}, "to_agent": {"const": "QA"}, "status": {"const": "in_progress"}}}},
-    {"if": {"properties": {"type": {"const": "deliver"}}}, "then": {"properties": {"from_agent": {"enum": ["A", "B", "C", "D", "E"]}, "to_agent": {"const": "QA"}, "status": {"const": "in_review"}, "payload": {"required": ["artifacts"], "properties": {"artifacts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}}}},
-    {"if": {"properties": {"type": {"const": "reject"}}}, "then": {"properties": {"from_agent": {"const": "QA"}, "to_agent": {"enum": ["A", "B", "C", "D", "E"]}, "status": {"const": "changes_requested"}, "payload": {"required": ["issues"], "properties": {"issues": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/issue"}}}}}}},
+    {"if": {"properties": {"type": {"const": "assign"}}}, "then": {"properties": {"from_agent": {"const": "Orchestrator"}, "to_agent": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]}, "status": {"const": "assigned"}}}},
+    {"if": {"properties": {"type": {"const": "fix"}}}, "then": {"properties": {"from_agent": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]}, "to_agent": {"const": "QA"}, "status": {"const": "in_progress"}}}},
+    {"if": {"properties": {"type": {"const": "deliver"}}}, "then": {"properties": {"from_agent": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]}, "to_agent": {"const": "QA"}, "status": {"const": "in_review"}, "payload": {"required": ["artifacts"], "properties": {"artifacts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}}}},
+    {"if": {"properties": {"type": {"const": "reject"}}}, "then": {"properties": {"from_agent": {"const": "QA"}, "to_agent": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]}, "status": {"const": "changes_requested"}, "payload": {"required": ["issues"], "properties": {"issues": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/issue"}}}}}}},
     {"if": {"properties": {"type": {"const": "review"}}}, "then": {"properties": {"from_agent": {"const": "QA"}, "to_agent": {"const": "Orchestrator"}, "status": {"const": "done"}, "payload": {"required": ["summary"], "properties": {"summary": {"type": "string", "minLength": 1}}}}}}
   ],
   "$defs": {
-    "issue": {"type": "object", "required": ["issue_id", "owner", "severity", "description", "retest"], "properties": {"issue_id": {"type": "string", "minLength": 1}, "owner": {"enum": ["A", "B", "C", "D", "E"]}, "severity": {"enum": ["blocker", "major", "minor"]}, "description": {"type": "string", "minLength": 1}, "retest": {"type": "string", "minLength": 1}}}
+    "issue": {"type": "object", "required": ["issue_id", "owner", "severity", "description", "retest"], "properties": {"issue_id": {"type": "string", "minLength": 1}, "owner": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]}, "severity": {"enum": ["blocker", "major", "minor"]}, "description": {"type": "string", "minLength": 1}, "retest": {"type": "string", "minLength": 1}}}
   }
 }

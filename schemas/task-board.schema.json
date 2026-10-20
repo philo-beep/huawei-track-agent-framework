@@ -17,7 +17,7 @@
       "required": ["task_id", "owner", "title", "acceptance", "dependencies", "status", "artifacts", "artifact_hashes", "dependency_fingerprints", "issues", "created_at", "updated_at"],
       "properties": {
         "task_id": {"type": "string", "minLength": 1},
-        "owner": {"enum": ["A", "B", "C", "D", "E"]},
+        "owner": {"enum": ["A", "B", "C", "D", "E", "M1", "M2", "M3", "M4", "M5"]},
         "title": {"type": "string", "minLength": 1},
         "acceptance": {"type": "string", "minLength": 1},
         "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
