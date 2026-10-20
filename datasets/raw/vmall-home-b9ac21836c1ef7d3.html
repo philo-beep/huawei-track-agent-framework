@@ -1,0 +1,349 @@
+<!doctype html><html lang="zh-Hans"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta http-equiv="X-UA-Compatible" content="ie=edge"/><title>华为商城VMALL</title><meta name="description" content="华为商城是华为公司旗下官方电商平台，提供华为手机、PC、平板、穿戴、音频、智慧屏、IoT等智能终端产品，持续打造便捷、暖心的购物体验，力争将全场景智慧生活带给每一位消费者。"/><meta name="keywords" content="华为、华为官网、华为5G、华为手机、华为笔记本、华为平板、华为穿戴、华为智慧屏、华为配件、华为智能家居"/><meta name="mobile-agent" content="format=xhtml;url=https://m.vmall.com/"/><meta http-equiv="Cache-Control" content="no-cache,no-store"/><meta http-equiv="Pragma" content="no-cache"/><meta http-equiv="Expires" content="0"/><link rel="shortcut icon" href="https://res.vmallres.com/icon/favicon.ico"/><link rel="stylesheet" href="https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/css/portal/footer-toolbar.min.css"/><link rel="stylesheet" href="https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/css/pullup-app/pullup-app.css"/></head><body><style>@media screen and (min-width: 841px) {
+        body div {
+          font-family: 'Helvetica Neue', Helvetica, Arial, 'Microsoft Yahei', 'Hiragino Sans GB', 'Heiti SC',
+            'WenQuanYi Micro Hei', sans-serif !important;
+        }
+      }
+      @media screen and (max-width: 840px) {
+        body div {
+          font-family: Arial, Helvetica, sans-serif, 'Lucida Grande', Verdana !important;
+        }
+      }
+      body {
+        height: 100%;
+      }
+      /* 搜索input适配IE */
+      #textInput input[type='text']::-ms-clear {
+        display: none;
+      }
+      body :focus:not(.focus-visible) {
+        outline: none;
+      }
+      html {
+        overflow-y: scroll;
+      }
+      #pos {
+        top: constant(safe-area-inset-top);
+        top: env(safe-area-inset-top);
+        left: constant(safe-area-inset-left);
+        left: env(safe-area-inset-left);
+        right: constant(safe-area-inset-right);
+        right: env(safe-area-inset-right);
+        bottom: constant(safe-area-inset-bottom);
+        bottom: env(safe-area-inset-bottom);
+      }</style><div id="pos"></div><div id="navigation-root"></div><div id="react-root"></div><div id="region-select-root"></div><div id="cookie-banner-root"></div><div id="fixed-button-root"></div><script src="https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/script/prod/script.js"></script><script src="https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/script/common/script.js"></script><script>const resources = ["https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-vendors~2a42e354.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-vendors~d939e436.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-vendors~7d359b94.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-vendors~678f84af.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-vendors~feca55ca.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~ee43a9a6.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~a0326677.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~6c071c94.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~4dc4b27e.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~80700def.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~714a38c6.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~015cb9e1.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~20f9c333.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~980ad0f6.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~2c69707d.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~7eb99e2f.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~94081665.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~1ea474a1.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~d5665989.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~471701f8.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~f80ad4e3.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~a30f15b9.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/chunk-commons~50a80fe0.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~01e7b97c.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~253ae210.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~77a9468d.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~cb4cfdbb.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~f481fd5f.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~7d359b94.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~678f84af.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~f71cff67.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~2a8a4ffa.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~21833f8f.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~a41c7baa.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~89e4d28f.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~4ae15ce5.js","https://res.vmallres.com/portal/com/1.26.9.300SP01/h5/homepage~7e7f9fb2.js"];
+      const cdnUrl = "https://res.vmallres.com/portal/com/1.26.9.300SP01/h5";
+      const urlList = cdnUrl.split("/");
+      const appVersion = urlList[urlList.length - 2];
+      function injectJs(url) {
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+        document.body.appendChild(script);
+      }
+      let js_cache = '0';
+      if (window.localStorage) {
+        js_cache = window.localStorage.getItem('RN_JS_CACHE_DISABLE');
+      }
+      const isWorkerSupported = "Worker" in window;
+      const isIndexedDBSupported = "indexedDB" in window;
+      if (!isWorkerSupported || !isIndexedDBSupported || js_cache === '1') {
+        resources.forEach((url) => {
+          injectJs(url);
+        });
+      } else {
+        // 缓存逻辑
+        const workerCode = `
+          let dbManager = null;
+          class IndexedDBManager {
+            constructor() {
+              this.dbName = "resourceCache";
+              this.dbVersion = 1;
+              this.db = null;
+              this.currentAppVersion = null; // 缓存当前业务版本
+            }
+
+            // 打开数据库
+            async open() {
+              return new Promise((resolve, reject) => {
+                const request = indexedDB.open(this.dbName, this.dbVersion);
+
+                request.onerror = (event) => {
+                  resolve({ success: false, msg: event.target.error });
+                };
+
+                // 数据库升级时创建对象存储
+                request.onupgradeneeded = (event) => {
+                  const db = event.target.result;
+                  // 创建resources表
+                  if (!db.objectStoreNames.contains("resources")) {
+                    const store = db.createObjectStore("resources", { keyPath: "url" });
+                    store.createIndex("appVersionIndex", "version", { unique: false });
+                  }
+                  // 创建metadata表
+                  if (!db.objectStoreNames.contains("metadata")) {
+                    db.createObjectStore("metadata", { keyPath: "key" });
+                  }
+                };
+
+                request.onsuccess = async (event) => {
+                  this.db = event.target.result;
+                  try {
+                    const res = await this.getStoredAppVersion();
+                    if (res.success && res.msg) {
+                      this.currentAppVersion = res.msg;
+                    }
+                    resolve({ success: true, msg: '' });
+                  } catch (error) {
+                    resolve({ success: false, msg: error });
+                  }
+                };
+              });
+            }
+
+            // 获取存储的应用版本
+            getStoredAppVersion() {
+              return new Promise((resolve, reject) => {
+                const tx = this.db.transaction(["metadata"], "readonly");
+                const store = tx.objectStore("metadata");
+                const request = store.get("appVersion");
+
+                request.onsuccess = () =>
+                  resolve({
+                    success: true,
+                    msg: request.result ? request.result.value : "",
+                  });
+                request.onerror = (err) => resolve({ success: false, msg: err });
+              });
+            }
+
+            // 设置存储的应用版本
+            setStoredAppVersion(appVersion) {
+              return new Promise((resolve, reject) => {
+                const tx = this.db.transaction(["metadata"], "readwrite");
+                const store = tx.objectStore("metadata");
+                const request = store.put({ key: "appVersion", value: appVersion });
+
+                request.onsuccess = () => {
+                  resolve({ success: true, msg: "" });
+                  this.currentAppVersion = appVersion;
+                };
+                request.onerror = (err) => resolve({ success: false, msg: err });
+              });
+            }
+
+            // 添加或更新资源
+            async addOrUpdateResource(resource) {
+              return new Promise((resolve, reject) => {
+                const transaction = this.db.transaction(["resources"], "readwrite");
+                const store = transaction.objectStore("resources");
+                const request = store.put(resource);
+                request.onsuccess = () => resolve({ success: true, msg: resource.url });
+                request.onerror = (err) => resolve({ success: false, msg: err });
+              });
+            }
+
+            // 根据URL获取资源
+            async getResourceByUrl(url) {
+              return new Promise((resolve, reject) => {
+                const transaction = this.db.transaction(["resources"], "readonly");
+                const store = transaction.objectStore("resources");
+                const request = store.get(url);
+                request.onsuccess = () => resolve({ success: true, msg: request.result });
+                request.onerror = (err) => resolve({ success: false, msg: err });
+              });
+            }
+
+            // 删除资源
+            async deleteAll() {
+              return new Promise((resolve, reject) => {
+                const transaction = this.db.transaction(["resources"], "readwrite");
+                const store = transaction.objectStore("resources");
+                const request = store.clear();
+                request.onsuccess = () => resolve({ success: true, msg: "" });
+                request.onerror = (err) => resolve({ success: false, msg: err });
+              });
+            }
+
+            // 关闭数据库连接
+            close() {
+              if (this.db) {
+                this.db.close();
+                this.db = null;
+              }
+            }
+          }
+
+          // 初始化 IndexedDB
+          self.onmessage = async function (e) {
+            const { type, payload } = e.data;
+            switch (type) {
+              case "INIT":
+                dbManager = new IndexedDBManager();
+                const res = await dbManager.open();
+                self.postMessage({ type: "INITED", data: res });
+                break;
+              case "CHECK_AND_UPDATE_RESOURCES":
+                checkAndUpdateResources(payload);
+                break;
+              case "CLOSE":
+                dbManager.close();
+                break;
+              default:
+                break;
+            }
+          };
+
+          // 下载资源并存储到IndexedDB
+          async function downloadAndStoreResource(url) {
+            try {
+              // 实际下载资源内容
+              const response = await fetch(url);
+              if (!response.ok) {
+                self.postMessage({
+                  type: "DOWNLOAD_ERROR",
+                  data: { url, msg: error.message },
+                });
+                return;
+              }
+              const blob = await response.blob();
+              // 存储到IndexedDB
+              await dbManager.addOrUpdateResource({
+                url,
+                blobSize: blob.size,
+                content: blob,
+              });
+              self.postMessage({
+                type: "CACHE_HIT",
+                data: { url, content: blob },
+              });
+            } catch (error) {
+              self.postMessage({
+                type: "DOWNLOAD_ERROR",
+                data: { url, msg: error.message },
+              });
+            }
+          }
+
+          // 处理资源下载和缓存
+          async function processResources(resources, requestAll) {
+            const promises = resources.map(async (url) => {
+              try {
+                if (requestAll) {
+                  await downloadAndStoreResource(url);
+                } else {
+                  // 先检查本地缓存
+                  const res = await dbManager.getResourceByUrl(url);
+                  if (res.success && res.msg && res.msg.content) {
+                    self.postMessage({
+                      type: "CACHE_HIT",
+                      data: { url, content: res.msg.content },
+                    });
+                  } else {
+                    // 缓存失败，走网络请求
+                    await downloadAndStoreResource(url);
+                  }
+                }
+              } catch (error) {
+                self.postMessage({
+                  type: "DOWNLOAD_ERROR",
+                  data: { url, msg: error.message },
+                });
+              }
+            });
+            await Promise.allSettled(promises);
+          }
+
+          // 检查并更新资源列表
+          async function checkAndUpdateResources(payload) {
+            if (!dbManager || !dbManager.db) {
+              self.postMessage({ type: "ERROR", data: { msg: "" } });
+              return;
+            }
+            const resources = payload.resources;
+            const appVersion = payload.appVersion;
+            const storedVersion = dbManager.currentAppVersion;
+
+            // 核心逻辑：比较业务版本
+            const needFullUpdate = !storedVersion || storedVersion !== appVersion;
+            if (needFullUpdate) {
+              await dbManager.deleteAll();
+              await dbManager.setStoredAppVersion(appVersion);
+              await processResources(resources, true); // 全量下载
+            } else {
+              await processResources(resources, false); // 增量检查
+            }
+          }
+        `;
+        let loadedUrl = [];
+        const blob = new Blob([workerCode], { type: "application/javascript" });
+        let worker = new Worker(URL.createObjectURL(blob));
+        function loadAll() {
+          resources.forEach((url) => {
+            if (!loadedUrl.includes(url)) {
+              loadedUrl.push(url);
+              injectJs(url);
+            }
+          });
+          worker.postMessage({type: "CLOSE"});
+        }
+        // 初始化
+        worker.postMessage({
+          type: "INIT",
+          payload: {
+            resources,
+          },
+        });
+        // 监听主线程和独立线程通信
+        worker.onmessage = (e) => {
+          const { type, data } = e.data;
+          if (type === "INITED") {
+            if (data.success) {
+              worker.postMessage({
+                type: "CHECK_AND_UPDATE_RESOURCES",
+                payload: {
+                  resources,
+                  appVersion,
+                },
+              });
+            } else {
+              // 初始化失败走网络请求
+              loadAll();
+            }
+          } else if (type === "CACHE_HIT") {
+            const content = URL.createObjectURL(data.content);
+            injectJs(content);
+            loadedUrl.push(data.url);
+            if (loadedUrl.length === resources.length) {
+              worker.postMessage({type: "CLOSE"});
+            }
+          } else if (type === "DOWNLOAD_ERROR") {
+            // 失败走网络请求
+            injectJs(data.url);
+            loadedUrl.push(data.url);
+            if (loadedUrl.length === resources.length) {
+              worker.postMessage({type: "CLOSE"});
+            }
+          } else if (type === "ERROR") {
+            // 失败走网络请求
+            loadAll();
+          }
+        };
+        worker.onerror = (err) => {
+          loadAll();
+        };
+  
+        // 关闭 Web Worker
+        function closeWorkerAndDB() {
+          if (worker) {
+            worker.terminate();
+            worker = null;
+          }
+        }
+  
+        // 页面卸载时关闭
+        window.addEventListener('beforeunload', () => {
+          closeWorkerAndDB();
+        });
+      }</script></body><script>setScale();
+    handleIosZIndexFromImg();</script></html>
