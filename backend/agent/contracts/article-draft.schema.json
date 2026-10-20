@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:article-draft:1.0",
+  "title": "写作子 Agent 成稿 ArticleDraft v1.0",
+  "description": "写作子 Agent 交给质检阶段的唯一稿件数据。正文可以是自然表达，但每条事实性表述必须能回溯到证据阶段的事实ID；不得新增数字、价格、许可、客户评价或亲测结论。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "platform", "draft_status", "title", "lead", "body_markdown", "cta", "tags", "images", "citations", "revision"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "platform": {"enum": ["小红书", "公众号", "朋友圈", "其他"]},
+    "draft_status": {"enum": ["first_draft", "edited", "ready_for_review"]},
+    "title": {"type": "string", "minLength": 1, "maxLength": 120},
+    "lead": {"type": "string", "minLength": 1, "maxLength": 600},
+    "body_markdown": {"type": "string", "minLength": 1, "maxLength": 20000},
+    "cta": {"type": "string", "minLength": 1, "maxLength": 300},
+    "tags": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 40}},
+    "images": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["image_id", "position", "caption"],
+        "properties": {
+          "image_id": {"type": "string", "pattern": "^image-[A-Za-z0-9._-]{1,60}$"},
+          "position": {"enum": ["cover", "after_lead", "section", "before_cta"]},
+          "caption": {"type": "string", "minLength": 1, "maxLength": 300}
+        }
+      }
+    },
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact_id", "claim", "used_in"],
+        "properties": {
+          "fact_id": {"type": "string", "pattern": "^fact-[A-Za-z0-9._-]{1,60}$"},
+          "claim": {"type": "string", "minLength": 1, "maxLength": 500},
+          "used_in": {"enum": ["title", "lead", "body", "cta"]}
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["round", "editor", "change_summary"],
+      "properties": {
+        "round": {"type": "integer", "minimum": 1, "maximum": 10},
+        "editor": {"enum": ["A", "HUMAN"]},
+        "change_summary": {"type": "array", "maxItems": 30, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}

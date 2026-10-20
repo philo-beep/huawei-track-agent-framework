@@ -1,0 +1,2 @@
+# 仅使用 Python 3.11+ 标准库；无需 pip 安装。
+# Node.js 20+ 用于运行 backend/agent/cloud-server.js。
