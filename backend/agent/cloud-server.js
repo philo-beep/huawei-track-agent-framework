@@ -33,6 +33,16 @@ function readStatic(relative) {
 function createCloudServer(options = {}) {
     const publicOrigin = new URL(options.publicOrigin || process.env.PUBLIC_ORIGIN || 'http://localhost:7860');
     if (!['http:', 'https:'].includes(publicOrigin.protocol) || publicOrigin.username || publicOrigin.password || publicOrigin.pathname !== '/' || publicOrigin.search || publicOrigin.hash) throw new Error('PUBLIC_ORIGIN must be one exact http(s) origin');
+    const allowedOriginHosts = new Set([publicOrigin.hostname, 'modelscope.cn', 'www.modelscope.cn']);
+    const originAllowed = rawOrigin => String(rawOrigin || '').split(',').map(value => value.trim()).filter(Boolean).some(value => {
+        try {
+            const parsed = new URL(value.replace(/\/$/, ''));
+            return ['http:', 'https:'].includes(parsed.protocol) && (allowedOriginHosts.has(parsed.hostname) || parsed.hostname.endsWith('.modelscope.cn'));
+        } catch { return false; }
+    });
+    const originHostLabel = rawOrigin => String(rawOrigin || '').split(',').map(value => value.trim()).filter(Boolean).map(value => {
+        try { return new URL(value.replace(/\/$/, '')).host; } catch { return 'invalid'; }
+    }).join(',');
     const platformProxyHost = options.platformProxyHost ?? process.env.PLATFORM_PROXY_HOST === '1';
     const sessions = new Map();
     const jobs = new Map();
@@ -56,7 +66,7 @@ function createCloudServer(options = {}) {
         const port = server.address()?.port || 7860;
         const internalHealth = request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(request.url) && [`127.0.0.1:${port}`, `localhost:${port}`].includes(request.headers.host) && ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(request.socket.remoteAddress);
         if (!platformProxyHost && request.headers.host !== publicOrigin.host && !internalHealth) return fail(response, 403, 'HOST_FORBIDDEN', '请求域名不在公开演示配置中');
-        if (request.headers.origin && request.headers.origin !== publicOrigin.origin) return fail(response, 403, 'ORIGIN_FORBIDDEN', '仅接受本演示页面同源请求');
+        if (request.headers.origin && !originAllowed(request.headers.origin)) return fail(response, 403, 'ORIGIN_FORBIDDEN', `请求来源不在允许范围内（${originHostLabel(request.headers.origin)}）`);
         let url;
         try { url = new URL(request.url, publicOrigin); } catch { return fail(response, 400, 'INVALID_PATH', '路径无效'); }
         if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '不接受外部代理地址');
