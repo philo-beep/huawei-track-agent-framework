@@ -9,6 +9,13 @@
 
 当前版本是**规则准备稿模式**：不调用千问、不调用 IMA、不访问外网，结果用于演示和人工复核，不冒充模型生成或真实成交建议。
 
+## 公开演示
+
+- 魔搭空间：<https://modelscope.cn/studios/philosophia/promotion-agent>
+- 公网入口：<https://philosophia-promotion-agent.ms.show>
+
+公开云端由魔搭免费 Docker CPU 托管网页和同源 HTTP 接口。当前引擎为规则准备稿模式，不调用云端模型推理；页面可访问不等于正式报价、真实图片、客户咨询或销售转化已经验证。
+
 ## 运行
 
 环境要求：Python 3.11+、Node.js 20+。本项目只使用 Python 标准库，不需要 `pip install`。
