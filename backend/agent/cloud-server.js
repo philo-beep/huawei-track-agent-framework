@@ -34,15 +34,17 @@ function createCloudServer(options = {}) {
     const publicOrigin = new URL(options.publicOrigin || process.env.PUBLIC_ORIGIN || 'http://localhost:7860');
     if (!['http:', 'https:'].includes(publicOrigin.protocol) || publicOrigin.username || publicOrigin.password || publicOrigin.pathname !== '/' || publicOrigin.search || publicOrigin.hash) throw new Error('PUBLIC_ORIGIN must be one exact http(s) origin');
     const allowedOriginHosts = new Set([publicOrigin.hostname, 'modelscope.cn', 'www.modelscope.cn']);
+    const originHost = value => {
+        const normalized = String(value || '').trim().replace(/\/$/, '');
+        try { return new URL(normalized).hostname.toLowerCase(); } catch {}
+        const hostOnly = normalized.match(/^([A-Za-z0-9.-]+)(?::[0-9]{1,5})?$/);
+        return hostOnly ? hostOnly[1].toLowerCase() : null;
+    };
     const originAllowed = rawOrigin => String(rawOrigin || '').split(',').map(value => value.trim()).filter(Boolean).some(value => {
-        try {
-            const parsed = new URL(value.replace(/\/$/, ''));
-            return ['http:', 'https:'].includes(parsed.protocol) && (allowedOriginHosts.has(parsed.hostname) || parsed.hostname.endsWith('.modelscope.cn'));
-        } catch { return false; }
+        const hostname = originHost(value);
+        return Boolean(hostname && (allowedOriginHosts.has(hostname) || hostname.endsWith('.modelscope.cn')));
     });
-    const originHostLabel = rawOrigin => String(rawOrigin || '').split(',').map(value => value.trim()).filter(Boolean).map(value => {
-        try { return new URL(value.replace(/\/$/, '')).host; } catch { return 'invalid'; }
-    }).join(',');
+    const originHostLabel = rawOrigin => String(rawOrigin || '').split(',').map(value => originHost(value) || 'invalid').filter(Boolean).join(',');
     const platformProxyHost = options.platformProxyHost ?? process.env.PLATFORM_PROXY_HOST === '1';
     const sessions = new Map();
     const jobs = new Map();
