@@ -36,7 +36,10 @@ function createCloudServer(options = {}) {
     const allowedOriginHosts = new Set([publicOrigin.hostname, 'modelscope.cn', 'www.modelscope.cn']);
     const originHost = value => {
         const normalized = String(value || '').trim().replace(/\/$/, '');
-        try { return new URL(normalized).hostname.toLowerCase(); } catch {}
+        try {
+            const parsed = new URL(normalized);
+            if (['http:', 'https:'].includes(parsed.protocol) && parsed.hostname) return parsed.hostname.toLowerCase();
+        } catch {}
         const hostOnly = normalized.match(/^([A-Za-z0-9.-]+)(?::[0-9]{1,5})?$/);
         return hostOnly ? hostOnly[1].toLowerCase() : null;
     };
@@ -44,6 +47,7 @@ function createCloudServer(options = {}) {
         const hostname = originHost(value);
         return Boolean(hostname && (allowedOriginHosts.has(hostname) || hostname.endsWith('.modelscope.cn')));
     });
+    const samePublicOriginHost = rawOrigin => originHost(rawOrigin) === publicOrigin.hostname;
     const originHostLabel = rawOrigin => String(rawOrigin || '').split(',').map(value => originHost(value) || 'invalid').filter(Boolean).join(',');
     const platformProxyHost = options.platformProxyHost ?? process.env.PLATFORM_PROXY_HOST === '1';
     const sessions = new Map();
@@ -93,7 +97,7 @@ function createCloudServer(options = {}) {
             }
             if (request.method === 'POST' && url.pathname === '/api/runs') {
                 const csrf = request.headers['x-csrf-token'];
-                if (!session || request.headers.origin !== publicOrigin.origin || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
                 if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '每会话20分钟最多3次，需间隔2秒；请稍后重试');
                 if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');

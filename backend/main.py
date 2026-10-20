@@ -167,7 +167,7 @@ def create_server(host: str, port: int) -> tuple[ThreadingHTTPServer, NodeEngine
     server = ThreadingHTTPServer((host, port), GatewayHandler)
     server.daemon_threads = True
     actual_port = int(server.server_address[1])
-    public_origin = f"http://localhost:{actual_port}"
+    public_origin = os.environ.get("PUBLIC_ORIGIN") or f"http://localhost:{actual_port}"
     engine = NodeEngine(public_origin)
     GatewayHandler.node_port = engine.port
     engine.start()

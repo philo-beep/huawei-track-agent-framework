@@ -127,6 +127,14 @@ class GatewayTests(unittest.TestCase):
                 with self.opener.open(f"{self.origin}{path}", timeout=10) as response:
                     self.assertEqual(response.status, 200)
                     self.assertTrue(response.read())
+        forwarded_origin = self.origin.removeprefix("http://")
+        source_request = urllib.request.Request(
+            f"{self.origin}/api/source-status",
+            headers={"Origin": forwarded_origin},
+        )
+        with self.opener.open(source_request, timeout=10) as response:
+            self.assertEqual(response.status, 200)
+            self.assertTrue(response.read())
         examples = self.get_json("/api/examples")
         self.assertTrue(examples["csrf_token"])
         payload = json.dumps(
@@ -142,7 +150,7 @@ class GatewayTests(unittest.TestCase):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Origin": self.origin,
+                "Origin": forwarded_origin,
                 "X-CSRF-Token": examples["csrf_token"],
             },
         )
