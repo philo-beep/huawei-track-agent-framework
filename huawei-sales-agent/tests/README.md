@@ -8,7 +8,8 @@
 
 ## 职责
 
-- `test_chat.py`：Agent 四步契约、来源、边界、HTTP 页面和导出测试。
+- `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
+- `product_match.test.js`：产品匹配召回、证据绑定、预算、IMA、【待确认】和模型幻觉测试。
 - `test_cases.json`：明确的合成测试样例。`verify_integrations.js`：按需验证云端模型、IMA 与联网抓取的独立调用；加 `--full` 运行同时启用三项能力的端到端联调。
 - 维护可复现命令、通过/失败证据、回归结论和已知限制。
 
@@ -33,6 +34,7 @@
 从 `huawei-sales-agent/` 运行：
 
 ```powershell
+node --test tests/product_match.test.js
 python -B -m unittest discover -s tests -v
 $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```

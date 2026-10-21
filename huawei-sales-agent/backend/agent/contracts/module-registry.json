@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
-  "contract_version": "3.0",
-  "updated": "2026-10-20",
+  "contract_version": "3.1",
+  "updated": "2026-10-21",
   "status": "active",
   "authority": "huawei-sales-agent/backend/agent/contracts/",
   "specification": "文件归属与责任矩阵.md",
@@ -31,7 +31,11 @@
         "huawei-sales-agent/backend/agent/prompts/",
         "huawei-sales-agent/backend/rag/",
         "huawei-sales-agent/tests/",
-        "huawei-sales-agent-data/agent_spec/"
+        "huawei-sales-agent-data/agent_spec/",
+        "huawei-sales-agent/backend/agent/product-catalog.js",
+        "huawei-sales-agent/backend/agent/product-match.js",
+        "huawei-sales-agent/backend/agent/product-match-verification.js",
+        "huawei-sales-agent/backend/agent/prompts/product-match.md"
       ],
       "responsibilities": [
         "主/子 Agent 调度",
@@ -106,12 +110,15 @@
     "pricing_input": "huawei-sales-agent/backend/agent/contracts/pricing-input.schema.json",
     "pricing_output": "huawei-sales-agent/backend/agent/contracts/pricing-output.schema.json",
     "module_input": "huawei-sales-agent/backend/agent/contracts/module-input.schema.json",
-    "module_envelope": "huawei-sales-agent/backend/agent/contracts/module-envelope.schema.json"
+    "module_envelope": "huawei-sales-agent/backend/agent/contracts/module-envelope.schema.json",
+    "product_match_input": "huawei-sales-agent/backend/agent/contracts/product-match-input.schema.json",
+    "product_match_output": "huawei-sales-agent/backend/agent/contracts/product-match-output.schema.json"
   },
   "examples": {
     "pipeline_input": "huawei-sales-agent-data/datasets/test_sample/pipeline_input.json",
     "pipeline_output": "huawei-sales-agent-data/datasets/test_sample/pipeline_output.example.json",
-    "portrait_cases": "huawei-sales-agent-data/datasets/test_sample/portrait_cases.json"
+    "portrait_cases": "huawei-sales-agent-data/datasets/test_sample/portrait_cases.json",
+    "product_match_cases": "huawei-sales-agent-data/datasets/test_sample/product_match_cases.json"
   },
   "implementation_status_values": {
     "current_rule_mode": "当前可运行模式为规则准备稿，未调用千问或云端模型。",

@@ -6,9 +6,9 @@ B 接口负责人。
 
 ## 职责
 
-- 维护 marketing、pricing、module input/envelope 和各业务输出 Schema。
+- 维护 marketing、pricing、product-match、module input/envelope 和各业务输出 Schema。
 - 保证生产方、消费方和测试使用同一契约版本。
-- 对客户画像、证据包、内容任务书、文章、交付评审和价格结果执行兼容性检查。
+- 对客户画像、产品匹配、证据包、内容任务书、文章、交付评审和价格结果执行兼容性检查。
 
 ## 开始工作前
 

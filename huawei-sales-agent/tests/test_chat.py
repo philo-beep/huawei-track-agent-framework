@@ -172,6 +172,47 @@ class GatewayTests(unittest.TestCase):
             self.opener.open(upload, timeout=10)
         self.assertEqual(caught.exception.code, 501)
 
+    def test_product_match_endpoint_and_export(self) -> None:
+        examples = self.get_json("/api/examples")
+        self.assertTrue(examples["match_examples"])
+        input_value = json.loads(json.dumps(examples["match_examples"][0]["input"]))
+        input_value["mode"] = "local"
+        input_value["use_cloud_model"] = False
+        forwarded_origin = self.origin.removeprefix("http://")
+        request = urllib.request.Request(
+            f"{self.origin}/api/product-matches",
+            data=json.dumps(input_value, ensure_ascii=False).encode("utf-8"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json; charset=utf-8",
+                "Origin": forwarded_origin,
+                "X-CSRF-Token": examples["csrf_token"],
+            },
+        )
+        with self.opener.open(request, timeout=10) as response:
+            self.assertEqual(response.status, 202)
+            job = json.loads(response.read())
+            self.assertEqual(job["kind"], "product-match")
+        for _ in range(50):
+            status = self.get_json(f"/api/runs/{job['id']}")
+            if status["status"] != "running":
+                break
+            threading.Event().wait(0.1)
+        self.assertEqual(status["status"], "completed")
+        result = status["result"]
+        self.assertIn(result["status"], {"ready", "partial"})
+        self.assertTrue(result["candidates"])
+        for candidate in result["candidates"]:
+            self.assertIn(candidate["status"], {"recommended", "pending_confirmation", "not_recommended"})
+            self.assertTrue(candidate["limitations"])
+            self.assertTrue(candidate["evidence"])
+            for reason in candidate["matching_reasons"]:
+                self.assertTrue(reason["evidence_ids"])
+        for fmt in ("json", "markdown"):
+            with self.opener.open(f"{self.origin}/api/runs/{job['id']}/export?format={fmt}", timeout=10) as response:
+                self.assertEqual(response.status, 200)
+                self.assertTrue(response.read())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

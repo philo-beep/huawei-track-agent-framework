@@ -8,9 +8,11 @@ const { ROOT, PipelineError } = require('./support');
 const { ENGINE, CAPABILITIES, examples, validateCloudInput, runCloud, cloudMarkdown } = require('./cloud-runner');
 const { getSourceStatus, sourceReadiness } = require('./source-health');
 const { MANIFEST } = require('./official');
+const { runProductMatch, renderProductMatchMarkdown, productMatchExamples } = require('./product-match');
 
 const TTL = 20 * 60 * 1000;
 const BODY_LIMIT = 4096;
+const MATCH_BODY_LIMIT = 16384;
 const STATIC = {
     '/': ['frontend/index.html', 'text/html; charset=utf-8'],
     '/index.html': ['frontend/index.html', 'text/html; charset=utf-8'],
@@ -53,6 +55,7 @@ function createCloudServer(options = {}) {
     const sessions = new Map();
     const jobs = new Map();
     const runner = options.runner || runCloud;
+    const matchRunner = options.matchRunner || runProductMatch;
     let active = null;
     let windowStarted = Date.now();
     let globalRuns = 0;
@@ -93,7 +96,7 @@ function createCloudServer(options = {}) {
                     sessions.set(identifier, session);
                     response.setHeader('Set-Cookie', `huawei_demo=${identifier}; HttpOnly; SameSite=Lax; Path=/; Max-Age=1200${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`);
                 }
-                return send(response, 200, { csrf_token: session.csrf, examples: examples(), engine: ENGINE, capabilities: CAPABILITIES, session_ttl_seconds: 1200 });
+                return send(response, 200, { csrf_token: session.csrf, examples: examples(), match_examples: productMatchExamples(), engine: ENGINE, capabilities: { ...CAPABILITIES, product_matching: true }, session_ttl_seconds: 1200 });
             }
             if (request.method === 'POST' && url.pathname === '/api/runs') {
                 const csrf = request.headers['x-csrf-token'];
@@ -126,6 +129,39 @@ function createCloudServer(options = {}) {
                 setImmediate(async () => {
                     try { job.result = await runner(input); job.markdown = cloudMarkdown(job.result); job.status = 'completed'; }
                     catch (error) { job.status = 'failed'; job.error = { code: error instanceof PipelineError ? error.code : 'RUN_FAILED', message: error instanceof PipelineError ? error.message : '演示执行未完成，未输出内部异常或客户原文' }; }
+                    finally { if (active === id) active = null; }
+                });
+                return;
+            }
+            if (request.method === 'POST' && url.pathname === '/api/product-matches') {
+                const csrf = request.headers['x-csrf-token'];
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
+                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '每会话20分钟最多3次，需间隔2秒；请稍后重试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
+                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '产品匹配请求最多16384字节'); }
+                const body = await new Promise((resolve, reject) => {
+                    let length = 0;
+                    const chunks = [];
+                    request.on('data', chunk => { length += chunk.length; if (length <= MATCH_BODY_LIMIT) chunks.push(chunk); });
+                    request.on('end', () => {
+                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '产品匹配请求最多16384字节'));
+                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+                    });
+                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '请求读取中断')));
+                });
+                while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
+                const id = crypto.randomUUID();
+                const job = { id, kind: 'product-match', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id };
+                jobs.set(id, job);
+                active = id;
+                session.runs += 1;
+                session.lastRun = Date.now();
+                globalRuns += 1;
+                send(response, 202, { id, status: 'running', kind: 'product-match' });
+                setImmediate(async () => {
+                    try { job.result = await matchRunner(body); job.markdown = renderProductMatchMarkdown(job.result); job.status = 'completed'; }
+                    catch (error) { job.status = 'failed'; job.error = { code: error instanceof PipelineError ? error.code : 'MATCH_FAILED', message: error instanceof PipelineError ? error.message : '产品匹配未完成，未输出内部异常或客户原文' }; }
                     finally { if (active === id) active = null; }
                 });
                 return;

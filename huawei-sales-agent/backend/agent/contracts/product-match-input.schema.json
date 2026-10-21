@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:product-match-input:1.0",
+  "title": "客户画像产品匹配输入 ProductMatchInput v1.0",
+  "description": "只接受脱敏客户画像和公开能力开关。产品匹配是选品前置阶段，不改变既有营销输入契约。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "profile", "use_cloud_model"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "mode": {"enum": ["local", "ima", "hybrid"]},
+    "use_cloud_model": {"type": "boolean"},
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_request", "needs", "preferences", "pain_points", "excluded_requirements"],
+      "properties": {
+        "raw_request": {"type": "string", "minLength": 1, "maxLength": 1600},
+        "audience": {"type": ["string", "null"], "maxLength": 400},
+        "scenario": {"type": ["string", "null"], "maxLength": 400},
+        "industry": {"type": ["string", "null"], "maxLength": 200},
+        "company_size": {"type": ["integer", "null"], "minimum": 1, "maximum": 10000000},
+        "product_type": {"type": ["string", "null"], "maxLength": 100},
+        "needs": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
+        "preferences": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
+        "pain_points": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
+        "excluded_requirements": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
+        "budget": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["min", "max", "currency", "scope", "quantity"],
+          "properties": {
+            "min": {"type": ["number", "null"], "minimum": 0, "maximum": 1000000000000},
+            "max": {"type": ["number", "null"], "minimum": 0, "maximum": 1000000000000},
+            "currency": {"type": ["string", "null"], "enum": ["CNY", null]},
+            "scope": {"type": ["string", "null"], "enum": ["单台", "总额", null]},
+            "quantity": {"type": ["integer", "null"], "minimum": 1, "maximum": 1000000}
+          }
+        }
+      }
+    }
+  }
+}

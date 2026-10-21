@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
+const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -58,12 +58,21 @@ function renderCapabilities(capabilities) {
         labels.push(`${label}：${enabled ? '已配置，将在本次勾选时调用' : '未配置'}`);
     }
     byId('capability-status').textContent = labels.join('；');
+    const matchCloud = byId('match-use-cloud-model');
+    const matchIma = byId('match-use-ima');
+    matchCloud.disabled = !capabilities?.cloud_model_configured;
+    matchCloud.checked = Boolean(capabilities?.cloud_model_configured);
+    matchIma.disabled = !capabilities?.ima_configured;
+    matchIma.checked = Boolean(capabilities?.ima_configured);
+    byId('match-capability-status').textContent = `云端模型：${capabilities?.cloud_model_configured ? '已配置' : '未配置'}；IMA：${capabilities?.ima_configured ? '已配置' : '未配置'}。未配置时不会伪造调用成功。`;
 }
 
 function setRunning(running) {
     state.running = running;
     byId('input-fields').disabled = running;
+    byId('match-fields').disabled = running;
     byId('run-button').disabled = running || !state.csrf || state.sourceLoading || !selectedSourceReady();
+    byId('match-button').disabled = running || !state.csrf;
     byId('refresh-source-status').disabled = running || state.sourceLoading;
     byId('new-customer').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
@@ -321,7 +330,196 @@ function renderResult(result, markdown) {
     byId('results').hidden = false;
 }
 
+function matchStatus(message, isError = false) {
+    byId('match-status').textContent = message;
+    byId('match-status').classList.toggle('error', isError);
+}
+
+function splitList(value) {
+    return [...new Set(String(value || '').split(/[,，、\n]+/).map(item => item.trim()).filter(Boolean))].slice(0, 20);
+}
+
+function clearMatchResult() {
+    byId('match-results').hidden = true;
+    byId('match-candidates').replaceChildren();
+    byId('match-diagnostics').replaceChildren();
+    state.matchMarkdown = '';
+}
+
+function fillMatchExample(index) {
+    const example = state.matchExamples[index];
+    if (!example || state.running) return;
+    const input = example.input;
+    const values = {
+        'match-raw-request': input.profile.raw_request,
+        'match-audience': input.profile.audience,
+        'match-scenario': input.profile.scenario,
+        'match-industry': input.profile.industry,
+        'match-company-size': input.profile.company_size,
+        'match-product-type': input.profile.product_type,
+        'match-needs': (input.profile.needs || []).join('，'),
+        'match-preferences': (input.profile.preferences || []).join('，'),
+        'match-excluded': (input.profile.excluded_requirements || []).join('，'),
+        'match-budget-min': input.profile.budget?.min,
+        'match-budget-max': input.profile.budget?.max,
+        'match-budget-scope': input.profile.budget?.scope || '',
+        'match-quantity': input.profile.budget?.quantity,
+    };
+    for (const [identifier, value] of Object.entries(values)) byId(identifier).value = value === null || value === undefined ? '' : String(value);
+    byId('match-use-cloud-model').checked = Boolean(input.use_cloud_model && state.capabilities?.cloud_model_configured);
+    byId('match-use-ima').checked = Boolean((input.mode === 'ima' || input.mode === 'hybrid') && state.capabilities?.ima_configured);
+    clearMatchResult();
+    matchStatus(`已填充合成匹配示例：${example.label}。尚未提交。`);
+}
+
+function clearMatchCustomer() {
+    if (state.running) return;
+    byId('match-form').reset();
+    renderCapabilities(state.capabilities || {});
+    clearMatchResult();
+    matchStatus('匹配条件已清空，请只输入脱敏或虚构客户信息。');
+}
+
+function collectMatchInput() {
+    const raw = byId('match-raw-request').value.trim();
+    if (!raw) throw new Error('请先填写客户原话或需求描述。');
+    if (raw.length > 1600) throw new Error('客户原话最多1600字。');
+    const optional = value => value.trim() || null;
+    const integer = value => value === '' ? null : Number(value);
+    const companySize = integer(byId('match-company-size').value);
+    if (companySize !== null && (!Number.isInteger(companySize) || companySize < 1)) throw new Error('组织人数必须为正整数。');
+    const min = byId('match-budget-min').value === '' ? null : Number(byId('match-budget-min').value);
+    const max = byId('match-budget-max').value === '' ? null : Number(byId('match-budget-max').value);
+    const quantity = integer(byId('match-quantity').value);
+    const hasBudget = [min, max, quantity].some(value => value !== null);
+    if ([min, max].some(value => value !== null && (!Number.isFinite(value) || value < 0))) throw new Error('预算金额必须为非负数。');
+    if (min !== null && max !== null && min > max) throw new Error('最低预算不能高于最高预算。');
+    if (quantity !== null && (!Number.isInteger(quantity) || quantity < 1)) throw new Error('采购数量必须为正整数。');
+    const useIma = byId('match-use-ima').checked;
+    const request = {
+        schema_version: '1.0',
+        mode: useIma ? 'hybrid' : 'local',
+        use_cloud_model: byId('match-use-cloud-model').checked,
+        profile: {
+            raw_request: raw,
+            audience: optional(byId('match-audience').value),
+            scenario: optional(byId('match-scenario').value),
+            industry: optional(byId('match-industry').value),
+            company_size: companySize,
+            product_type: optional(byId('match-product-type').value),
+            needs: splitList(byId('match-needs').value),
+            preferences: splitList(byId('match-preferences').value),
+            pain_points: [],
+            excluded_requirements: splitList(byId('match-excluded').value),
+            budget: hasBudget ? { min, max, currency: 'CNY', scope: byId('match-budget-scope').value || null, quantity } : null,
+        },
+    };
+    if (new TextEncoder().encode(JSON.stringify(request)).length > 16384) throw new Error('产品匹配输入最多16384字节，请缩短描述。');
+    return request;
+}
+
+async function startProductMatch(event) {
+    if (event) event.preventDefault();
+    if (state.running || !state.csrf) return;
+    let request;
+    try { request = collectMatchInput(); } catch (error) { matchStatus(error.message, true); return; }
+    clearMatchResult();
+    setRunning(true);
+    state.startedAt = Date.now();
+    matchStatus('正在召回候选并核验证据；云端模型不可用时会如实回退规则理由。');
+    try {
+        const job = await api('/api/product-matches', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(request) });
+        state.matchJobId = job.id;
+        state.matchPolling = true;
+        await pollProductMatch();
+    } catch (error) { setRunning(false); matchStatus(`产品匹配未完成：${error.message}。`, true); }
+}
+
+async function pollProductMatch() {
+    if (!state.matchPolling || !state.matchJobId) return;
+    try {
+        const job = await api(`/api/runs/${encodeURIComponent(state.matchJobId)}`);
+        if (job.status === 'running') {
+            matchStatus(`产品匹配正在执行，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。`);
+            setTimeout(pollProductMatch, 1000);
+            return;
+        }
+        state.matchPolling = false;
+        setRunning(false);
+        if (job.status === 'failed') { matchStatus(`产品匹配失败：${job.error?.message || '未知错误'}。`, true); return; }
+        if (job.status !== 'completed' || !job.result) throw new Error('服务结果不完整');
+        renderProductMatchResult(job.result, job.markdown || '');
+    } catch (error) {
+        state.matchPolling = false;
+        setRunning(false);
+        matchStatus(`产品匹配查询暂停：${error.message}。请勿重复提交，可刷新后重试。`, true);
+    }
+}
+
+function appendMatchText(container, label, values) {
+    const title = element('strong', label);
+    container.append(title);
+    const list = element('ul');
+    for (const value of values.length ? values : ['无']) list.append(element('li', typeof value === 'string' ? value : JSON.stringify(value)));
+    container.append(list);
+}
+
+function renderProductMatchResult(result, markdown) {
+    byId('match-candidates').replaceChildren();
+    byId('match-diagnostics').replaceChildren();
+    const modelStatus = result.provenance?.model?.status || '未确认';
+    byId('match-summary').textContent = `匹配状态：${result.status}；候选${result.verification.candidate_count}项；推荐${result.verification.recommended_count}项；【待确认】${result.verification.pending_count}项。\n请求模式：${result.provenance.requested_mode}；实际模式：${result.provenance.effective_mode}；模型：${modelStatus}${result.provenance.model?.name ? `（${result.provenance.model.name}）` : ''}。\n匹配分数只用于排序，不是匹配概率或成交概率。`;
+    const criteria = element('div', `匹配条件：${result.criteria.map(item => `${item.kind}=${typeof item.value === 'object' ? JSON.stringify(item.value) : item.value}`).join('；') || '待确认'}`);
+    criteria.className = 'notice';
+    byId('match-candidates').append(criteria);
+    for (const candidate of result.candidates) {
+        const article = element('article');
+        article.className = `result-card match-card ${candidate.status}`;
+        const heading = element('div'); heading.className = 'match-heading';
+        heading.append(element('strong', `${candidate.status_label}｜${candidate.product_name}`), element('span', `${candidate.category} · 排序分 ${candidate.match_score}`));
+        const badge = element('span', candidate.status_label); badge.className = 'status-badge'; heading.append(badge);
+        article.append(heading);
+        appendMatchText(article, '匹配理由', candidate.matching_reasons.map(reason => `${reason.text}（证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`));
+        appendMatchText(article, '限制', candidate.limitations);
+        appendMatchText(article, '缺失信息', candidate.missing_information);
+        const evidenceTitle = element('strong', '证据');
+        const evidenceList = element('ul'); evidenceList.className = 'match-evidence';
+        for (const evidence of candidate.evidence) {
+            const item = element('li', `${evidence.evidence_id}｜${evidence.source_level}｜${evidence.title}｜${evidence.locator}`);
+            const excerpt = element('div', evidence.excerpt.slice(0, 500)); excerpt.className = 'notice';
+            item.append(excerpt);
+            if (evidence.url) {
+                try {
+                    const url = new URL(evidence.url);
+                    if (['http:', 'https:'].includes(url.protocol)) {
+                        const link = element('a', '打开来源页面'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; item.append(link);
+                    }
+                } catch { }
+            }
+            evidenceList.append(item);
+        }
+        article.append(evidenceTitle, evidenceList);
+        if (sourceProducts.includes(candidate.product_name)) {
+            const use = element('button', '用此候选进入四步流程'); use.type = 'button'; use.className = 'match-use-candidate';
+            use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); byId('input-fields').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+            article.append(use);
+        }
+        byId('match-candidates').append(article);
+    }
+    if (!result.candidates.length) byId('match-candidates').append(element('p', '未取得候选，未使用模型常识补造产品。'));
+    for (const diagnostic of result.diagnostics || []) card('match-diagnostics', diagnostic.code || '诊断', diagnostic.message || diagnostic);
+    if (!result.diagnostics?.length) card('match-diagnostics', '诊断', '无额外诊断；仍须人工复核 SKU、价格和兼容性。');
+    state.matchMarkdown = markdown;
+    byId('match-download-json').href = `/api/runs/${encodeURIComponent(state.matchJobId)}/export?format=json`;
+    byId('match-download-markdown').href = `/api/runs/${encodeURIComponent(state.matchJobId)}/export?format=markdown`;
+    byId('match-results').hidden = false;
+    matchStatus('产品匹配结果已生成；请检查【待确认】项、限制和证据，不要仅依据排序分决策。', result.verification.recommended_count === 0);
+}
+
 byId('growth-form').addEventListener('submit', startRun);
+byId('match-form').addEventListener('submit', startProductMatch);
+byId('match-clear').addEventListener('click', clearMatchCustomer);
+for (let index = 0; index < 2; index += 1) byId(`match-example-${index + 1}`).addEventListener('click', () => fillMatchExample(index));
 byId('new-customer').addEventListener('click', clearCustomer);
 for (let index = 0; index < 3; index += 1) byId(`example-${index + 1}`).addEventListener('click', () => fillExample(index));
 for (const identifier of ['raw-request', 'audience', 'product']) byId(identifier).addEventListener('input', () => {
@@ -353,11 +551,14 @@ async function initialize() {
         if (!response.csrf_token || !Array.isArray(response.examples)) throw new Error('初始化响应不完整');
         state.csrf = response.csrf_token;
         state.examples = response.examples.slice(0, 3);
+        state.matchExamples = Array.isArray(response.match_examples) ? response.match_examples.slice(0, 2) : [];
         byId('engine-status').textContent = engineStatus(response.engine);
         renderCapabilities(response.capabilities || {});
         state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${example.label} · Alt+${index + 1}`; });
+        state.matchExamples.forEach((example, index) => { byId(`match-example-${index + 1}`).textContent = example.label; });
         setRunning(false);
         if (state.examples.length) fillExample(0);
+        if (state.matchExamples.length) fillMatchExample(0);
         await refreshSourceStatus();
     } catch (error) { status(`服务初始化失败：${error.message}。请稍后刷新页面。`, true); }
 }

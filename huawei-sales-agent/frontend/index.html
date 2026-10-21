@@ -25,6 +25,47 @@
       <p>以下核验已有官网快照的型号、指纹及7天有效期，不会重新联网抓取。到期需维护者更新并验收资料；进程在线不代表资料可用。规格可用也不代表售价、真实交易报价或图片已核实。</p>
       <div id="source-status-products"></div>
     </section>
+    <section aria-labelledby="match-title">
+      <h2 id="match-title">产品匹配（先选品）</h2>
+      <p>先根据脱敏客户画像从 IMA 与本地产品目录召回候选。每项均显示匹配理由、限制、证据和状态；没有证据的候选固定标为【待确认】。</p>
+      <div class="toolbar"><button id="match-example-1" type="button">匹配示例1</button><button id="match-example-2" type="button">匹配示例2</button><button id="match-clear" type="button">清空匹配条件</button></div>
+      <form id="match-form">
+        <fieldset id="match-fields"><legend>客户画像与选品条件</legend>
+          <label>客户原话或需求描述<textarea id="match-raw-request" rows="3" maxlength="1600" required placeholder="例如：30人制造企业，移动办公，预算暂不确定。"></textarea></label>
+          <div class="fields">
+            <label>客户 / 受众<input id="match-audience" maxlength="400" placeholder="例如：采购负责人"></label>
+            <label>场景<input id="match-scenario" maxlength="400" placeholder="例如：仓库与办公室轮用"></label>
+            <label>行业<input id="match-industry" maxlength="200" placeholder="例如：制造业"></label>
+            <label>组织人数<input id="match-company-size" type="number" min="1" step="1" placeholder="例如：30"></label>
+            <label>产品类型<input id="match-product-type" maxlength="100" placeholder="电脑 / 打印机 / 显示器"></label>
+            <label>明确需求（逗号分隔）<input id="match-needs" maxlength="800" placeholder="移动办公, 长续航"></label>
+            <label>偏好（逗号分隔）<input id="match-preferences" maxlength="800" placeholder="便携, 大屏"></label>
+            <label>客户排除项（逗号分隔）<input id="match-excluded" maxlength="800" placeholder="例如：不要台式机"></label>
+          </div>
+          <fieldset class="match-budget"><legend>预算（未知可留空）</legend>
+            <div class="fields">
+              <label>最低预算<input id="match-budget-min" type="number" min="0" step="0.01"></label>
+              <label>最高预算<input id="match-budget-max" type="number" min="0" step="0.01"></label>
+              <label>预算口径<select id="match-budget-scope"><option value="">待确认</option><option>单台</option><option>总额</option></select></label>
+              <label>采购数量<input id="match-quantity" type="number" min="1" step="1"></label>
+            </div>
+          </fieldset>
+          <fieldset class="capability-options"><legend>本次启用的外部能力</legend>
+            <label><input id="match-use-cloud-model" type="checkbox" checked>云端模型组织匹配理由</label>
+            <label><input id="match-use-ima" type="checkbox" checked>IMA 知识库召回</label>
+            <p id="match-capability-status">正在核验产品匹配能力……</p>
+          </fieldset>
+        </fieldset>
+        <div class="toolbar"><button id="match-button" type="submit" disabled>开始产品匹配</button></div>
+      </form>
+      <p id="match-status" role="status" aria-live="polite">尚未运行产品匹配。</p>
+      <div id="match-results" hidden>
+        <div class="toolbar"><a id="match-download-json" download>下载匹配 JSON</a><a id="match-download-markdown" download>下载匹配 Markdown</a></div>
+        <p id="match-summary" class="notice"></p>
+        <h3>候选、理由与证据</h3><div id="match-candidates"></div>
+        <h3>匹配诊断</h3><div id="match-diagnostics"></div>
+      </div>
+    </section>
     <section>
       <h2>输入客户信息</h2>
       <div class="toolbar"><button id="example-1" type="button" disabled>示例1 · Alt+1</button><button id="example-2" type="button" disabled>示例2 · Alt+2</button><button id="example-3" type="button" disabled>示例3 · Alt+3</button><button id="new-customer" type="button">新客户</button></div>

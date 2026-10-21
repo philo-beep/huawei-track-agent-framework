@@ -29,3 +29,16 @@ kbd { border: 1px solid #b4bec9; border-radius: 3px; padding: 1px 4px; }
 [hidden] { display: none !important; }
 footer { color: #536170; font-size: .9rem; }
 @media (max-width: 680px) { header, main, footer { padding: 12px; } section { padding: 14px; } .fields { grid-template-columns: 1fr; } }
+
+.match-budget { margin: 12px 0; }
+.match-card { border-left: 5px solid #788899; }
+.match-card.recommended { border-left-color: #1f7a4d; }
+.match-card.pending_confirmation { border-left-color: #957121; background: #fffdf6; }
+.match-card.not_recommended { border-left-color: #9c2020; }
+.match-card .match-heading { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; }
+.match-card .status-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e8eef5; color: #163e6c; font-size: .86rem; }
+.match-card.pending_confirmation .status-badge { background: #fff0c2; color: #6d4f00; }
+.match-card.recommended .status-badge { background: #dff3e7; color: #155d39; }
+.match-evidence { padding-left: 20px; }
+.match-evidence li { margin: 6px 0; }
+.match-use-candidate { margin-top: 8px; }
