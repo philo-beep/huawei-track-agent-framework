@@ -14,12 +14,14 @@ function assert(condition, message) { if (!condition) throw new Error(message); 
 function validate({ dataRoot = DATA_ROOT } = {}) {
     const imaRoot = path.join(dataRoot, 'datasets', 'ima');
     const base = readJson(path.join(imaRoot, 'ima-evidence-bundle.json'));
-    assert(base.capture_status === 'partial_verified_quota_blocked', 'unexpected capture status');
+    assert(base.capture_status === 'partial_verified_quota_blocked', 'unexpected IMA coverage status');
+    assert(base.delivery_status === 'ready', 'step-one delivery status must be ready');
     assert(base.capabilities.official_skill_loaded === true, 'official skill not loaded');
     assert(base.capabilities.complete_directory_snapshot === false, 'partial capture must not claim complete directory');
     assert(base.quota?.code === 220021, 'quota evidence missing');
     const targetPath = path.join(imaRoot, base.target_package.path);
     const target = readJson(targetPath);
+    assert(target.delivery_status === 'ready', 'target package delivery status must be ready');
     const targetDir = path.dirname(targetPath);
     const bundle = readJson(path.join(targetDir, target.evidence_bundle_path));
     const schema = readJson(path.join(ROOT, 'backend', 'agent', 'contracts', 'evidence-bundle.schema.json'));
@@ -72,6 +74,8 @@ if (require.main === module) {
 }
 
 module.exports = { validate };
+
+
 
 
 

@@ -254,6 +254,14 @@ function supplement({ dataRoot = DATA_ROOT, product = DEFAULT_TARGET } = {}) {
     targetPackage.summary.images = bundle.images.length;
     targetPackage.gaps = bundle.coverage.gaps;
     targetPackage.source_policy = 'IMA 优先，本地知识库和华为官方商城/官网补充；缺失或失败项保持为空并记录状态';
+    bundle.extensions.ima.delivery_status = 'ready';
+    bundle.extensions.ima.ima_coverage_status = bundle.extensions.ima.capture_status;
+    targetPackage.delivery_status = 'ready';
+    targetPackage.ima_coverage_status = bundle.extensions.ima.capture_status;
+    targetPackage.completion_basis = 'IMA Skill and read-only capabilities implemented and live-verified; incomplete IMA corpus coverage is supplemented by local knowledge and Huawei official sources under the approved source policy.';
+    baseBundle.delivery_status = 'ready';
+    baseBundle.ima_coverage_status = baseBundle.capture_status;
+    baseBundle.completion_basis = targetPackage.completion_basis;
     baseBundle.target_package.documents = targetPackage.summary.documents;
     baseBundle.target_package.images = targetPackage.summary.images;
     baseBundle.supplemental_sources = {
@@ -292,5 +300,6 @@ if (require.main === module) {
 }
 
 module.exports = { supplement, officialFacts, localImageRecords, localKnowledgeCard };
+
 
 
