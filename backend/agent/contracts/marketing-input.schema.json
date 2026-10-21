@@ -6,13 +6,14 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {"const": "1.0", "default": "1.0"},
-    "mode": {"enum": ["local", "ima"], "default": "local"},
+    "mode": {"enum": ["local", "ima", "hybrid"], "default": "local"},
     "product": {"type": "string", "minLength": 1},
     "audience": {"type": "string", "minLength": 1},
     "scenario": {"type": "string", "minLength": 1},
     "platform": {"enum": ["小红书", "公众号", "朋友圈"]},
     "raw_request": {"type": "string", "minLength": 1},
     "intent": {"enum": ["marketing", "quote", "both"], "default": "marketing"},
+    "live_research": {"type": "boolean", "default": false},
     "customer": {
       "type": "object",
       "additionalProperties": false,

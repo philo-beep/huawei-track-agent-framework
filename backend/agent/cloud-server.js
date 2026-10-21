@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { ROOT, PipelineError } = require('./support');
-const { ENGINE, examples, validateCloudInput, runCloud, cloudMarkdown } = require('./cloud-runner');
+const { ENGINE, CAPABILITIES, examples, validateCloudInput, runCloud, cloudMarkdown } = require('./cloud-runner');
 const { getSourceStatus, sourceReadiness } = require('./source-health');
 const { MANIFEST } = require('./official');
 
@@ -78,7 +78,7 @@ function createCloudServer(options = {}) {
         if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '不接受外部代理地址');
         purge();
         try {
-            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: null, model_ready: 'disabled', ima_enabled: false, public_demo: true, source_manifest_available: fs.existsSync(MANIFEST), source_readiness: sourceReadiness(getSourceStatus()) });
+            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: CAPABILITIES.cloud_model_name, model_ready: CAPABILITIES.cloud_model_configured ? 'configured' : 'disabled', ima_enabled: CAPABILITIES.ima_configured, web_research_enabled: CAPABILITIES.web_research_configured, capabilities: CAPABILITIES, public_demo: true, source_manifest_available: fs.existsSync(MANIFEST), source_readiness: sourceReadiness(getSourceStatus()) });
             if (request.method === 'GET' && url.pathname === '/api/source-status') {
                 if (url.search) return fail(response, 400, 'SOURCE_QUERY_FORBIDDEN', '来源状态不接受参数或更新指令');
                 return send(response, 200, getSourceStatus());
@@ -93,7 +93,7 @@ function createCloudServer(options = {}) {
                     sessions.set(identifier, session);
                     response.setHeader('Set-Cookie', `huawei_demo=${identifier}; HttpOnly; SameSite=Lax; Path=/; Max-Age=1200${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`);
                 }
-                return send(response, 200, { csrf_token: session.csrf, examples: examples(), engine: ENGINE, session_ttl_seconds: 1200 });
+                return send(response, 200, { csrf_token: session.csrf, examples: examples(), engine: ENGINE, capabilities: CAPABILITIES, session_ttl_seconds: 1200 });
             }
             if (request.method === 'POST' && url.pathname === '/api/runs') {
                 const csrf = request.headers['x-csrf-token'];

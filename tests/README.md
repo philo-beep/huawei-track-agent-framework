@@ -9,7 +9,7 @@
 ## 职责
 
 - `test_chat.py`：Agent 四步契约、来源、边界、HTTP 页面和导出测试。
-- `test_cases.json`：明确的合成测试样例。
+- `test_cases.json`：明确的合成测试样例。`verify_integrations.js`：按需验证云端模型、IMA 与联网抓取的独立调用；加 `--full` 运行同时启用三项能力的端到端联调。
 - 维护可复现命令、通过/失败证据、回归结论和已知限制。
 
 ## 开始工作前
@@ -41,3 +41,8 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 
 验收报告至少包含候选标识、环境、命令、通过项、失败项、跳过项、产品体验结论、已知限制和是否允许进入集成或发布。
 
+集成验证（会真实访问外部服务并可能产生模型调用费用）：
+
+```powershell
+node tests/verify_integrations.js --full
+```

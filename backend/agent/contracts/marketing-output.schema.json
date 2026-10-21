@@ -7,8 +7,8 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {"const": "1.0"},
-    "requested_mode": {"enum": ["local", "ima"]},
-    "mode": {"enum": ["local", "ima"]},
+    "requested_mode": {"enum": ["local", "ima", "hybrid"]},
+    "mode": {"enum": ["local", "ima", "hybrid"]},
     "ima_connection": {"enum": ["connected", "not_connected", "not_requested"]},
     "status": {"enum": ["ready", "needs_clarification", "blocked"]},
     "competition_readiness": {"enum": ["offline_only", "ima_evidence_present", "not_verified"]},
@@ -62,7 +62,7 @@
       "additionalProperties": false,
       "properties": {
         "product": {"type": ["string", "null"]},
-        "source_mode": {"enum": ["local_zip", "official_snapshot", "ima", "none"]},
+        "source_mode": {"enum": ["local_zip", "official_snapshot", "ima", "hybrid", "none"]},
         "facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}}
       }
     },

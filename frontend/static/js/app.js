@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null };
+const state = { examples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -31,8 +31,33 @@ function card(identifier, title, value) {
 
 function engineStatus(engine) {
     if (!engine) return '引擎未确认，请查看本次结果；不能据页面名称判定为模型生成。';
-    const mode = engine.mode === 'qwen_cpu' ? 'CPU 千问辅助模式' : engine.mode === 'rules' ? '规则准备稿模式（未调用大模型）' : `未确认模式：${engine.mode}`;
-    return `${mode}\n模型：${engine.model || '未启用'}；状态：${engine.model_status || '未确认'}\n${engine.notice || '最终内容为程序化准备稿，需要人工审核。'}`;
+    const modeNames = {
+        cloud_model: '云端大模型受约束推理',
+        cloud_model_with_rules_fallback: '云端模型调用 + 规则纠错回退',
+        hybrid_rules: '规则引擎 + IMA 检索',
+        hybrid_capable: '云端模型 / IMA / 联网能力可用',
+        rules: '规则准备稿模式（未调用大模型）',
+        qwen_cpu: '本地千问辅助模式'
+    };
+    const mode = modeNames[engine.mode] || `未确认模式：${engine.mode}`;
+    return `${mode}\n模型：${engine.model || '未启用'}；状态：${engine.model_status || '未确认'}\nIMA：${engine.ima_enabled ? '可用' : '未启用'}；联网检索：${engine.web_research_enabled ? '可用' : '未启用'}\n${engine.notice || '最终内容需要人工审核。'}`;
+}
+
+function renderCapabilities(capabilities) {
+    state.capabilities = capabilities || null;
+    const mapping = [
+        ['use-cloud-model', Boolean(capabilities?.cloud_model_configured), capabilities?.cloud_model_name ? `云端模型 ${capabilities.cloud_model_name}` : '云端模型'],
+        ['use-ima', Boolean(capabilities?.ima_configured), capabilities?.ima_knowledge_base_name ? `IMA：${capabilities.ima_knowledge_base_name}` : 'IMA 知识库'],
+        ['use-web-research', Boolean(capabilities?.web_research_configured), '联网检索'],
+    ];
+    const labels = [];
+    for (const [identifier, enabled, label] of mapping) {
+        const control = byId(identifier);
+        control.disabled = !enabled;
+        control.checked = enabled;
+        labels.push(`${label}：${enabled ? '已配置，将在本次勾选时调用' : '未配置'}`);
+    }
+    byId('capability-status').textContent = labels.join('；');
 }
 
 function setRunning(running) {
@@ -175,7 +200,7 @@ function collectInput() {
         if (value.length > 800) throw new Error('每个自由输入字段最多800字。');
         if (value) input[field] = value;
     }
-    const request = { marketing_input: input, demo_pricing: byId('demo-pricing').checked };
+    const request = { marketing_input: input, demo_pricing: byId('demo-pricing').checked, use_cloud_model: byId('use-cloud-model').checked, use_ima: byId('use-ima').checked, use_web_research: byId('use-web-research').checked };
     if (new TextEncoder().encode(JSON.stringify(request)).length > 4096) throw new Error('输入合计最多4096字节，请缩短描述。');
     return request;
 }
@@ -329,6 +354,7 @@ async function initialize() {
         state.csrf = response.csrf_token;
         state.examples = response.examples.slice(0, 3);
         byId('engine-status').textContent = engineStatus(response.engine);
+        renderCapabilities(response.capabilities || {});
         state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${example.label} · Alt+${index + 1}`; });
         setRunning(false);
         if (state.examples.length) fillExample(0);

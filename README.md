@@ -7,14 +7,14 @@
 3. **给出方案**：用四步规则演算四级价格，并给出 0–30 分钟可执行的演示计划。
 4. **推成交**：输出带负责人、触发条件、依赖项和人工确认边界的下一步动作。
 
-当前版本是**规则准备稿模式**：不调用千问、不调用 IMA、不访问外网，结果用于演示和人工复核，不冒充模型生成或真实成交建议。
+当前版本支持**按请求显式启用**云端模型、IMA OpenAPI 知识库检索和联网公开网页抓取。云端模型默认配置为 `deepseek-v4.1-flash`；凭据仅从本地 `.env` 或部署环境变量读取。结果仍用于演示和人工复核，不冒充真实成交建议。
 
 ## 公开演示
 
 - 魔搭空间：<https://modelscope.cn/studios/philosophia/promotion-agent>
 - 公网入口：<https://philosophia-promotion-agent.ms.show>
 
-公开云端由魔搭免费 Docker CPU 托管网页和同源 HTTP 接口。当前引擎为规则准备稿模式，不调用云端模型推理；页面可访问不等于正式报价、真实图片、客户咨询或销售转化已经验证。
+公开云端由魔搭免费 Docker CPU 托管网页和同源 HTTP 接口。配置凭据后，页面可分别启用云端模型推理、IMA 检索和联网抓取；未配置时会明确标记不可用。页面可访问不等于正式报价、真实图片、客户咨询或销售转化已经验证。
 
 ## 运行
 
@@ -26,11 +26,22 @@ python backend/main.py
 
 浏览器打开 <http://localhost:7860>。也可以运行：
 
+
 ```bash
 bash start.sh
 ```
 
 页面内按 `Alt+1`、`Alt+2`、`Alt+3` 可填入合成示例。服务只监听本机，客户输入仅用于当前内存会话，20 分钟后过期。
+
+## 外部能力配置
+
+复制 `.env.example` 为 `.env`，或由部署平台注入同名环境变量：
+
+- `CLOUD_MODEL_*`：OpenAI-compatible 云端模型，默认 `deepseek-v4.1-flash`。
+- `IMA_OPENAPI_*`：IMA OpenAPI Client ID、API Key、服务地址和默认知识库 ID。
+- `WEB_RESEARCH_*`：联网检索开关、搜索入口、超时与正文大小限制。
+
+真实凭据只保存在本地或部署平台的秘密配置中；`.env` 已被 Git 和 Docker 忽略。页面可在每次请求中分别勾选云端模型、IMA 和联网检索，未勾选时不会调用对应服务。
 
 ## 验证
 
@@ -61,7 +72,7 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -m unittest discover -s tests -v
 | `backend/api/` | B 后端接口 | 同源 API、异常、限流和上传拒绝；见 `backend/api/README.md` |
 | `backend/agent/` | A Agent 核心 | 主/子 Agent 调度、提示词、工具和模型调用；见 `backend/agent/README.md` |
 | `backend/agent/contracts/` | B 后端接口 | 前后端、Agent 和价格接口契约；见 `backend/agent/contracts/README.md` |
-| `backend/agent/prompts/` | A Agent 核心 | 主/子 Agent 提示词；当前规则模式不表示模型已调用 |
+| `backend/agent/prompts/` | A Agent 核心 | 主/子 Agent 提示词参考；当前云端适配器使用内嵌受约束提示词 |
 | `backend/rag/` | A + D | A 维护检索代码，D 提供清洗数据、切片和索引；见 `backend/rag/README.md` |
 | `backend/session/` | B 后端接口 | 会话、聊天历史、过期和持久化；见 `backend/session/README.md` |
 | `tests/` | A + E | A 维护自动化脚本和联调，E 协助全流程验收；见 `tests/README.md` |
@@ -76,10 +87,10 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -m unittest discover -s tests -v
 - 当前公开价格、完整 SKU 和正式图片仍待核实：`public_price_reference=null`、`actual_transaction_quote=false`、正式图片数为 0。
 - 四级价格是**基于行业惯例与赛题推断的可配置假设模型**，基价、折扣、资格、地区均为人为设定，待官方确认；演示金额不是华为真实政策或交易报价。
 - 咨询与转化效果没有真实数据，不报告提升；30 分钟演示是待执行计划，`onsite_within_30_minutes_verified=false`。
-- IMA 未接入；本地知识库与华为官网替代，资料和图片来源标注保留。真实 IMA 接入需要赛事认可的凭证与许可。
+- IMA OpenAPI 已接入并完成只读知识库搜索验证；请求 ID、知识库 ID、媒体 ID 和元数据指纹随结果保留；只有实际抓取正文的公开网页保留内容 SHA-256。写入、导入和全量正文提取未在本轮验证。
 
 ## 已知缺口
 
-- 当前规则引擎不读取 `backend/agent/prompts/`，该目录是接入模型时的角色提示词，不代表已调用模型。
+- `backend/agent/prompts/` 仍是维护参考，不等于自动运行链路；云端调用的策略与事实选择提示词目前内嵌在 `backend/agent/model.js`，并经过输出核验。
 - 客户端图片候选未完成画面、SKU 与版权核验，不能作为正式配图。
 - 公开演示只接受合成或脱敏文本，拒绝文件上传，避免客户隐私落盘。

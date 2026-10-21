@@ -19,16 +19,18 @@
 | 文件 | 主负责人 | 职责 |
 | --- | --- | --- |
 | `agent_core.py` | A | 主/子 Agent 调度、四步运行核心和工具编排 |
+| `config.js` | A | 本地 `.env` 加载与云端模型、IMA、联网能力配置 |
+| `research.js` | A | 公开搜索、官网抓取、SSRF 防护和来源指纹 |
 | `cloud-runner.js` | A | Agent 和规则运行编排 |
 | `fourstep.js` | A | 四步业务流和 Agent 工具链 |
 | `main.js` | A | Agent 命令行入口 |
 | `support.js` | A | 路径、校验、脱敏和公共设施 |
-| `model.js` | A | 模型 API、`temperature`、上下文控制和模式声明 |
+| `model.js` | A | DeepSeek OpenAI-compatible 调用、JSON 输出、上下文控制和模式声明 |
 | `profile.js` | A | 客户画像、明确输入、推断和待确认项 |
 | `knowledge.js` | A | 本地知识检索调用和结果适配 |
 | `official.js` | A | 官网事实、型号、价格和图片证据消费 |
 | `source-health.js` | A | 来源健康和时效检查 |
-| `ima.js` | A | IMA 适配边界；未授权不得发起真实请求 |
+| `ima.js` | A | IMA OpenAPI 知识库搜索与来源回传 |
 | `tools.py` | A | 检索、模型工具和验收辅助 |
 | `cloud-fact-selector.js` | A | 内容聚焦、事实选择和策略理由 |
 | `verification.js` | A | 事实、图片、合规和适配核验 |

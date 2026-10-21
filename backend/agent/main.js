@@ -7,15 +7,18 @@ const { ROOT, PipelineError, schema, validateSchema, outputPath, redact } = requ
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const { localKnowledge, extractFacts, imageCandidates, sourceReference } = require('./knowledge');
 const { loadOfficialReference, officialKnowledge } = require('./official');
-const { reasonStrategy, generateCopy } = require('./model');
+const { reasonStrategy, generateCopy, PLATFORM } = require('./model');
+const { selectCloudFact } = require('./cloud-fact-selector');
 const { composeContent } = require('./verification');
 const { prepareSales } = require('./sales');
+const { imaKnowledge } = require('./ima');
+const { researchHuawei } = require('./research');
 
 function baseResult(input = {}) {
-    const requested = input?.mode === 'ima' ? 'ima' : 'local';
+    const requested = ['ima', 'hybrid'].includes(input?.mode) ? input.mode : 'local';
     const parsed = parseInput(input);
     return {
-        schema_version: '1.0', requested_mode: requested, mode: 'local', ima_connection: requested === 'ima' ? 'not_connected' : 'not_requested', status: 'blocked', competition_readiness: 'offline_only',
+        schema_version: '1.0', requested_mode: requested, mode: 'local', ima_connection: requested === 'local' ? 'not_requested' : 'not_connected', status: 'blocked', competition_readiness: 'offline_only',
         profile: parsed.profile, clarification_questions: parsed.questions,
         scenario_judgment: { audience: parsed.normalized.audience || null, scenario: parsed.normalized.scenario || null, user_problem: parsed.normalized.scenario || null, content_goal: '依据可追溯产品事实准备内容与下一步澄清，不保证咨询转化', platform: ['小红书', '公众号', '朋友圈'].includes(parsed.normalized.platform) ? parsed.normalized.platform : null, strategy: null },
         knowledge_basis: { product: parsed.normalized.product || null, source_mode: 'none', facts: [] }, marketing_content: null,
@@ -78,8 +81,41 @@ async function runPipeline(input, options = {}) {
             return result;
         }
         const request = parsed.normalized;
-        const official = loadOfficialReference(request.product);
-        result.diagnostics.push(...official.diagnostics.map(item => ({ ...item, retryable: false })));
+        let liveResearchEvidence = [];
+        if (request.mode === 'ima' || request.mode === 'hybrid') {
+            try {
+                const ima = await imaKnowledge(`${request.product} ${request.scenario}`.trim(), { limit: 20 });
+                result.mode = 'hybrid';
+                result.ima_connection = ima.status === 'connected' ? 'connected' : 'not_connected';
+                result.competition_readiness = ima.status === 'connected' ? 'ima_evidence_present' : 'offline_only';
+                result.diagnostics.push({
+                    code: ima.results.length ? 'IMA_SEARCH_COMPLETED' : 'IMA_SEARCH_NO_MATCH',
+                    message: JSON.stringify({
+                        provider: 'IMA OpenAPI',
+                        knowledge_base: ima.knowledge_base ? { kb_id: ima.knowledge_base.kb_id, kb_name: ima.knowledge_base.kb_name } : null,
+                        request_ids: ima.request_ids,
+                        matches: ima.results.slice(0, 6).map(item => ({ title: item.title, media_id: item.media_id, source: item.source_ref })),
+                    }),
+                    retryable: false,
+                });
+            } catch (error) {
+                result.ima_connection = 'not_connected';
+                result.diagnostics.push({ code: error instanceof PipelineError ? error.code : 'IMA_SEARCH_FAILED', message: error instanceof PipelineError ? error.message : 'IMA 检索失败，已回退本地与官网来源', retryable: Boolean(error.retryable) });
+            }
+        }
+        if (request.live_research === true) {
+            try {
+                liveResearchEvidence = await researchHuawei(request.product, request.scenario);
+                result.diagnostics.push({
+                    code: liveResearchEvidence.length ? 'WEB_RESEARCH_COMPLETED' : 'WEB_RESEARCH_NO_RESULT',
+                    message: JSON.stringify({ provider: 'Bing RSS + 公开网页抓取', query_scope: 'Huawei official sources', sources: liveResearchEvidence.map(item => ({ title: item.title, url: item.url, fetched_at: item.fetched_at, content_sha256: item.content_sha256, error: item.error || null })) }),
+                    retryable: false,
+                });
+            } catch (error) {
+                result.diagnostics.push({ code: error instanceof PipelineError ? error.code : 'WEB_RESEARCH_FAILED', message: error instanceof PipelineError ? error.message : '联网检索失败，未使用未核验网页内容', retryable: true });
+            }
+        }
+        const official = loadOfficialReference(request.product);        result.diagnostics.push(...official.diagnostics.map(item => ({ ...item, retryable: false })));
         let knowledge = officialKnowledge(official);
         if (knowledge) {
             result.diagnostics.push({ code: 'OFFICIAL_SPEC_PRIORITIZED', message: '本次产品参数优先引用已核验华为官网本地快照；系列选项不能拼成销售SKU，完整配置和公开价格仍需独立确认', retryable: false });
@@ -101,15 +137,36 @@ async function runPipeline(input, options = {}) {
         if (request.intent === 'quote') throw new PipelineError('PRICE_RULES_MISSING', '当前请求为真实报价，但四级规则缺失，金额保持null');
         const strategy = options.reasonStrategy || reasonStrategy;
         const copy = options.generateCopy || generateCopy;
-        result.scenario_judgment.strategy = await strategy(request, result.profile);
+        try {
+            result.scenario_judgment.strategy = await strategy(request, result.profile, liveResearchEvidence);
+        } catch (error) {
+            if (error.code !== 'MODEL_OUTPUT_INVALID') throw error;
+            result.diagnostics.push({ code: 'MODEL_STRATEGY_RETRY', message: '首次策略JSON结构不符合约束；仅重试一次，未放行初稿', retryable: false });
+            try {
+                result.scenario_judgment.strategy = await strategy(request, result.profile, liveResearchEvidence, error.message);
+            } catch (retryError) {
+                if (retryError.code !== 'MODEL_OUTPUT_INVALID') throw retryError;
+                result.diagnostics.push({ code: 'MODEL_STRATEGY_RULES_FALLBACK', message: '策略模型连续返回无效JSON，已回退到受约束规则策略；后续事实选择仍按本次所选模式执行', retryable: false });
+                result.scenario_judgment.strategy = { platform_rules: PLATFORM[request.platform], model_analysis: { focus: request.scenario, rationale: '模型策略输出未通过结构校验，使用受约束规则策略继续；未知客户事实保持待确认', outline: ['确认实际任务与软件版本', '核对来源与限制', '安排人工确认的下一步'] }, analysis_status: 'rules_fallback_after_model_error', model: 'rules_fallback', elapsed_ms: 0, research_source_count: liveResearchEvidence.length };
+            }
+        }
         let generated = await copy(request, result.scenario_judgment.strategy, facts);
         try {
             result.marketing_content = composeContent(generated.value, facts, request);
         } catch (error) {
-            if (!['FACT_VERIFICATION_FAILED', 'COMPLIANCE_FAILED'].includes(error.code) || !/^模型/.test(error.message)) throw error;
+            if (!['MODEL_OUTPUT_INVALID', 'FACT_VERIFICATION_FAILED', 'COMPLIANCE_FAILED'].includes(error.code)) throw error;
             result.diagnostics.push({ code: 'MODEL_REPAIR_ATTEMPT', message: `首次事实选择或实际叙述核验被拦截：${error.message}；仅一次带反馈重生成，未放行初稿`, retryable: false });
-            generated = await copy(request, result.scenario_judgment.strategy, facts, error.message);
-            result.marketing_content = composeContent(generated.value, facts, request);
+            try {
+                generated = await copy(request, result.scenario_judgment.strategy, facts, error.message);
+                result.marketing_content = composeContent(generated.value, facts, request);
+            } catch (retryError) {
+                if (!['MODEL_OUTPUT_INVALID', 'FACT_VERIFICATION_FAILED', 'COMPLIANCE_FAILED'].includes(retryError.code)) throw retryError;
+                const selection = selectCloudFact(request, facts);
+                if (!selection.fact_ids.length) throw retryError;
+                result.diagnostics.push({ code: 'MODEL_COPY_RULES_FALLBACK', message: '事实选择模型连续未通过结构或核验，已回退到确定性事实选择；未放行无效模型正文', retryable: false });
+                generated = { model: 'rules_fallback', value: { fact_ids: selection.fact_ids } };
+                result.marketing_content = composeContent(generated.value, facts, request);
+            }
         }
         result.status = 'ready';
         result.diagnostics.push({ code: 'MODEL_NARRATIVE_CONSTRAINED', message: '生成阶段只要求模型选择事实ID；最终标题/导语/过渡/CTA由程序按输入场景生成并独立核验。真实模型用于策略与事实选择，这不是模型自由文案合规通过证明', retryable: false });

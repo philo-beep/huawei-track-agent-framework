@@ -15,7 +15,7 @@
       <ol><li>选择一个合成示例，或点击“新客户”，只输入脱敏、虚构的客户描述。</li><li>核对完整型号、平台和本次场景。未知信息留空，系统会列出待确认项。</li><li>点击“运行四步”，查看准备稿、来源与假设，再下载完整结果。</li></ol>
       <p><kbd>Alt</kbd> + <kbd>1 / 2 / 3</kbd> 填充示例；<kbd>Ctrl</kbd> + <kbd>Enter</kbd> 运行。快捷键不自动提交示例。</p>
       <p id="engine-status" class="notice" role="status">正在读取当前引擎模式……</p>
-      <p class="notice">公开云端演示采用官网可公开资料，不上传本地知识库原文。IMA 非必需且不调用。四级价格是可配置合成假设，非华为官方政策，非真实交易报价。内容为待人工审核的准备稿，不保证曝光或咨询转化。正式图片当前为 0 张。</p>
+      <p class="notice">AI 推理、IMA 知识库检索与联网抓取按本次请求显式启用。联网结果只作公开上下文，事实仍须保留来源并经过核验。四级价格是可配置合成假设，非华为官方政策，非真实交易报价。内容为待人工审核的准备稿，不保证曝光或咨询转化。正式图片当前为 0 张。</p>
       <p>云端与本机 7B 模型版能力不同。当前优先核心交互，前端 UI 将在功能稳定后继续优化。</p>
     </section>
     <section aria-labelledby="source-status-title">
@@ -40,6 +40,13 @@
           </div>
           <label><input id="demo-pricing" type="checkbox">开启固定5台的四级假设政策演算</label>
           <p>勾选后使用后端固定演示配置，5台是合成数量，不作为客户真实需求；真实预算和真实报价仍待核实。</p>
+          <fieldset class="capability-options">
+            <legend>本次启用的外部能力</legend>
+            <label><input id="use-cloud-model" type="checkbox" checked>云端大模型推理</label>
+            <label><input id="use-ima" type="checkbox" checked>IMA 知识库检索</label>
+            <label><input id="use-web-research" type="checkbox" checked>联网实时检索与公开网页抓取</label>
+            <p id="capability-status">正在核验云端模型、IMA 与联网检索配置……</p>
+          </fieldset>
           <details><summary>查看当前示例的合成价格配置</summary><pre id="policy-summary">请先选择示例。</pre></details>
         </fieldset>
         <div class="toolbar"><button id="run-button" type="submit" disabled>运行四步 · Ctrl+Enter</button><button id="resume-polling" type="button" hidden>继续结果查询</button></div>

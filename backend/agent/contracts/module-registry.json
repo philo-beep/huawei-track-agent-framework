@@ -11,6 +11,8 @@
       "title": "Agent 核心工程师、项目负责人",
       "owned_paths": [
         "huawei-sales-agent/backend/agent/agent_core.py",
+        "huawei-sales-agent/backend/agent/config.js",
+        "huawei-sales-agent/backend/agent/research.js",
         "huawei-sales-agent/backend/agent/cloud-runner.js",
         "huawei-sales-agent/backend/agent/fourstep.js",
         "huawei-sales-agent/backend/agent/main.js",
