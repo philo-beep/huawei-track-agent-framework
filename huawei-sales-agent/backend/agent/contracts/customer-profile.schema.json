@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:customer-profile:1.0",
+  "title": "客户理解子 Agent 画像 CustomerProfile v1.0",
+  "description": "客户理解子 Agent 交给证据、策略和质检阶段的唯一画像数据。explicit、inferred、pending 必须如实标记，下游不得把推断或待确认升级为客户已确认事实。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "input_summary", "profile", "conflicts", "questions", "readiness"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "input_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_request", "product", "audience", "scenario", "platform"],
+      "properties": {
+        "raw_request": {"type": "string", "minLength": 5, "maxLength": 4000},
+        "product": {"type": ["string", "null"]},
+        "audience": {"type": ["string", "null"]},
+        "scenario": {"type": ["string", "null"]},
+        "platform": {"type": ["string", "null"]}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "relationship", "industry", "company_size", "needs", "budget", "decision_chain", "preferences", "pain_points", "purchase_stage", "channels"],
+      "properties": {
+        "identity": {"$ref": "#/$defs/profileField"},
+        "relationship": {"$ref": "#/$defs/profileField"},
+        "industry": {"$ref": "#/$defs/profileField"},
+        "company_size": {"$ref": "#/$defs/profileField"},
+        "needs": {"$ref": "#/$defs/profileField"},
+        "budget": {"$ref": "#/$defs/profileField"},
+        "decision_chain": {"$ref": "#/$defs/profileField"},
+        "preferences": {"$ref": "#/$defs/profileField"},
+        "pain_points": {"$ref": "#/$defs/profileField"},
+        "purchase_stage": {"$ref": "#/$defs/profileField"},
+        "channels": {"$ref": "#/$defs/profileField"}
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "reason", "evidence"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}}
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "question", "blocks", "priority"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1, "maxLength": 300},
+          "blocks": {"enum": ["content", "quote", "both", "none"]},
+          "priority": {"enum": ["blocking", "recommended"]}
+        }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content", "quote", "reason"],
+      "properties": {
+        "content": {"enum": ["ready", "needs_clarification", "blocked"]},
+        "quote": {"enum": ["ready", "needs_clarification", "blocked"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_path", "quote"],
+      "properties": {
+        "input_path": {"type": "string", "pattern": "^/", "maxLength": 200},
+        "quote": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "profileField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "status", "evidence", "reason", "confidence"],
+      "properties": {
+        "value": {"type": ["string", "number", "object", "array", "null"]},
+        "status": {"enum": ["explicit", "inferred", "pending"]},
+        "evidence": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/evidence"}},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 300},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "pending"}}, "required": ["status"]}, "then": {"properties": {"value": {"type": "null"}, "confidence": {"const": 0}}}},
+        {"if": {"properties": {"status": {"enum": ["explicit", "inferred"]}}, "required": ["status"]}, "then": {"properties": {"value": {"not": {"type": "null"}}, "evidence": {"minItems": 1}}}}
+      ]
+    }
+  }
+}

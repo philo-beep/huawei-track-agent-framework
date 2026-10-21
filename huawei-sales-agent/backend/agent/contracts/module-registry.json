@@ -1,0 +1,128 @@
+{
+  "schema_version": "3.0",
+  "contract_version": "3.0",
+  "updated": "2026-10-20",
+  "status": "active",
+  "authority": "huawei-sales-agent/backend/agent/contracts/",
+  "specification": "文件归属与责任矩阵.md",
+  "summary": "当前 A—E 角色、主要文件责任和跨角色接口登记；不代表尚未实现的能力已经存在。",
+  "roles": {
+    "A": {
+      "title": "Agent 核心工程师、项目负责人",
+      "owned_paths": [
+        "huawei-sales-agent/backend/agent/agent_core.py",
+        "huawei-sales-agent/backend/agent/config.js",
+        "huawei-sales-agent/backend/agent/research.js",
+        "huawei-sales-agent/backend/agent/cloud-runner.js",
+        "huawei-sales-agent/backend/agent/fourstep.js",
+        "huawei-sales-agent/backend/agent/main.js",
+        "huawei-sales-agent/backend/agent/support.js",
+        "huawei-sales-agent/backend/agent/model.js",
+        "huawei-sales-agent/backend/agent/profile.js",
+        "huawei-sales-agent/backend/agent/knowledge.js",
+        "huawei-sales-agent/backend/agent/official.js",
+        "huawei-sales-agent/backend/agent/source-health.js",
+        "huawei-sales-agent/backend/agent/ima.js",
+        "huawei-sales-agent/backend/agent/tools.py",
+        "huawei-sales-agent/backend/agent/cloud-fact-selector.js",
+        "huawei-sales-agent/backend/agent/verification.js",
+        "huawei-sales-agent/backend/agent/pricing.js",
+        "huawei-sales-agent/backend/agent/sales.js",
+        "huawei-sales-agent/backend/agent/prompts/",
+        "huawei-sales-agent/backend/rag/",
+        "huawei-sales-agent/tests/",
+        "huawei-sales-agent-data/agent_spec/"
+      ],
+      "responsibilities": [
+        "主/子 Agent 调度",
+        "系统提示词和 Agent 运行规则",
+        "模型 API 调用与参数",
+        "知识库检索代码",
+        "自动化验收脚本",
+        "代码审核、整体联调和最终验收"
+      ]
+    },
+    "B": {
+      "title": "后端接口工程师",
+      "owned_paths": [
+        "huawei-sales-agent/backend/main.py",
+        "huawei-sales-agent/backend/api/",
+        "huawei-sales-agent/backend/session/",
+        "huawei-sales-agent/backend/agent/cloud-server.js",
+        "huawei-sales-agent/backend/agent/contracts/",
+        "huawei-sales-agent/backend/requirements.txt"
+      ],
+      "responsibilities": [
+        "HTTP 接口和异常处理",
+        "数据入库、缓存和限流",
+        "上传接口边界",
+        "会话记忆和聊天历史持久化",
+        "标准化 JSON 接口和接口文档"
+      ]
+    },
+    "C": {
+      "title": "前端开发工程师",
+      "owned_paths": [
+        "huawei-sales-agent/frontend/",
+        "huawei-sales-agent/assets/"
+      ],
+      "responsibilities": [
+        "聊天界面和产品卡片",
+        "加载样例、消息渲染和对话展示",
+        "对接后端 JSON 接口",
+        "移动端、页面样式和演示答辩页面"
+      ]
+    },
+    "D": {
+      "title": "数据与知识库工程师",
+      "owned_paths": [
+        "huawei-sales-agent-data/datasets/"
+      ],
+      "responsibilities": [
+        "数据集清洗、去重和校验",
+        "华为商城页面抓取与解析",
+        "文本切片和向量化入库准备",
+        "测试样例和 RAG 检索库质量"
+      ]
+    },
+    "E": {
+      "title": "产品与答辩工程师",
+      "owned_paths": [
+        "huawei-sales-agent/README.md",
+        "huawei-sales-agent-data/README.md",
+        "huawei-sales-agent-data/docs/"
+      ],
+      "responsibilities": [
+        "需求与赛项规则核对",
+        "README、PPT、答辩稿和演示脚本",
+        "全流程体验、bug、issue 和风险记录",
+        "提交材料整理和验收协助"
+      ]
+    }
+  },
+  "runtime_contracts": {
+    "marketing_input": "huawei-sales-agent/backend/agent/contracts/marketing-input.schema.json",
+    "marketing_output": "huawei-sales-agent/backend/agent/contracts/marketing-output.schema.json",
+    "pricing_input": "huawei-sales-agent/backend/agent/contracts/pricing-input.schema.json",
+    "pricing_output": "huawei-sales-agent/backend/agent/contracts/pricing-output.schema.json",
+    "module_input": "huawei-sales-agent/backend/agent/contracts/module-input.schema.json",
+    "module_envelope": "huawei-sales-agent/backend/agent/contracts/module-envelope.schema.json"
+  },
+  "examples": {
+    "pipeline_input": "huawei-sales-agent-data/datasets/test_sample/pipeline_input.json",
+    "pipeline_output": "huawei-sales-agent-data/datasets/test_sample/pipeline_output.example.json",
+    "portrait_cases": "huawei-sales-agent-data/datasets/test_sample/portrait_cases.json"
+  },
+  "implementation_status_values": {
+    "current_rule_mode": "当前可运行模式为规则准备稿，未调用千问或云端模型。",
+    "model_adapter_present": "存在模型适配和提示词文件，不表示模型调用已验证。",
+    "verified": "已通过 A 的联调、E 的辅助验收和相应测试。",
+    "pending_external": "缺少真实政策、许可、客户验证或赛事认可，不能由内部推定关闭。"
+  },
+  "change_policy": {
+    "owner": "B 维护契约，A 审核 Agent 生产方影响，C 复核前端消费，D 复核数据字段",
+    "compatible": "新增可选字段或保持现有语义，更新样例和消费方。",
+    "breaking": "删除字段、改变语义、收紧枚举或必填项时升级主版本并保留旧契约。",
+    "forbidden": "不得私改公共 Schema、复制契约、伪造事实或来源 ID。"
+  }
+}

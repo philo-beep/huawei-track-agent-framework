@@ -1,0 +1,628 @@
+{
+  "schema_version": "2.0",
+  "synthetic": true,
+  "note": "全链路契约样例：所有客户、产品、事实与金额均为合成或占位，仅用于验证接口结构，不构成真实客户资料、产品声明、价格政策或成交报价。",
+  "request_id": "demo-20261020-0001",
+  "envelopes": {
+    "customer": {
+      "schema_version": "2.0",
+      "request_id": "demo-20261020-0001",
+      "module_id": "customer",
+      "status": "ready",
+      "output_contract": "customer-profile",
+      "data": {
+        "schema_version": "1.0",
+        "input_summary": {
+          "raw_request": "合成样例：30人制造企业的新客户采购负责人，为仓库与办公室轮用采购12台办公笔记本，单台预算6000元，关注移动办公、软件兼容性和长续航，目前处于比价阶段。",
+          "product": "演示机型 A（合成）",
+          "audience": "制造企业采购负责人",
+          "scenario": "仓库与办公室轮用",
+          "platform": "公众号"
+        },
+        "profile": {
+          "identity": {
+            "value": "采购负责人",
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "采购负责人"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "relationship": {
+            "value": "新客户",
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "新客户"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "industry": {
+            "value": "制造业",
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "制造企业"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "company_size": {
+            "value": 30,
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "30人制造企业"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "needs": {
+            "value": [
+              "移动办公",
+              "软件兼容性"
+            ],
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "关注移动办公、软件兼容性"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "budget": {
+            "value": {
+              "min": 6000,
+              "max": 6000,
+              "currency": "CNY",
+              "scope": "单台",
+              "quantity": 12
+            },
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "单台预算6000元"
+              },
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "采购12台"
+              }
+            ],
+            "reason": "预算为客户输入，不是产品价格或补助资格",
+            "confidence": 1
+          },
+          "decision_chain": {
+            "value": null,
+            "status": "pending",
+            "evidence": [],
+            "reason": "未提供审批人和采购流程",
+            "confidence": 0
+          },
+          "preferences": {
+            "value": [
+              "长续航"
+            ],
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "长续航"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "pain_points": {
+            "value": [
+              "软件兼容性待核实"
+            ],
+            "status": "inferred",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "关注移动办公、软件兼容性"
+              }
+            ],
+            "reason": "由关注点推断为比价风险，需客户确认",
+            "confidence": 0.6
+          },
+          "purchase_stage": {
+            "value": "比价",
+            "status": "explicit",
+            "evidence": [
+              {
+                "input_path": "/payload/raw_request",
+                "quote": "处于比价阶段"
+              }
+            ],
+            "reason": "客户原话明确表达",
+            "confidence": 1
+          },
+          "channels": {
+            "value": null,
+            "status": "pending",
+            "evidence": [],
+            "reason": "未获客户授权可联系渠道",
+            "confidence": 0
+          }
+        },
+        "conflicts": [],
+        "questions": [
+          {
+            "field": "customer.decision_chain",
+            "question": "最终审批人和采购流程是什么？",
+            "blocks": "quote",
+            "priority": "recommended"
+          },
+          {
+            "field": "customer.channels",
+            "question": "客户授权使用哪个渠道继续联系？",
+            "blocks": "none",
+            "priority": "recommended"
+          }
+        ],
+        "readiness": {
+          "content": "ready",
+          "quote": "needs_clarification",
+          "reason": "内容可先按已知场景准备；完整SKU、价格政策与决策链未确认，报价继续阻塞。"
+        }
+      },
+      "issues": [],
+      "provenance": {
+        "contract_version": "2.0",
+        "generated_at": "2026-10-20T12:00:00Z",
+        "source_ids": [],
+        "mode": "synthetic",
+        "model": "synthetic-fixture",
+        "duration_ms": 12
+      }
+    },
+    "evidence": {
+      "schema_version": "2.0",
+      "request_id": "demo-20261020-0001",
+      "module_id": "evidence",
+      "status": "ready",
+      "output_contract": "evidence-bundle",
+      "data": {
+        "schema_version": "1.0",
+        "query": {
+          "product": "演示机型 A（合成）",
+          "sku": null,
+          "purpose": "mixed",
+          "as_of": "2026-10-20"
+        },
+        "facts": [
+          {
+            "fact_id": "fact-demo-001",
+            "product": "演示机型 A（合成）",
+            "sku": null,
+            "claim": "合成样例事实：该演示机型面向日常办公与移动使用场景；本句仅用于验证契约，不构成真实产品声明。",
+            "conditions": [
+              "仅用于契约测试",
+              "不代表任何真实SKU"
+            ],
+            "source": {
+              "source_id": "src-demo-001",
+              "source_type": "synthetic",
+              "title": "合成契约样例",
+              "entry": "pipeline.example.json#evidence",
+              "url": null,
+              "retrieved_at": "2026-10-20T12:00:00Z",
+              "sha256": null,
+              "excerpt": "合成样例，不含真实产品参数。"
+            }
+          }
+        ],
+        "images": [
+          {
+            "image_id": "image-demo-001",
+            "product": "演示机型 A（合成）",
+            "caption": "合成占位图，仅用于验证图片字段，不用于发布。",
+            "usage_scope": "internal_only",
+            "rights_status": "unknown",
+            "source": {
+              "source_id": "src-demo-002",
+              "source_type": "synthetic",
+              "title": "合成占位图",
+              "entry": "pipeline.example.json#evidence-image",
+              "url": null,
+              "retrieved_at": "2026-10-20T12:00:00Z",
+              "sha256": null,
+              "excerpt": "合成占位图片，无真实版权素材。"
+            }
+          }
+        ],
+        "pricing_refs": [],
+        "conflicts": [],
+        "coverage": {
+          "facts": 1,
+          "images": 1,
+          "prices": 0,
+          "gaps": [
+            "价格与完整SKU未核验，报价必须阻塞。",
+            "图片许可未知，不得公开发布。"
+          ]
+        }
+      },
+      "issues": [],
+      "provenance": {
+        "contract_version": "2.0",
+        "generated_at": "2026-10-20T12:00:01Z",
+        "source_ids": [
+          "src-demo-001",
+          "src-demo-002"
+        ],
+        "mode": "synthetic",
+        "model": "synthetic-fixture",
+        "duration_ms": 8
+      }
+    },
+    "strategy": {
+      "schema_version": "2.0",
+      "request_id": "demo-20261020-0001",
+      "module_id": "strategy",
+      "status": "ready",
+      "output_contract": "content-brief",
+      "data": {
+        "schema_version": "1.0",
+        "platform": "公众号",
+        "audience": "制造企业采购负责人",
+        "reader_problem": "需要在仓库与办公室轮用时兼顾移动办公与软件兼容，但型号、兼容性和价格尚未核实。",
+        "objective": {
+          "primary": "consult",
+          "secondary": "quote_request"
+        },
+        "angle": "先帮采购负责人列出比价前必须核对的兼容性与使用条件，再邀请补充信息。",
+        "proof_points": [
+          {
+            "fact_id": "fact-demo-001",
+            "role": "risk_control",
+            "order": 1,
+            "reason": "用受控事实建立边界，避免把样例当真实参数。"
+          }
+        ],
+        "structure": [
+          {
+            "section": "场景开头",
+            "purpose": "复述仓库与办公室轮用的具体任务",
+            "fact_ids": []
+          },
+          {
+            "section": "核对清单",
+            "purpose": "列出软件版本、外设、移动方式和售后条件",
+            "fact_ids": [
+              "fact-demo-001"
+            ]
+          },
+          {
+            "section": "下一步",
+            "purpose": "邀请客户补充信息再安排核实",
+            "fact_ids": [
+              "fact-demo-001"
+            ]
+          }
+        ],
+        "tone": {
+          "style": "克制、解释型、面向采购决策",
+          "avoid": [
+            "夸张形容词",
+            "未经核实的对比",
+            "承诺优惠"
+          ]
+        },
+        "image_plan": [],
+        "cta": {
+          "goal": "consult",
+          "text_direction": "邀请客户补充软件版本、外设与采购数量，再安排核实。",
+          "channel": "公众号留言"
+        },
+        "constraints": {
+          "length_hint": "800-1200字",
+          "compliance": [
+            "不承诺兼容性",
+            "不报未经核实价格",
+            "保留来源"
+          ],
+          "forbidden_claims": [
+            "真实成交价",
+            "未核实参数",
+            "客户评价",
+            "亲测结论"
+          ]
+        }
+      },
+      "issues": [],
+      "provenance": {
+        "contract_version": "2.0",
+        "generated_at": "2026-10-20T12:00:02Z",
+        "source_ids": [
+          "fact-demo-001",
+          "src-demo-001"
+        ],
+        "mode": "synthetic",
+        "model": "synthetic-fixture",
+        "duration_ms": 10
+      }
+    },
+    "writing": {
+      "schema_version": "2.0",
+      "request_id": "demo-20261020-0001",
+      "module_id": "writing",
+      "status": "ready",
+      "output_contract": "article-draft",
+      "data": {
+        "schema_version": "1.0",
+        "platform": "公众号",
+        "draft_status": "ready_for_review",
+        "title": "比价前，先把这几项使用条件核对清楚",
+        "lead": "如果设备要在仓库和办公室之间轮用，先别急着比价格。把任务、软件和移动方式对齐，后面的选型才有可比性。",
+        "body_markdown": "## 先确认任务，而不是先看参数\n\n仓库与办公室轮用的场景，核心是设备能否跟着人走、能否覆盖日常办公任务。\n\n## 比价前建议核对的四件事\n\n1. 常用软件的名称与版本；\n2. 是否需要连接仓库里的打印、扫码或测量设备；\n3. 单次移动的距离与携带方式；\n4. 售后响应和交付条件。\n\n> 本文使用演示机型作为结构样例，不对应任何真实产品参数或成交价格。\n\n## 把信息补齐，再安排下一步\n\n把上述信息整理后，再由销售顾问对照已核实资料给出可执行的核对清单。",
+        "cta": "欢迎补充常用软件版本、外设和采购数量，我们先把核对清单补齐，再安排下一步。",
+        "tags": [
+          "采购核对",
+          "移动办公",
+          "比价"
+        ],
+        "images": [],
+        "citations": [
+          {
+            "fact_id": "fact-demo-001",
+            "claim": "演示机型仅作为结构样例，不代表真实参数。",
+            "used_in": "body"
+          }
+        ],
+        "revision": {
+          "round": 1,
+          "editor": "A",
+          "change_summary": [
+            "按任务书生成受控初稿",
+            "移除未授权的图片位置"
+          ]
+        }
+      },
+      "issues": [],
+      "provenance": {
+        "contract_version": "2.0",
+        "generated_at": "2026-10-20T12:00:03Z",
+        "source_ids": [
+          "fact-demo-001",
+          "src-demo-001"
+        ],
+        "mode": "synthetic",
+        "model": "synthetic-fixture",
+        "duration_ms": 14
+      }
+    },
+    "quality": {
+      "schema_version": "2.0",
+      "request_id": "demo-20261020-0001",
+      "module_id": "quality",
+      "status": "blocked",
+      "output_contract": "delivery-review",
+      "data": {
+        "schema_version": "1.0",
+        "decision": "blocked",
+        "checks": [
+          {
+            "check_id": "check-fact-001",
+            "category": "fact",
+            "result": "pass",
+            "severity": "major",
+            "owner": "A",
+            "message": "引用事实ID存在，未发现新增数字或参数。",
+            "evidence_ids": [
+              "fact-demo-001"
+            ]
+          },
+          {
+            "check_id": "check-source-001",
+            "category": "source",
+            "result": "pass",
+            "severity": "major",
+            "owner": "D",
+            "message": "事实和图片均保留来源；样例来源已标注为合成。",
+            "evidence_ids": [
+              "src-demo-001",
+              "src-demo-002"
+            ]
+          },
+          {
+            "check_id": "check-image-001",
+            "category": "image",
+            "result": "fail",
+            "severity": "major",
+            "owner": "D",
+            "message": "图片许可未知且仅限内部，不得公开发布。",
+            "evidence_ids": [
+              "image-demo-001"
+            ]
+          },
+          {
+            "check_id": "check-profile-001",
+            "category": "profile_fit",
+            "result": "pass",
+            "severity": "major",
+            "owner": "A",
+            "message": "内容围绕仓库与办公室轮用及比价核对，未虚构身份或预算。",
+            "evidence_ids": []
+          },
+          {
+            "check_id": "check-platform-001",
+            "category": "platform_fit",
+            "result": "pass",
+            "severity": "minor",
+            "owner": "A",
+            "message": "公众号采用分层说明结构，没有把平台规则当作营销主题。",
+            "evidence_ids": []
+          },
+          {
+            "check_id": "check-compliance-001",
+            "category": "compliance",
+            "result": "pass",
+            "severity": "major",
+            "owner": "A",
+            "message": "未出现成交价、客户评价或亲测结论。",
+            "evidence_ids": [
+              "fact-demo-001"
+            ]
+          },
+          {
+            "check_id": "check-pricing-001",
+            "category": "pricing",
+            "result": "fail",
+            "severity": "blocker",
+            "owner": "HUMAN",
+            "message": "缺完整SKU与有效四级价格政策，报价阻塞。",
+            "evidence_ids": []
+          },
+          {
+            "check_id": "check-format-001",
+            "category": "format",
+            "result": "pass",
+            "severity": "minor",
+            "owner": "A",
+            "message": "四部分结构可导出为JSON与Markdown。",
+            "evidence_ids": []
+          }
+        ],
+        "routed_fixes": [
+          {
+            "owner": "D",
+            "requirement": "补充图片授权，或从交付中移除该图片。",
+            "related_check_ids": [
+              "check-image-001"
+            ],
+            "blocking": false
+          },
+          {
+            "owner": "HUMAN",
+            "requirement": "提供完整SKU、有效四级价格政策、适用地区与授权依据。",
+            "related_check_ids": [
+              "check-pricing-001"
+            ],
+            "blocking": true
+          }
+        ],
+        "pricing": {
+          "status": "blocked",
+          "unit_amount_cents": null,
+          "amount_cents": null,
+          "currency": null,
+          "policy_id": null,
+          "synthetic": false,
+          "actual_transaction_quote": false,
+          "notice": "缺完整SKU与获授权四级价格政策，未输出金额。",
+          "pricing_output_ref": null
+        },
+        "demo": {
+          "status": "planned",
+          "estimated_minutes": 30,
+          "verified_within_30_minutes": false,
+          "steps": [
+            "5分钟：确认客户要演示的具体办公任务与软件版本。",
+            "10分钟：在已核实设备上打开客户授权的脱敏文件。",
+            "10分钟：客户逐项确认打开、编辑、保存和导出结果。",
+            "5分钟：记录失败步骤、待确认项和下一次验证时间。"
+          ],
+          "assumptions": [
+            "设备和网络由客户现场准备",
+            "演示时长尚未实测",
+            "软件兼容性尚未核实"
+          ]
+        },
+        "next_actions": [
+          {
+            "action": "向客户补充询问常用软件名称与版本、外设类型和移动距离。",
+            "owner": "销售顾问",
+            "trigger": "客户愿意继续沟通后",
+            "depends_on": [
+              "客户授权联系渠道"
+            ]
+          },
+          {
+            "action": "在获得完整SKU和有效价格政策前，不向客户报金额。",
+            "owner": "销售顾问",
+            "trigger": "客户询问价格时",
+            "depends_on": [
+              "完整SKU",
+              "有效四级价格政策",
+              "适用地区"
+            ]
+          },
+          {
+            "action": "图片授权确认前，交付物不包含该图片。",
+            "owner": "内容负责人",
+            "trigger": "准备对外发布前",
+            "depends_on": [
+              "图片授权或替换素材"
+            ]
+          }
+        ],
+        "deliverable": {
+          "four_parts": {
+            "scenario_judgment": true,
+            "knowledge_basis": true,
+            "marketing_content": true,
+            "verification": true
+          },
+          "sources_preserved": true,
+          "image_sources_preserved": true,
+          "export_format": "both",
+          "export_ref": null
+        }
+      },
+      "issues": [
+        {
+          "code": "PRICE_POLICY_MISSING",
+          "path": "/pricing",
+          "message": "缺完整SKU与有效四级价格政策，未输出金额。",
+          "owner": "HUMAN",
+          "severity": "blocker",
+          "retryable": false,
+          "evidence": [
+            "check-pricing-001"
+          ]
+        },
+        {
+          "code": "IMAGE_RIGHTS_UNKNOWN",
+          "path": "/images/0/rights_status",
+          "message": "图片许可未知，只能内部使用。",
+          "owner": "D",
+          "severity": "major",
+          "retryable": false,
+          "evidence": [
+            "image-demo-001"
+          ]
+        }
+      ],
+      "provenance": {
+        "contract_version": "2.0",
+        "generated_at": "2026-10-20T12:00:05Z",
+        "source_ids": [
+          "fact-demo-001",
+          "src-demo-001",
+          "image-demo-001",
+          "src-demo-002"
+        ],
+        "mode": "synthetic",
+        "model": "synthetic-fixture",
+        "duration_ms": 9
+      }
+    }
+  }
+}
+

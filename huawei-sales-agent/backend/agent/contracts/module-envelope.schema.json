@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:agent-stage-envelope:2.0",
+  "title": "Agent 子任务统一返回信封 v2.0",
+  "description": "Agent 各流水线阶段 async run 的唯一返回外壳。data 的具体字段由 output_contract 指向的数据契约定义；信封不得塞入临时文件句柄、模型客户端、凭据或跨阶段可变对象。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "module_id", "status", "output_contract", "data", "issues", "provenance"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "request_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$",
+      "description": "一次客户请求的唯一标识。换客户、换场景或重新发起均须新 ID；不得复用旧会话。"
+    },
+    "module_id": {"enum": ["customer", "evidence", "strategy", "writing", "quality"]},
+    "status": {
+      "enum": ["ready", "needs_clarification", "blocked"],
+      "description": "ready 仅表示本模块可交接，不代表成稿通过、报价可成交或已发布。"
+    },
+    "output_contract": {
+      "enum": ["customer-profile", "evidence-bundle", "content-brief", "article-draft", "delivery-review"]
+    },
+    "data": {
+      "type": ["object", "null"],
+      "description": "ready/needs_clarification 时为本模块数据对象；blocked 时可为 null 或保留已核验的部分结果。"
+    },
+    "issues": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {"$ref": "#/$defs/issue"}
+    },
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "allOf": [
+    {"if": {"properties": {"module_id": {"const": "customer"}}, "required": ["module_id"]}, "then": {"properties": {"output_contract": {"const": "customer-profile"}}}},
+    {"if": {"properties": {"module_id": {"const": "evidence"}}, "required": ["module_id"]}, "then": {"properties": {"output_contract": {"const": "evidence-bundle"}}}},
+    {"if": {"properties": {"module_id": {"const": "strategy"}}, "required": ["module_id"]}, "then": {"properties": {"output_contract": {"const": "content-brief"}}}},
+    {"if": {"properties": {"module_id": {"const": "writing"}}, "required": ["module_id"]}, "then": {"properties": {"output_contract": {"const": "article-draft"}}}},
+    {"if": {"properties": {"module_id": {"const": "quality"}}, "required": ["module_id"]}, "then": {"properties": {"output_contract": {"const": "delivery-review"}}}},
+    {"if": {"properties": {"status": {"const": "ready"}}, "required": ["status"]}, "then": {"properties": {"data": {"type": "object"}}}},
+    {"if": {"properties": {"status": {"const": "needs_clarification"}}, "required": ["status"]}, "then": {"properties": {"data": {"type": "object"}, "issues": {"minItems": 1}}}},
+    {"if": {"properties": {"status": {"const": "blocked"}}, "required": ["status"]}, "then": {"properties": {"data": {"type": ["object", "null"]}, "issues": {"minItems": 1}}}}
+  ],
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "path", "message", "owner", "severity", "retryable"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$"},
+        "path": {"type": "string", "pattern": "^/", "maxLength": 200},
+        "message": {"type": "string", "minLength": 1, "maxLength": 500},
+        "owner": {"enum": ["A", "B", "C", "D", "E", "INTEGRATION", "HUMAN"]},
+        "severity": {"enum": ["blocker", "major", "minor"]},
+        "retryable": {"type": "boolean"},
+        "evidence": {"type": "array", "maxItems": 10, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "generated_at", "source_ids", "mode"],
+      "properties": {
+        "contract_version": {"const": "2.0"},
+        "generated_at": {"type": "string", "format": "date-time"},
+        "source_ids": {"type": "array", "uniqueItems": true, "maxItems": 100, "items": {"type": "string", "minLength": 1}},
+        "mode": {"enum": ["local", "official", "mixed", "synthetic", "none"]},
+        "model": {"type": ["string", "null"]},
+        "duration_ms": {"type": ["integer", "null"], "minimum": 0}
+      }
+    }
+  }
+}

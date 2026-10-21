@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:delivery-review:1.0",
+  "title": "质检子 Agent 交付核验 DeliveryReview v1.0",
+  "description": "质检子 Agent 交给整体联调和责任角色的唯一核验与交付数据。decision 只表示本次核验结论；pricing、demo 与转化均不得冒充真实成交、真实政策或已验证效果。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision", "checks", "routed_fixes", "pricing", "demo", "next_actions", "deliverable"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "decision": {"enum": ["pass", "needs_revision", "blocked"]},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "category", "result", "severity", "owner", "message", "evidence_ids"],
+        "properties": {
+          "check_id": {"type": "string", "pattern": "^check-[A-Za-z0-9._-]{1,60}$"},
+          "category": {"enum": ["fact", "image", "compliance", "profile_fit", "platform_fit", "pricing", "source", "format"]},
+          "result": {"enum": ["pass", "fail", "pending", "not_run"]},
+          "severity": {"enum": ["blocker", "major", "minor"]},
+          "owner": {"enum": ["A", "B", "C", "D", "E", "INTEGRATION", "HUMAN"]},
+          "message": {"type": "string", "minLength": 1, "maxLength": 500},
+          "evidence_ids": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "routed_fixes": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["owner", "requirement", "related_check_ids", "blocking"],
+        "properties": {
+          "owner": {"enum": ["A", "B", "C", "D", "E", "HUMAN", "INTEGRATION"]},
+          "requirement": {"type": "string", "minLength": 1, "maxLength": 500},
+          "related_check_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^check-[A-Za-z0-9._-]{1,60}$"}},
+          "blocking": {"type": "boolean"}
+        }
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "unit_amount_cents", "amount_cents", "currency", "policy_id", "synthetic", "actual_transaction_quote", "notice", "pricing_output_ref"],
+      "properties": {
+        "status": {"enum": ["calculated_demo", "blocked", "invalid_input", "not_run"]},
+        "unit_amount_cents": {"type": ["integer", "null"], "minimum": 0},
+        "amount_cents": {"type": ["integer", "null"], "minimum": 0},
+        "currency": {"enum": ["CNY", null]},
+        "policy_id": {"type": ["string", "null"], "maxLength": 100},
+        "synthetic": {"type": "boolean"},
+        "actual_transaction_quote": {"const": false},
+        "notice": {"type": "string", "minLength": 1, "maxLength": 500},
+        "pricing_output_ref": {"type": ["string", "null"], "maxLength": 300}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "calculated_demo"}}, "required": ["status"]}, "then": {"properties": {"unit_amount_cents": {"type": "integer"}, "amount_cents": {"type": "integer"}, "currency": {"const": "CNY"}, "policy_id": {"type": "string", "minLength": 1}, "synthetic": {"const": true}}}},
+        {"if": {"properties": {"status": {"enum": ["blocked", "invalid_input", "not_run"]}}, "required": ["status"]}, "then": {"properties": {"unit_amount_cents": {"type": "null"}, "amount_cents": {"type": "null"}}}}
+      ]
+    },
+    "demo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "estimated_minutes", "verified_within_30_minutes", "steps", "assumptions"],
+      "properties": {
+        "status": {"enum": ["planned", "verified", "not_run"]},
+        "estimated_minutes": {"type": "integer", "minimum": 0, "maximum": 240},
+        "verified_within_30_minutes": {"const": false},
+        "steps": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
+        "assumptions": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "owner", "trigger", "depends_on"],
+        "properties": {
+          "action": {"type": "string", "minLength": 1, "maxLength": 400},
+          "owner": {"type": "string", "minLength": 1, "maxLength": 100},
+          "trigger": {"type": "string", "minLength": 1, "maxLength": 200},
+          "depends_on": {"type": "array", "maxItems": 10, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "deliverable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["four_parts", "sources_preserved", "image_sources_preserved", "export_format", "export_ref"],
+      "properties": {
+        "four_parts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scenario_judgment", "knowledge_basis", "marketing_content", "verification"],
+          "properties": {
+            "scenario_judgment": {"type": "boolean"},
+            "knowledge_basis": {"type": "boolean"},
+            "marketing_content": {"type": "boolean"},
+            "verification": {"type": "boolean"}
+          }
+        },
+        "sources_preserved": {"type": "boolean"},
+        "image_sources_preserved": {"type": "boolean"},
+        "export_format": {"enum": ["markdown", "json", "both", "none"]},
+        "export_ref": {"type": ["string", "null"], "maxLength": 300}
+      }
+    }
+  }
+}

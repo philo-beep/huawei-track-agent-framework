@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:evidence-bundle:1.0",
+  "title": "证据子 Agent 证据包 EvidenceBundle v1.0",
+  "description": "证据子 Agent 交给策略、写作和质检阶段的唯一证据数据。事实、图片、价格都必须带来源；下游只能引用事实ID、图片ID和价格ID，不得自造来源或扩大适用条件。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "query", "facts", "images", "pricing_refs", "conflicts", "coverage"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "sku", "purpose", "as_of"],
+      "properties": {
+        "product": {"type": "string", "minLength": 1},
+        "sku": {"type": ["string", "null"]},
+        "purpose": {"enum": ["content", "quote", "demo", "mixed"]},
+        "as_of": {"type": "string", "format": "date"}
+      }
+    },
+    "facts": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact_id", "product", "sku", "claim", "conditions", "source"],
+        "properties": {
+          "fact_id": {"type": "string", "pattern": "^fact-[A-Za-z0-9._-]{1,60}$"},
+          "product": {"type": "string", "minLength": 1},
+          "sku": {"type": ["string", "null"]},
+          "claim": {"type": "string", "minLength": 1, "maxLength": 1000},
+          "conditions": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
+          "source": {"$ref": "#/$defs/source"}
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["image_id", "product", "caption", "usage_scope", "rights_status", "source"],
+        "properties": {
+          "image_id": {"type": "string", "pattern": "^image-[A-Za-z0-9._-]{1,60}$"},
+          "product": {"type": "string", "minLength": 1},
+          "caption": {"type": "string", "minLength": 1, "maxLength": 300},
+          "usage_scope": {"enum": ["internal_only", "demo", "public_release"]},
+          "rights_status": {"enum": ["cleared", "unknown", "restricted"]},
+          "source": {"$ref": "#/$defs/source"}
+        }
+      }
+    },
+    "pricing_refs": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["price_id", "product", "sku", "observed_price_cents", "currency", "price_kind", "tax_included", "region", "channel", "effective_from", "effective_to", "verification", "limitations", "source"],
+        "properties": {
+          "price_id": {"type": "string", "pattern": "^price-[A-Za-z0-9._-]{1,60}$"},
+          "product": {"type": "string", "minLength": 1},
+          "sku": {"type": "string", "minLength": 1},
+          "observed_price_cents": {"type": "integer", "minimum": 0},
+          "currency": {"enum": ["CNY"]},
+          "price_kind": {"enum": ["list_price", "promotion_price", "starting_price"]},
+          "tax_included": {"type": "boolean"},
+          "region": {"type": "string", "minLength": 1},
+          "channel": {"type": "string", "minLength": 1},
+          "effective_from": {"type": "string", "format": "date"},
+          "effective_to": {"type": ["string", "null"], "format": "date"},
+          "verification": {"enum": ["current_verified", "expired", "unverified"]},
+          "limitations": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
+          "source": {"$ref": "#/$defs/source"}
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "candidates", "resolution"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "candidates": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+          "resolution": {"enum": ["adopted_newer", "adopted_more_complete", "pending_human", "not_resolved"]}
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["facts", "images", "prices", "gaps"],
+      "properties": {
+        "facts": {"type": "integer", "minimum": 0},
+        "images": {"type": "integer", "minimum": 0},
+        "prices": {"type": "integer", "minimum": 0},
+        "gaps": {"type": "array", "maxItems": 30, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_type", "title", "entry", "url", "retrieved_at", "sha256", "excerpt"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^src-[A-Za-z0-9._-]{1,60}$"},
+        "source_type": {"enum": ["local_knowledge", "huawei_official", "competition_manual", "synthetic"]},
+        "title": {"type": "string", "minLength": 1, "maxLength": 300},
+        "entry": {"type": "string", "minLength": 1, "maxLength": 300},
+        "url": {"type": ["string", "null"], "maxLength": 500},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "excerpt": {"type": "string", "minLength": 1, "maxLength": 2000}
+      }
+    }
+  }
+}

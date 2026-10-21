@@ -4,81 +4,63 @@ sdk: docker
 app_port: 7860
 ---
 
-# 华销智策 —— 针对华为的销售智能体
+# 华销智策项目协作入口
 
-华销智策 —— 针对华为的销售智能体，为华为销售顾问提供四步工作流：**读懂客户 → 写出内容 → 给出方案 → 推进成交**。先整理客户明确说过的信息，再按渠道生成带来源的内容准备稿，演示四级价格计算与现场演示计划，最后列出待确认问题和跟进动作。
+本项目工作区采用两个标准目录：
 
-> 当前公开版是可交互的**规则准备稿演示**，不调用云大模型；本机增强版可调用免费本地千问。准备稿需销售审核，尚未验证咨询转化。演示报价使用人为合成政策，**不是华为现价、授权优惠或成交报价**。缺少真实价格依据时，正式报价金额为空。
+- `huawei-sales-agent/`：可运行业务代码、前端、后端、Agent、RAG、测试和启动脚本。
+- `huawei-sales-agent-data/`：数据集、Agent 规范、验收清单和赛事文档。
 
-## 评委入口与阅读顺序
+## 远端与公开演示
 
-- GitHub独立公开仓库：https://github.com/philo-beep/huawei-track-agent-framework
-- 魔搭空间：https://modelscope.cn/studios/philosophia/promotion-agent
-- 交互演示：https://philosophia-promotion-agent.ms.show
-- 完整说明书：[华为销售顾问产品使用说明书](docs/product/华为销售顾问产品使用说明书.md)
-- 提交材料：[黑客松提交清单](docs/product/黑客松提交清单.md)
-- 部署与核验记录：[SUBMISSION.md](SUBMISSION.md)
+- GitHub 业务代码：[main 分支](https://github.com/philo-beep/huawei-track-agent-framework/tree/main)
+- GitHub 数据与规范：[data-spec 分支](https://github.com/philo-beep/huawei-track-agent-framework/tree/data-spec)
+- 魔搭空间：[philosophia/promotion-agent](https://modelscope.cn/studios/philosophia/promotion-agent)
+- 公网演示：[https://philosophia-promotion-agent.ms.show](https://philosophia-promotion-agent.ms.show)
 
-最终部署状态以提交记录为准，历史框架介绍页不等于本版业务演示已上线。
+当前系统支持按请求显式启用云端大模型（DeepSeek v4.1-flash）、IMA OpenAPI 知识库检索和联网公开网页抓取；三项能力均需通过本地受控环境变量注入凭据，不写入源码或镜像。公网是否可用取决于部署平台是否完成同样的密钥注入与网络放行。公网可访问、模型/检索调用和业务效果是不同验收层级，不得互相替代。
 
-## 打开后怎么操作
+## 当前角色
 
-1. 选择一个完整产品型号和发布平台，可选公众号、小红书、朋友圈。
-2. 填写脱敏后的客户描述和具体使用场景。只输入客户已表达的情况，不填真实姓名、电话、公司机密。也可以按案例按钮或快捷键填入合成样例。
-3. 选择是否查看假设价格演算，再点击运行，等待四步结果。信息不足时先阅读追问，不把“待确认”当成已知事实。
-4. 查看画像、内容准备稿、报价与演示计划、跟进动作；逐条检查资料来源及限制。云演示使用固定5台合成采购数量，不能套用到真实客户。
-5. 下载完整JSON或Markdown结果供复核；修改客户描述、场景或平台可重新运行。
+| 角色 | 职责 |
+| --- | --- |
+| A：Agent 核心工程师、项目负责人 | 主/子 Agent 调度、系统提示词、模型 API、RAG 代码、验收脚本、Agent 规范、代码审核和最终联调 |
+| B：后端接口工程师 | HTTP 接口、数据入库、缓存、限流、上传边界、会话记忆、持久化、标准化 JSON 接口和异常处理 |
+| C：前端开发工程师 | 聊天界面、产品卡片、加载样例、流式消息、接口对接、移动端和演示页面 |
+| D：数据与知识库工程师 | 数据清洗、商城页面解析、文本切片、向量化入库、去重、RAG 检索库和测试样例数据 |
+| E：产品与答辩工程师 | 需求与规则核对、README、PPT、答辩稿、演示脚本、问题记录、风险和提交包；协助验收 |
 
-快捷键：`Alt+1`、`Alt+2`、`Alt+3`填入不同案例；`Ctrl+Enter`开始运行。案例只填表，不自动执行。浏览器或系统若占用快捷键，直接点页面按钮即可。
+## 开始工作前
 
-页面“资料状态”逐型号显示核验、抓取和到期时间。提交前会重新核验，资料过期、损坏或无法确认时阻止生成并提示维护；“重新核验”只检查已有快照，不会重新抓取网站。进程在线不代表资料有效，规格有效不代表价格或图片已核实。
+1. 阅读本文件。
+2. 阅读 [团队协作与分工说明](团队协作与分工说明.md)。
+3. 阅读 [文件归属与责任矩阵](文件归属与责任矩阵.md)。
+4. 进入工作区后阅读对应 README：
 
-维护者可按[安全更新官网资料](docs/data/安全更新官网资料.md)验证获授权的离线规格证据包：`python data/import_official.py --package <证据包目录>` 默认不写入，只有显式 `--apply` 才在全量核验后原子更新并备份原清单；失败保留原资料，不能伪改抓取时刻或扩大有效期。本工具首版不导入价格、SKU或图片。已有 `fetch_official.py` 为原采集工具，不能代替授权范围核验或安全导入流程。
+   - A：`huawei-sales-agent/backend/README.md`、`backend/agent/README.md`、`backend/agent/prompts/README.md`、`backend/rag/README.md`、`tests/README.md`、`huawei-sales-agent-data/agent_spec/README.md`
+   - B：`huawei-sales-agent/backend/README.md`、`backend/api/README.md`、`backend/agent/contracts/README.md`、`backend/session/README.md`
+   - C：`huawei-sales-agent/frontend/README.md`、`assets/README.md`、`backend/api/README.md`
+   - D：`huawei-sales-agent-data/datasets/README.md`、`backend/rag/README.md`、`huawei-sales-agent-data/agent_spec/task_rule.md`
+   - E：`huawei-sales-agent/README.md`、`tests/README.md`、`huawei-sales-agent-data/agent_spec/acceptance.md`、`huawei-sales-agent-data/docs/README.md`
 
-逐项功能改进与发布记录见 [ITERATIONS.md](ITERATIONS.md)。每项独立验收后同步两平台，达到同口径自评60分才启动UI美化；测试通过率不换算为赛事分数。
+阅读优先级为：任务单 → 根协作文档 → 工作区 README → 子目录 README → 当前验收材料。
 
-## 本地运行公开演示版
+## 运行入口
 
-需要Node.js 24，无额外npm依赖，不需要账号、API Key或模型下载。
-
-```bash
-git clone https://github.com/philo-beep/huawei-track-agent-framework.git
-cd huawei-track-agent-framework
-node backend/marketing/cloud-server.js
+```powershell
+Set-Location '.\huawei-sales-agent'
+python backend/main.py
 ```
 
-按终端显示的本地地址打开。云端使用 `PORT=7860` 和 `PUBLIC_ORIGIN=https://philosophia-promotion-agent.ms.show`，监听 `0.0.0.0`；本地配置见 [云端后端说明](docs/backend/cloud-demo.md)。Dockerfile启动同一服务；公开演示使用官网快照及合成配置，不读取私有知识库、不调用IMA。
+默认访问地址：`http://localhost:7860`。
 
-官网规格按抓取时点及完整型号核验，快照超过7天会阻止继续使用。维护者按[安全更新官网资料](docs/data/安全更新官网资料.md)导入获授权的离线证据包，先验证、再显式更新，经过独立核验后重新部署；不将旧采集脚本作为安全维护入口。不能以旧快照冒充实时价格；华为商城动态价格暂未取得完整可用证据，价格保持待核实。
+当前实现使用 Python 标准库 HTTP 网关、Node.js Agent/规则引擎和原生 HTML/CSS/JavaScript。FastAPI、Flask、Vue 或 Tailwind 如后续引入，必须单独说明，不得描述为已经使用。
 
-## 本机千问增强版
+## Git 与验收
 
-在用户原工作区，双击 `启动网页助手.cmd`，访问 `http://127.0.0.1:8767/`。修复后真实运行17.092秒通过35项复核。当前本机模型为Ollama `qwen2.5vl:7b`，不是最新千问，不需要付费API。本机版使用任德耀本地知识库和官网资料；独立公开版不包含私有知识库文件。
+- `main`：可运行业务代码；所有合并走 PR，由 A 代码审核。
+- `data-spec`：数据集、Agent 规范、测试样例、验收清单和文档；不与 main 混放，也不合并进 main。
+- 每个成员使用 `feat/xxx` 功能分支；提交 PR 前先同步 main 并解决冲突。
+- A 负责整体联调和验收脚本；E 协助需求对齐、全流程验收和材料一致性核对。
+- 只有自测、PR 审核、A/E 验收和最终联调全部通过，成果才可进入可交付版本。
 
-从公开仓库重建本机增强版时，需自行准备合法的知识库ZIP，运行 `python data/build_local_index.py build`，安装Ollama及该模型，再运行 `node backend/marketing/web-server.js --port 8767`。没有知识库和模型时请先使用公开规则版。CLI入口 `main.js`、`fourstep.js` 保留，输入契约见 `contracts/` 与 `docs/api/`。
-
-## 已实现与边界
-
-| 能力 | 当前结果 | 尚需完善 |
-| --- | --- | --- |
-| 客户画像 | 十一维拆解，区分明确输入、推断、待确认；输出追问 | 更广行业实测及复杂决策链识别 |
-| 内容准备 | 三平台结构、事实引用、限制条件、咨询引导 | 自然可发布软文、正式配图、真实转化验证 |
-| 报价方案 | 四级假设模型，整数分计算、顺序、封顶、资格及日期校验；演示计划 | 真实授权政策、精确SKU现价、现场半小时计时 |
-| 销售跟进 | 缺失问题、条件式下一步行动 | 客户管理系统、提醒、成交效果跟踪 |
-| 交互留源 | 网页操作、来源核对、双格式导出；云会话隔离 | 商务风格设计、图片审核流程 |
-
-四级演示政策采用“客户类型→采购数量→产品配置→区域”。**此为基于行业惯例与赛题推断的合理假设，待官方确认**；分类、系数均为项目人为配置，不代表已有行业或华为政策认证。公开演示规则位于 `backend/marketing/cloud-runner.js` 的 `pricingInput`，完整来源复查见 [价格政策来源与假设清单](outputs/B/价格政策来源与假设清单.md)。
-
-IMA已由本地知识库 + 华为官网替代，资料来源标注已保留；正式图片当前未完成核验，不展示伪造配图。此替代来自用户产品要求，不能视为赛事手册IMA要求已被修改。最新公开云候选按原S1—S7独立自评40/100（12/0/3/6/7/8/4）；本机千问历史46/100属于不同环境，不能作同版升降比较。未达到60分，不启动UI美化、不承诺初赛晋级；手册没有初赛固定60分线。逐项理由及实际发布状态见 [SUBMISSION.md](SUBMISSION.md)。
-
-当前版本已完成核心功能完整实现（四步闭环可运行、可演示），前端UI属于后续优化项，将在功能稳定后迭代美化。这里的“完整实现”限于已披露的准备稿、合成报价和行动建议流程，不代表真实交易政策、正式图文与转化效果已实现。
-
-## 来源、公开范围与复现
-
-- 官网资料：`data/official/manifest.json`记录页面、抓取时间、型号、限制和SHA-256；`data/official/raw/`保留匹配字节。
-- 本机知识库：两个ZIP经比对字节相同，以任德耀版本为主别名去重；公开仓库不含ZIP、索引、受控条目摘录或客户会话。
-- 公开文件由 `tools/public_release.py` 明确白名单并扫描凭据，不使用整目录上传。
-- 本地独立验收与真实运行证据保留在受控工作区，不随仓库公开。公网验收摘要见 `SUBMISSION.md`。
-- 多Agent协作框架保留在 `framework/`、`agents/`。可用 `python -m unittest discover -s tests -v` 验证公开框架测试；真实任务看板不公开。
-
-复赛尚需真实运行录屏及不少于3组、覆盖至少2场景和2平台的优秀结果，须保留资料与图片来源；不能用静态页面或固定结果代替实际运行。

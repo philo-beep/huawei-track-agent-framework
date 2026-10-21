@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:agent-stage-input:2.0",
+  "title": "Agent 子任务统一输入 StageInput v2.0",
+  "description": "所有 Agent 子任务 async run(input, context) 的 input 结构。context 是运行时能力注入，不属于本 Schema，也不得序列化进结果。upstream 中放已通过校验的上游 data 对象，不重复嵌套信封。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "module_id", "payload", "upstream"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "module_id": {
+      "enum": ["customer", "evidence", "strategy", "writing", "quality"],
+      "description": "Agent 流水线阶段 ID，不是项目团队角色。"
+    },
+    "payload": {
+      "type": "object",
+      "description": "当前 Agent 子任务的业务输入。各阶段的必填键见下方 allOf。"
+    },
+    "upstream": {
+      "type": "object",
+      "description": "按 output_contract 名称存放上游 data 对象。只有当前阶段声明依赖的上游才可出现内容；独立开发时使用明确合成且同契约的样例。",
+      "additionalProperties": false,
+      "properties": {
+        "customer-profile": {"type": ["object", "null"]},
+        "evidence-bundle": {"type": ["object", "null"]},
+        "content-brief": {"type": ["object", "null"]},
+        "article-draft": {"type": ["object", "null"]}
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "locale": {"const": "zh-CN"},
+        "strict": {"type": "boolean"},
+        "deadline_ms": {"type": "integer", "minimum": 1000, "maximum": 600000}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"module_id": {"const": "customer"}}, "required": ["module_id"]},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["raw_request"],
+            "properties": {
+              "raw_request": {"type": "string", "minLength": 5, "maxLength": 4000},
+              "customer": {"type": "object"},
+              "product": {"type": ["string", "null"]},
+              "audience": {"type": ["string", "null"]},
+              "scenario": {"type": ["string", "null"]},
+              "platform": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"module_id": {"const": "evidence"}}, "required": ["module_id"]},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["product"],
+            "properties": {
+              "product": {"type": "string", "minLength": 1},
+              "sku": {"type": ["string", "null"]},
+              "purpose": {"enum": ["content", "quote", "demo", "mixed"]},
+              "as_of": {"type": "string", "format": "date"},
+              "query_terms": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"module_id": {"const": "strategy"}}, "required": ["module_id"]},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["platform"],
+            "properties": {
+              "platform": {"enum": ["小红书", "公众号", "朋友圈", "其他"]},
+              "length_hint": {"type": ["string", "null"]},
+              "notes": {"type": ["string", "null"]}
+            }
+          },
+          "upstream": {
+            "type": "object",
+            "required": ["customer-profile", "evidence-bundle"],
+            "properties": {
+              "customer-profile": {"type": "object"},
+              "evidence-bundle": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"module_id": {"const": "writing"}}, "required": ["module_id"]},
+      "then": {
+        "properties": {
+          "upstream": {
+            "type": "object",
+            "required": ["evidence-bundle", "content-brief"],
+            "properties": {
+              "evidence-bundle": {"type": "object"},
+              "content-brief": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"module_id": {"const": "quality"}}, "required": ["module_id"]},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "pricing": {"type": "object"},
+              "demo": {"type": "object"}
+            }
+          },
+          "upstream": {
+            "type": "object",
+            "required": ["customer-profile", "evidence-bundle", "content-brief", "article-draft"],
+            "properties": {
+              "customer-profile": {"type": "object"},
+              "evidence-bundle": {"type": "object"},
+              "content-brief": {"type": "object"},
+              "article-draft": {"type": "object"}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

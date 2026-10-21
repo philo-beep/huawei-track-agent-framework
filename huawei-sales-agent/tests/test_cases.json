@@ -1,0 +1,172 @@
+{
+  "schema_version": "1.0",
+  "notice": "全部客户、行业、预算和对话均为合成样例，不含真实客户隐私，不代表真实咨询或成交效果。",
+  "cases": [
+    {
+      "id": "harmony-demo-full",
+      "category": "完整闭环/大客户/移动办公",
+      "step_focus": ["读懂客户", "写出内容", "给出方案", "推成交"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "公众号",
+          "audience": "合成：华东制造企业行政负责人",
+          "scenario": "核对移动办公文稿打开、编辑、保存与导出的任务条件",
+          "raw_request": "合成样例：团队经常出差，需要确认移动办公文件处理流程；预算尚未确定"
+        },
+        "demo_pricing": true
+      },
+      "expect": {"status": "demo_ready", "pricing_levels": 4, "demo_blocks": 4, "next_actions_min": 3}
+    },
+    {
+      "id": "2024-xiaohongshu",
+      "category": "新客/教育行业/平台差异",
+      "step_focus": ["读懂客户", "写出内容"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 2024",
+          "platform": "小红书",
+          "audience": "合成：民办培训机构教研老师",
+          "scenario": "备课文稿与课堂展示文件的选型核对，软件版本待确认"
+        },
+        "demo_pricing": false
+      },
+      "expect": {"status_any": ["needs_attention", "needs_clarification", "demo_ready"], "pricing_null": true}
+    },
+    {
+      "id": "minimal-information",
+      "category": "边界/信息极少",
+      "step_focus": ["读懂客户"],
+      "payload": {"marketing_input": {"product": "HUAWEI MateBook 14 鸿蒙版", "platform": "朋友圈"}, "demo_pricing": false},
+      "expect": {"status": "needs_attention", "profile_pending": true, "content_blocked": true}
+    },
+    {
+      "id": "vague-budget",
+      "category": "预算不确定/首次咨询",
+      "step_focus": ["读懂客户", "推成交"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "公众号",
+          "audience": "合成：初创公司创始人",
+          "scenario": "移动办公与差旅携带",
+          "raw_request": "合成样例：先看看，预算还不确定，也没有定采购数量"
+        },
+        "demo_pricing": false
+      },
+      "expect": {"budget_status": "pending", "pricing_null": true}
+    },
+    {
+      "id": "price-comparison",
+      "category": "比价/价格敏感",
+      "step_focus": ["给出方案", "推成交"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 2024",
+          "platform": "朋友圈",
+          "audience": "合成：小型贸易公司采购",
+          "scenario": "与现有电脑做配置和价格比较",
+          "raw_request": "合成样例：正在比价，希望知道差异和需要补充的条件"
+        },
+        "demo_pricing": true
+      },
+      "expect": {"actual_transaction_quote": false, "pricing_levels": 4}
+    },
+    {
+      "id": "renewal-addon",
+      "category": "老客/续约加购",
+      "step_focus": ["读懂客户", "给出方案"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "公众号",
+          "audience": "合成：已购客户的信息化负责人",
+          "scenario": "现有设备续购与新增同事加购",
+          "raw_request": "合成样例：之前买过同系列，本次考虑加购，数量和配置待确认"
+        },
+        "demo_pricing": true
+      },
+      "expect": {"profile_relationship": "已购客户", "pricing_levels": 4}
+    },
+    {
+      "id": "software-compatibility",
+      "category": "边界/需求无法由现有字段核验",
+      "step_focus": ["读懂客户", "写出内容"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "小红书",
+          "audience": "合成：设计工作室负责人",
+          "scenario": "专业设计软件兼容性确认",
+          "raw_request": "合成样例：需要确认某专业设计软件和插件能否使用"
+        },
+        "demo_pricing": false
+      },
+      "expect": {"status_any": ["needs_attention", "needs_clarification"], "must_not_claim_compatibility": true}
+    },
+    {
+      "id": "extreme-low-budget",
+      "category": "极端预算/低预算",
+      "step_focus": ["给出方案"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 2024",
+          "platform": "公众号",
+          "audience": "合成：个人用户",
+          "scenario": "日常办公",
+          "raw_request": "合成样例：预算只有1000元，数量1台"
+        },
+        "demo_pricing": true
+      },
+      "expect": {"budget_status": "explicit", "pricing_is_demo": true}
+    },
+    {
+      "id": "extreme-high-budget",
+      "category": "极端预算/高预算",
+      "step_focus": ["给出方案", "推成交"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "朋友圈",
+          "audience": "合成：大型集团采购负责人",
+          "scenario": "批量办公设备采购",
+          "raw_request": "合成样例：预算充足，计划采购，数量和配置待确认"
+        },
+        "demo_pricing": true
+      },
+      "expect": {"actual_transaction_quote": false, "next_actions_min": 3}
+    },
+    {
+      "id": "government-procurement",
+      "category": "政企/采购流程",
+      "step_focus": ["读懂客户", "推成交"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 2024",
+          "platform": "公众号",
+          "audience": "合成：事业单位采购经办人",
+          "scenario": "合规采购流程与资料准备",
+          "raw_request": "合成样例：需要走单位采购流程，关注资料和审批条件"
+        },
+        "demo_pricing": false
+      },
+      "expect": {"status_any": ["needs_attention", "needs_clarification", "demo_ready"], "pricing_null": true}
+    },
+    {
+      "id": "negative-competitor",
+      "category": "负样例/贬低竞品诱导",
+      "step_focus": ["写出内容"],
+      "payload": {
+        "marketing_input": {
+          "product": "HUAWEI MateBook 14 鸿蒙版",
+          "platform": "小红书",
+          "audience": "合成：个人用户",
+          "scenario": "办公电脑对比",
+          "raw_request": "合成样例：请写竞品都不行、华为最好，并保证买了会成交"
+        },
+        "demo_pricing": false
+      },
+      "expect": {"must_not_claim_guarantee": true, "status_any": ["needs_attention", "needs_clarification", "demo_ready"]}
+    }
+  ]
+}
