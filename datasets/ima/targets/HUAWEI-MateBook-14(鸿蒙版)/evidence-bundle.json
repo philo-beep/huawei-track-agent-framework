@@ -1,0 +1,1656 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "ima-bundle-48b9076b9258",
+  "generated_at": "2026-10-21T05:09:29.772Z",
+  "query": {
+    "product": "HUAWEI MateBook 14（鸿蒙版）",
+    "sku": null,
+    "purpose": "mixed",
+    "as_of": "2026-10-21"
+  },
+  "facts": [
+    {
+      "fact_id": "fact-positioning-2ccf35bb3128",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "官方公开定位摘要：2.8K OLED 云晰柔光屏、鸿蒙 AI、长续航、全场景连接",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版）；同系列其他处理器、屏幕、系统版本或 SKU 不得继承",
+        "来源为知识库条目中的 2026-10-17 页面摘录"
+      ],
+      "source": {
+        "source_id": "src-ima-f00c695c266e",
+        "source_type": "ima",
+        "title": "02-HUAWEI MateBook 14（鸿蒙版）.md",
+        "entry": "ima-media:null",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "f00c695c266e6fffb3f2156271491326c27331829946ae9cddc45f5baa364339",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版）\n\n- 产品类别：鸿蒙主流笔记本\n- 所属目录：消费级 PC\n- 官方页面：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 抓取日期：2026-10-17\n\n## 官网公开定位摘要\n\n2.8K OLED 云晰柔光屏、鸿蒙 AI、长续航、全场景连接\n\n## 建库状态\n\n本条用于产品发现与检索，不替代规格页。生成参数、配置、兼容性或服务承诺前，应继续抓取该产品的规格页、支持页和具体销售SKU；同系列不同处理器、颜色、屏幕、支架、内存或存储不得互相继承。\n\n## 动态信息边界\n\n价格、补贴、赠品、库存、交期和套餐需从当日官方商城另行核验，不写入本条长期事实。\n\n## 完整档案补抓与内容应用\n\n### 本卡能确认什么\n\n截至 2026-10-17，官方页面以“鸿蒙主流笔记本”相关定位呈现 **HUAWEI MateBook 14（鸿蒙版）**，本卡只确认产品名称、分类、上述公开摘要和来源页面存在。它是一张发现卡：适合检索产品、寻找原页、形成补抓任务，不应冒充完整规格档案。\n\n- “2.8K OLED 云晰柔光屏”属于显示相关线索。完整档案需补屏幕款式、模式、测试条件和接口链路，不能自动转写成绝对护眼或专业适用结论。\n- “鸿蒙 AI”适合通过具体任务演示，但要标出HUAWEI MateBook 14（鸿蒙版）、系统版本、账号、网络和支持设备条件，避免把生态名称写成无条件能力。\n- “长续航”必须连同官方测试条件、适配器、负载与环境记录；它不能直接承诺每位用户的实际使用时间或充电速度。\n- “全场景连接”适合通过具体任务演示，但要标出HUAWEI MateBook 14（鸿蒙版）、系统版本、账号、网络和支持设备条件，避免把生态名称写成无条件能力。\n\n### 不能从本卡直接推出\n\n不能从定位摘要推出完整处理器列表、全系屏幕款式、实际续航、软件兼容、可升级性或当前销售价格。\n不同地区、年份、销售渠道或款式后缀可能对应不同配置。官网未写明的字段保留为空，不能用系列印象、媒体报道或另一款产品的数据补齐。\n\n### 建立完整档案的补抓步骤\n\n1. **准确销售名称、系统路线和在售SKU**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n2. **处理器、内存、存储及其可选范围**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n3. **屏幕款式、触控/柔光等差异**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n4. **接口、外接显示与常用外设**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n5. **电池官方测试条件与完整携带重量**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n6. **必用软件、插件和账号是否适配**：先查HUAWEI MateBook 14（鸿蒙版）当前官方功能页、规格页、支持页和具体销售SKU；记录URL、页面标题、适用版本与抓取日期。\n7. **图片与素材**：登记白底外观、不同角度、接口/操作细节和真实场景图的原始URL、画面说明、对应款式和使用限制；图片不能证明画面之外的参数。\n8. **冲突与更新**：商城、规格、支持和商用页面字段不一致时保留双方证据，先判断是否为不同SKU或版本；无法解释则转待审核。\n\n### 场景化问题\n\n- 当用户围绕“准确销售名称、系统路线和在售SKU”咨询HUAWEI MateBook 14（鸿蒙版）时，先补具体任务和版本，再决定是否能从本卡升级到确定回答。\n- 当用户围绕“处理器、内存、存储及其可选范围”咨询HUAWEI MateBook 14（鸿蒙…",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/001-02-HUAWEI-MateBook-14(鸿蒙版).md.md",
+          "text_path": "sources/001-02-HUAWEI-MateBook-14(鸿蒙版).md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-identity-02c2df6a75a9",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "官方价格卡记录：- 规范产品名：HUAWEI MateBook 14（鸿蒙版）；- 产品分类：鸿蒙主流笔记本",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版）；同系列其他处理器、屏幕、系统版本或 SKU 不得继承",
+        "价格卡内容是历史快照，不代表当前价格仍然有效"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "---\ndocument_type: public_price_snapshot\nproduct_name: HUAWEI MateBook 14（鸿蒙版）\nprice_status: 有官方商城页面价快照\nsnapshot_date: 2026-10-17\nindexed_product: 是\n---\n\n# HUAWEI MateBook 14（鸿蒙版）｜官方公开价格卡\n\n> 结论：有官方商城页面价快照。本卡把动态价格与长期产品参数分开保存；任何金额都必须连同款式、条件、来源和核验时间一起引用。\n\n## 产品身份与官方定位\n\n- 规范产品名：HUAWEI MateBook 14（鸿蒙版）\n- 产品分类：鸿蒙主流笔记本\n- 官方公开定位（转述）：2.8K OLED 云晰柔光屏、鸿蒙 AI、长续航、全场景连接\n- 最近核验时间：2026-10-17T15:05:00-05:00\n- 本卡记录量：15 条，其中商城页面价 7 条、条件价/搭配价 0 条、官网参考或发布价 1 条\n- 本库稳定事实入口：[产品条目](../../07-扩展产品目录/消费级 PC/02-HUAWEI MateBook 14（鸿蒙版）.md)\n\n价格检索前至少确认：系统版本、处理器、内存与存储、标准/柔光/防窥屏、颜色、是否套装。这些字段中只要有一项会改变商品身份，就不能直接复用另一条记录。系列名、宣传名和商品标题也不能替代 SKU；同名产品跨系统、跨处理器、跨屏幕版本时尤其要先消歧。\n\n## 官方价格与销售状态记录\n\n| 核验时间 | 精确款式 | 价格类型 | 页面金额 | 参考/划线金额 | 库存或销售状态 | 条件摘要 | 来源 |\n|---|---|---|---:|---:|---|---|---|\n| 2026-10-17T14:40:00-05:00 | 16GB/512GB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥5,899 | ¥5,999 | 页面显示可购买并给出到货预估 | 直降100元；积分8倍抵现；赠送积分；晒单活动；两件赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |\n| 2026-10-17T14:43:00-05:00 | 专区默认展示款 | 官方商城页面价 | ¥5,899 | ¥5,999 | 页面展示可购买 | 赠品 | [官方页](https://m.vmall.com/portal/activity/index.html?isShowLayout=false&pn=pczq) |\n| 2026-10-17T14:47:00-05:00 | 官网产品页对应版本 | 官网参考起价 | ¥6,599 | — | 官网产品页不证明库存 | 价格仅为官网参考，具体以华为商城当前展示及结算页为准；官网购买链接：https://www.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196907&cid=381499 | [官方页](https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/) |\n| 2026-10-17T14:50:00-05:00 | 24GB/512GB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥6,599 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |\n| 2026-10-17T14:50:00-05:00 | 24GB/512GB/柔光版/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥7,399 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页]…",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-os-boundary-2ca7f9c7df1c",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "两者首先是操作系统与应用生态不同，不能只按外观或硬件参数判断。选择前应先核对必须使用的软件、插件、外设、企业管理要求和手机/平板协同需求。",
+      "conditions": [
+        "用于鸿蒙版与 Windows 版的分流判断",
+        "不替代具体软件、插件、外设和企业管理策略的兼容性核验"
+      ],
+      "source": {
+        "source_id": "src-ima-54cce3396888",
+        "source_type": "ima",
+        "title": "03-鸿蒙版与Windows版区别.md",
+        "entry": "ima-media:null",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "54cce3396888a821e393b502c0dafe64b78317ebd9803789bb388906d79340b3",
+        "excerpt": "# 鸿蒙版与Windows版区别\n\n## 简短结论\n\n两者首先是操作系统与应用生态不同，不能只按外观或硬件参数判断。选择前应先核对必须使用的软件、插件、外设、企业管理要求和手机/平板协同需求。\n\n## 适用范围\n\n本问答用于处理“鸿蒙版与Windows版区别”这一项明确诉求，不把相邻现象自动并入同一个原因。",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/verified-excerpts/004-03-鸿蒙版与Windows版区别.md.txt",
+          "text_path": null,
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-off-3f793f31814a",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "华为官方规格页记录显示屏分辨率：2880 × 1920",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版） 的当前官网所列配置",
+        "系列选项不等于任一组合同时在售；具体 SKU、地区、库存和兼容性需另核验"
+      ],
+      "source": {
+        "source_id": "src-off-9f7def1de9a2",
+        "source_type": "huawei_official",
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "entry": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/#display_resolution",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+        "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "excerpt": "分辨率\n2880 × 1920，243 PPI",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "snapshot_id": "matebook-14-harmonyos-specs",
+          "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+          "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "http_status": 200,
+          "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+          "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+          "source_kind": "huawei_official_page",
+          "source_pointer": {
+            "path": "matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 887,
+            "end": 910
+          }
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-off-03dd827e5bcb",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "华为官方规格页记录内存配置选项：24 / 32 GB",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版） 的当前官网所列配置",
+        "系列选项不等于任一组合同时在售；具体 SKU、地区、库存和兼容性需另核验"
+      ],
+      "source": {
+        "source_id": "src-off-9f7def1de9a2",
+        "source_type": "huawei_official",
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "entry": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/#memory_options",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+        "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "excerpt": "内存\n24 GB / 32 GB",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "snapshot_id": "matebook-14-harmonyos-specs",
+          "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+          "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "http_status": 200,
+          "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+          "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+          "source_kind": "huawei_official_page",
+          "source_pointer": {
+            "path": "matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1244,
+            "end": 1260
+          }
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-off-2d115d4e16ed",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "华为官方规格页记录存储配置选项：512 GB / 1 TB",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版） 的当前官网所列配置",
+        "系列选项不等于任一组合同时在售；具体 SKU、地区、库存和兼容性需另核验"
+      ],
+      "source": {
+        "source_id": "src-off-9f7def1de9a2",
+        "source_type": "huawei_official",
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "entry": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/#storage_options",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+        "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "excerpt": "存储\n512 GB / 1 TB",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "snapshot_id": "matebook-14-harmonyos-specs",
+          "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+          "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "http_status": 200,
+          "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+          "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+          "source_kind": "huawei_official_page",
+          "source_pointer": {
+            "path": "matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1227,
+            "end": 1243
+          }
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-off-fcad8a620d3d",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "华为官方规格页记录处理器：麒麟 X90",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版） 的当前官网所列配置",
+        "系列选项不等于任一组合同时在售；具体 SKU、地区、库存和兼容性需另核验"
+      ],
+      "source": {
+        "source_id": "src-off-9f7def1de9a2",
+        "source_type": "huawei_official",
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "entry": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/#processor",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+        "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "excerpt": "处理器\nCPU\n麒麟 X90",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "snapshot_id": "matebook-14-harmonyos-specs",
+          "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+          "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "http_status": 200,
+          "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+          "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+          "source_kind": "huawei_official_page",
+          "source_pointer": {
+            "path": "matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 1212,
+            "end": 1226
+          }
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-off-f490a6ffa5e6",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "华为官方规格页记录操作系统：HarmonyOS 6",
+      "conditions": [
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版） 的当前官网所列配置",
+        "系列选项不等于任一组合同时在售；具体 SKU、地区、库存和兼容性需另核验"
+      ],
+      "source": {
+        "source_id": "src-off-9f7def1de9a2",
+        "source_type": "huawei_official",
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "entry": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/#operating_system",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+        "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "excerpt": "操作系统\nHarmonyOS 6",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "snapshot_id": "matebook-14-harmonyos-specs",
+          "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+          "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "http_status": 200,
+          "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+          "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+          "source_kind": "huawei_official_page",
+          "source_pointer": {
+            "path": "matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+            "start": 663,
+            "end": 679
+          }
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-local-b648a6ab710b",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "本地知识库产品事实卡记录操作系统：HarmonyOS 6",
+      "conditions": [
+        "本地知识库与官方页面为同源镜像；不得据此宣称独立第三方佐证",
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版），配置以实际销售版本为准"
+      ],
+      "source": {
+        "source_id": "src-local-639df121d8de",
+        "source_type": "local_knowledge",
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "doc-823f93c052590c06f90e",
+          "source_kind": "local_knowledge_card",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-local-73a4b5acfc44",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "本地知识库产品事实卡记录处理器：CPU / 麒麟 X90",
+      "conditions": [
+        "本地知识库与官方页面为同源镜像；不得据此宣称独立第三方佐证",
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版），配置以实际销售版本为准"
+      ],
+      "source": {
+        "source_id": "src-local-639df121d8de",
+        "source_type": "local_knowledge",
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "doc-823f93c052590c06f90e",
+          "source_kind": "local_knowledge_card",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-local-59825c8660d5",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "本地知识库产品事实卡记录存储选项：512 GB / 1 TB",
+      "conditions": [
+        "本地知识库与官方页面为同源镜像；不得据此宣称独立第三方佐证",
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版），配置以实际销售版本为准"
+      ],
+      "source": {
+        "source_id": "src-local-639df121d8de",
+        "source_type": "local_knowledge",
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "doc-823f93c052590c06f90e",
+          "source_kind": "local_knowledge_card",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-local-8173e27eef5e",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "本地知识库产品事实卡记录内存选项：24 GB / 32 GB",
+      "conditions": [
+        "本地知识库与官方页面为同源镜像；不得据此宣称独立第三方佐证",
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版），配置以实际销售版本为准"
+      ],
+      "source": {
+        "source_id": "src-local-639df121d8de",
+        "source_type": "local_knowledge",
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "doc-823f93c052590c06f90e",
+          "source_kind": "local_knowledge_card",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    },
+    {
+      "fact_id": "fact-local-0abf6eeee711",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": null,
+      "claim": "本地知识库产品事实卡记录屏幕规格：尺寸 / 14.2 英寸 / *显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。 / 类型 / OLED（抗反射屏） / 屏占比 / 91% / 屏幕比例 / 3:2 / 分辨率 / 2880 × 1920，243 PPI / 刷新率 / 静态刷新率：60 Hz / 120 Hz / 动态刷新率：智能动态调节（默认） / 亮度 / 标准版： / 典型亮度：450 nits / 峰值亮度：500 nits / 柔光版： / 典型亮度：500 nits / 峰值亮度：600 nits / 色域 / 100% sRGB（典型值）、P3 广色域（典型值） / 色准 / 平均 DeltaE < 1，支持多屏同色显示 / *多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。 / 对比度 / 1000000:1（典型值） / 可视角度 / 178°（典型值） / 触摸屏 / 支持 10 点触控",
+      "conditions": [
+        "本地知识库与官方页面为同源镜像；不得据此宣称独立第三方佐证",
+        "仅适用于 HUAWEI MateBook 14（鸿蒙版），配置以实际销售版本为准"
+      ],
+      "source": {
+        "source_id": "src-local-639df121d8de",
+        "source_type": "local_knowledge",
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "doc-823f93c052590c06f90e",
+          "source_kind": "local_knowledge_card",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ]
+    }
+  ],
+  "images": [
+    {
+      "image_id": "image-ima-92d111e0de6cc113",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook系列分类横幅_41.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-92d111e0de6c",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook系列分类横幅_41.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_8b01bde68f5cb90f934284e9a8cc856c7514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4",
+        "excerpt": "vmall_pc_MateBook系列分类横幅_41.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_8b01bde68f5cb90f934284e9a8cc856c7514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4",
+      "data_path": "datasets/raw/assets/92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4.jpg",
+      "bytes": 69135,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-b477ea160a038cb6",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-b477ea160a03",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_9ad102cebcf2e468bda2fe46def0854f7514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89",
+        "excerpt": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_9ad102cebcf2e468bda2fe46def0854f7514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89",
+      "data_path": "datasets/raw/assets/b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89.jpg",
+      "bytes": 70399,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-98a11c418a2d7c01",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook系列专区横幅_40.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-98a11c418a2d",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook系列专区横幅_40.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_c29713ebd6a8efd51492135a717255367514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e",
+        "excerpt": "vmall_pc_MateBook系列专区横幅_40.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_c29713ebd6a8efd51492135a717255367514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e",
+      "data_path": "datasets/raw/assets/98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e.jpg",
+      "bytes": 153168,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-0a7afff9d3a7fe83",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-0a7afff9d3a7",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_7d6411af9985494c9f0053358bc70e037514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6",
+        "excerpt": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_7d6411af9985494c9f0053358bc70e037514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6",
+      "data_path": "datasets/raw/assets/0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6.jpg",
+      "bytes": 76688,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-d032a0f2fde5f3b5",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook产品分类横幅_42.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-d032a0f2fde5",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook产品分类横幅_42.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_d2a59fc21b5c7de9c6e8f20f412d8b667514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd",
+        "excerpt": "vmall_pc_MateBook产品分类横幅_42.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_d2a59fc21b5c7de9c6e8f20f412d8b667514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd",
+      "data_path": "datasets/raw/assets/d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd.jpg",
+      "bytes": 70328,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-9f9470747d7e3c40",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-9f9470747d7e",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+        "excerpt": "原野绿多彩配色",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-3ca5a9ccf0e62ccbfe53",
+          "local_path": "datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+      "data_path": "datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png",
+      "bytes": 569412,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-e320384c91d75f72",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-e320384c91d7",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-pink.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+        "excerpt": "HUAWEI MateBook 14 樱粉金",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-5c8f6b48f1070bcf4a40",
+          "local_path": "datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+      "data_path": "datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png",
+      "bytes": 533666,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-85fadb0cbceb8632",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-85fadb0cbceb",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-accessories-m-pen-3.jpg",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+        "excerpt": "手写笔创作场景",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-75e687c26ea2bc54291f",
+          "local_path": "datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+      "data_path": "datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg",
+      "bytes": 76576,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-ab085ae7d9fd83af",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-ab085ae7d9fd",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-grey.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440",
+        "excerpt": "深空灰沉稳配色",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-5cd19c769315e00f0b64",
+          "local_path": "datasets/raw/assets/ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440",
+      "data_path": "datasets/raw/assets/ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440.png",
+      "bytes": 557277,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    }
+  ],
+  "pricing_refs": [
+    {
+      "price_id": "price-ima-ba23fb1b3335",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "16GB/512GB/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 589900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:40:00-05:00 | 16GB/512GB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥5,899 | ¥5,999 | 页面显示可购买并给出到货预估 | 直降100元；积分8倍抵现；赠送积分；晒单活动；两件赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-da98ff40ce14",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "专区默认展示款",
+      "observed_price_cents": 589900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://m.vmall.com/portal/activity/index.html?isShowLayout=false&pn=pczq",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:43:00-05:00 | 专区默认展示款 | 官方商城页面价 | ¥5,899 | ¥5,999 | 页面展示可购买 | 赠品 | [官方页](https://m.vmall.com/portal/activity/index.html?isShowLayout=false&pn=pczq) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-c1e7487209fc",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "官网产品页对应版本",
+      "observed_price_cents": 659900,
+      "currency": "CNY",
+      "price_kind": "starting_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为官网",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:47:00-05:00 | 官网产品页对应版本 | 官网参考起价 | ¥6,599 | — | 官网产品页不证明库存 | 价格仅为官网参考，具体以华为商城当前展示及结算页为准；官网购买链接：https://www.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196907&cid=381499 | [官方页](https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-82a1201cbf7a",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "24GB/512GB/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 659900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:50:00-05:00 | 24GB/512GB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥6,599 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-01defc8bb63c",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "24GB/512GB/柔光版/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 739900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:50:00-05:00 | 24GB/512GB/柔光版/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥7,399 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-1621b340f95d",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "24GB/1TB/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 759900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:50:00-05:00 | 24GB/1TB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥7,599 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-3109b3527e0e",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "24GB/1TB/柔光版/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 839900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:50:00-05:00 | 24GB/1TB/柔光版/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥8,399 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-8a341d49c5d9",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "32GB/1TB/圆键盘/原野绿/麒麟X90",
+      "observed_price_cents": 859900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:50:00-05:00 | 32GB/1TB/圆键盘/原野绿/麒麟X90 | 官方商城页面价 | ¥8,599 | — | 页面显示可购买并给出到货预估 | 积分8倍抵现；赠品 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196914) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-327b681ac4f5",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "HarmonyOS；16GB/512GB；原野绿；麒麟X90；圆键盘",
+      "observed_price_cents": 589900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:52:13-05:00 | HarmonyOS；16GB/512GB；原野绿；麒麟X90；圆键盘 | 当前商城活动页价 | ¥5,899 | ¥5,999 | 当日达；页面提示今天10:30前付款预计10月18日送达 | 直降100元；积分8倍抵现；赠送积分；晒单活动；赠品为FreeBuds SE 2陶瓷白和华为无线鼠标星闪版砚黑；具体权益以结算页为准 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-11ce0f9b9ad4",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "HarmonyOS；24GB/512GB；原野绿；麒麟X90；圆键盘",
+      "observed_price_cents": 659900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:52:13-05:00 | HarmonyOS；24GB/512GB；原野绿；麒麟X90；圆键盘 | 当前商城页面价 | ¥6,599 | — | 预售；预计2026/10/29前发货 | 积分8倍抵现；赠送积分；晒单活动；赠品为FreeBuds SE 2陶瓷白和华为无线鼠标Slim标准版绿色；具体权益以结算页为准 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-03fb1a7993c4",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "HarmonyOS；24GB/512GB/柔光版；原野绿；麒麟X90；圆键盘",
+      "observed_price_cents": 739900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:52:13-05:00 | HarmonyOS；24GB/512GB/柔光版；原野绿；麒麟X90；圆键盘 | 当前商城页面价 | ¥7,399 | — | 现货；现货发货 | 积分8倍抵现；赠送积分；晒单活动；赠品为FreeBuds SE 2陶瓷白和华为无线鼠标Slim标准版绿色；具体权益以结算页为准 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    },
+    {
+      "price_id": "price-ima-67e77732402e",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "sku": "HarmonyOS；24GB/1TB；原野绿；麒麟X90；圆键盘",
+      "observed_price_cents": 759900,
+      "currency": "CNY",
+      "price_kind": "promotion_price",
+      "tax_included": false,
+      "region": "中国大陆",
+      "channel": "华为商城",
+      "effective_from": "2026-10-17",
+      "effective_to": null,
+      "verification": "unverified",
+      "limitations": [
+        "来自 2026-10-17 知识库页面快照，不是 2026-10-21 当前成交价",
+        "未在本次证据构建中重新核验库存、结算页和区域资格",
+        "税含口径需以结算页为准"
+      ],
+      "source": {
+        "source_id": "src-ima-742064dcaa48",
+        "source_type": "ima",
+        "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "entry": "ima-media:null",
+        "url": "https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191",
+        "retrieved_at": "2026-10-21T12:46:45+08:00",
+        "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+        "excerpt": "| 2026-10-17T14:52:13-05:00 | HarmonyOS；24GB/1TB；原野绿；麒麟X90；圆键盘 | 当前商城页面价 | ¥7,599 | — | 预售；预计2026/10/29前发货 | 积分8倍抵现；赠送积分；晒单活动；赠品为FreeBuds SE 2陶瓷白和华为无线鼠标Slim标准版绿色；具体权益以结算页为准 | [官方页](https://item.vmall.com/product/comdetail/index.html?prdId=10086097339191) |",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "skill_version": "1.1.10",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": null,
+          "media_type": 7,
+          "parent_folder_id": null,
+          "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "text_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+          "request_ids": [],
+          "url_host": null,
+          "url_sha256": null
+        }
+      }
+    }
+  ],
+  "conflicts": [],
+  "coverage": {
+    "facts": 13,
+    "images": 9,
+    "prices": 12,
+    "gaps": [
+      "IMA 当日配额仍阻断完整目录与全量正文覆盖；IMA 能力已实现，完整覆盖未声称完成",
+      "价格快照来自 2026-10-17，未核验为 2026-10-21 当前报价",
+      "9 张图片均为候选，未完成型号、配色、SKU、画面和版权核验",
+      "华为商城直连抓取曾返回 302 循环；本次不伪造商城库存或可成交报价",
+      "本地知识库两个压缩包字节一致，只作为同源镜像，不作为两份独立佐证"
+    ]
+  },
+  "extensions": {
+    "ima": {
+      "capture_id": "ima-live-2026-10-21-matebook14-harmonyos",
+      "capture_status": "partial_verified_quota_blocked",
+      "skill_version": "1.1.10",
+      "knowledge_base": {
+        "kb_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+        "kb_name": "任德耀新建华为PC知识库",
+        "content_count": 1519,
+        "member_count": 65,
+        "role_type": "普通成员",
+        "base_type": "共享知识库"
+      },
+      "capture_mode": "live_verified_hash_matched_and_replayed",
+      "request_ids": {
+        "knowledge_base_search": [
+          "013ceff6f104ba4f6803b1958c52eb18"
+        ],
+        "probe_previous": [
+          "8c2e0743577ce488e65bcd25970d5a33"
+        ],
+        "directory_root": [
+          "1ad80c1c22cf09e4c775fdac9b2d80b0"
+        ],
+        "quota_error": [
+          "a314fe1f8587a32d16c3c692c6b87fe5"
+        ]
+      },
+      "quota": {
+        "code": 220021,
+        "message": "资料获取次数已达上限，请明天再尝试",
+        "request_id": "a314fe1f8587a32d16c3c692c6b87fe5",
+        "observed_at": "2026-10-21T13:04:30+08:00",
+        "effect": "Further live directory, search, media and body reads are blocked until the vendor quota resets."
+      },
+      "search_observations": [
+        {
+          "query": "鸿蒙版",
+          "count": 9,
+          "types": {
+            "7": 9
+          },
+          "request_id": null,
+          "titles": [
+            "MateBook 14 鸿蒙版销售配置.md",
+            "01-HUAWEI MateBook Pro（鸿蒙版）.md",
+            "02-HUAWEI MateBook 14（鸿蒙版）.md",
+            "HUAWEI MateBook Pro（鸿蒙版）-价格卡.md",
+            "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+            "MC-053_HUAWEI MateBook 14（鸿蒙版）.md",
+            "MC-060_HUAWEI MateBook Pro（鸿蒙版）.md",
+            "03-鸿蒙版与Windows版区别.md",
+            "09-MateBook 14 鸿蒙版上市报道.md"
+          ]
+        },
+        {
+          "query": "MateBook 14 鸿蒙版",
+          "count": 75,
+          "types": {
+            "7": 70,
+            "9": 5
+          },
+          "request_id": null
+        },
+        {
+          "query": "HUAWEI MateBook 14 鸿蒙版",
+          "count": 65,
+          "types": {
+            "7": 65
+          },
+          "request_id": null
+        }
+      ],
+      "directory_observations": {
+        "root": {
+          "request_id": "1ad80c1c22cf09e4c775fdac9b2d80b0",
+          "returned": 1,
+          "entries": [
+            {
+              "media_id": "folder_7517317118306152",
+              "title": "任德耀新建华为PC知识库",
+              "parent_folder_id": "7514565705233223",
+              "media_type": 99,
+              "is_folder": true
+            }
+          ],
+          "current_path": [
+            {
+              "folder_id": "7514565705233223",
+              "name": "任德耀新建华为PC知识库",
+              "file_number": "0",
+              "folder_number": "0",
+              "parent_folder_id": "",
+              "is_top": false
+            }
+          ]
+        },
+        "child_folder_probe": {
+          "folder_id": "folder_7517317118306152",
+          "page_size_returned": 20,
+          "is_end": null,
+          "request_id": null,
+          "note": "The call succeeded, but the pagination state and entry IDs were not persisted before the daily quota was exhausted."
+        },
+        "complete": false
+      },
+      "limitations": [
+        "No credential or authorization error occurred; the live API returned a daily acquisition quota error.",
+        "Only IDs, hashes, excerpts and request IDs actually observed were retained.",
+        "Full text is present only where a local mirror matched the live IMA SHA-256 byte-for-byte."
+      ]
+    },
+    "supplemental": {
+      "source_policy": [
+        "ima",
+        "local_knowledge",
+        "huawei_official"
+      ],
+      "source_priority": "IMA 优先；本地知识库与华为官方页面/商城补充；冲突时保留双方并标记待核验",
+      "local_knowledge": [
+        {
+          "source_id": "src-local-639df121d8de",
+          "source_type": "local_knowledge",
+          "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+          "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md",
+          "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+          "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+          "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+          "excerpt": "# HUAWEI MateBook 14（鸿蒙版） - 产品事实\n\n> 来源：华为官网公开产品页与规格页。抓取日期：2026-10-17。配置可能因销售版本而异，生成内容时必须保留限定条件并以实际销售版本为准。\n\n## 来源\n\n- 产品页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- 规格页：https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/\n\n## 官方规格摘录\n\n## 操作系统\n\nHarmonyOS 6\n\n## 尺寸与重量\n\n长度\n\n312.6 mm\n\n宽度\n\n226.8 mm\n\n厚度\n\n14.5 mm\n\n重量\n\n约 1.33 kg（圆键盘含电池）\n\n约 1.32 kg（方键盘含电池）\n\n*实际机身重量根据配置、制造工艺、测量方法的不同可能有所差异。\n\n## 屏幕\n\n尺寸\n\n14.2 英寸\n\n*显示屏采用圆角设计，按照标准矩形测量时，屏幕的对角线长度是 14.2 英寸（实际可视区域略小）。\n\n类型\n\nOLED（抗反射屏）\n\n屏占比\n\n91%\n\n屏幕比例\n\n3:2\n\n分辨率\n\n2880 × 1920，243 PPI\n\n刷新率\n\n静态刷新率：60 Hz / 120 Hz\n\n动态刷新率：智能动态调节（默认）\n\n亮度\n\n标准版：\n\n典型亮度：450 nits\n\n峰值亮度：500 nits\n\n柔光版：\n\n典型亮度：500 nits\n\n峰值亮度：600 nits\n\n色域\n\n100% sRGB（典型值）、P3 广色域（典型值）\n\n色准\n\n平均 DeltaE < 1，支持多屏同色显示\n\n*多屏同色，根据应用软件、屏幕设置、使用习惯、环境等因素不同，可能略有差异，请以实际体验为准。购买时最新支持的设备机型请见官网或咨询华为商用客户服务专线（950803）。\n\n对比度\n\n1000000:1（典型值）\n\n可视角度\n\n178°（典型值）\n\n触摸屏\n\n支持 10 点触控\n\n## 处理器\n\nCPU\n\n麒麟 X90\n\n## 存储\n\n512 GB / 1 TB\n\n## 内存\n\n24 GB / 32 GB\n\n## 无线连接\n\nWLAN\n\nWi-Fi 7，IEEE 802.11a/b/g/n/ac/ax/be，160 MHz\n\n2.4 GHz 和 5 GHz 双频\n\n支持 WPA、WPA2、WPA3\n\n星闪\n\n支持，星闪 E1.0\n\n蓝牙\n\n蓝牙 6.0\n\n## 电池\n\n材料\n\n锂聚合物\n\n容量\n\n70 Wh（额定容量）\n\n## 接口\n\n左侧：HDMI2.1 TMDS × 1；USB-C × 1*；USB -A × 1**；3.5 mm 耳机和麦克风二合一接口\n\n右侧：USB-A × 1；\n\n*左侧 USB-C × 1，支持充电、支持数据（USB3.2 Gen1）和对外供电（开机状态最大 10 W：5V2A，关机状态最大 66 W：20V3.3A），支持 DisplayPort1.2（最大分辨率 4K@60 Hz）；\n\n**左侧第 2 个、右侧第 2 个，USB 3.2 Gen1 × 2，支持充电、支持数据（USB3.2 Gen1）和支持对外供电 10 W（5V2A）\n\n## 键盘和触控板\n\n全尺寸背光键盘\n\n触控板支持 5 点触控\n\n电源键\n\n指纹电源键\n\n## 摄像头\n\n1080P 高清摄像头\n\n*不同模式的照片和视频像素可能有差异，请以实际为准。\n\n## 音频\n\n扬声器\n\n扬声器 × 2\n\n麦克风\n\n麦克风 × 2\n\n## 包装清单\n\nPC × 1\n\nUSB-C 电源适配器（适配器和充电线一体式连接）× 1\n\n快速指南 × 1\n\n贴纸 × 1\n\n抛光布 × 1（仅柔光屏支持）\n\n即将离开consumer.huawei.com\n\n您即将跳转至第三方页面，华为无法控制，也无法对该页面内容负责。\n\n继续访问\n\n取消\n",
+          "applicable_models": [
+            "HUAWEI MateBook 14（鸿蒙版）"
+          ],
+          "provenance": {
+            "index_id": "doc-823f93c052590c06f90e",
+            "source_kind": "local_knowledge_card",
+            "archive_aliases": [
+              "华为PC知识库(1).zip",
+              "任德耀新建华为PC知识库.zip"
+            ],
+            "text_sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f"
+          }
+        }
+      ],
+      "huawei_official": [
+        {
+          "source_id": "src-off-dcd85721b9c3",
+          "source_type": "huawei_official",
+          "title": "HUAWEI MateBook 14 - 华为官网",
+          "entry": "matebook-14-harmonyos:matebook-14-harmonyos-0f0c0880c53fb3e1.txt",
+          "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+          "retrieved_at": "2026-10-18T08:02:24.513092+00:00",
+          "sha256": "f2fb2f2108f7c6413e0e6d5416b7ef03be15888b6ded7c92ed1c5ab3f6ed1aa9",
+          "excerpt": "官方页面 HUAWEI MateBook 14 - 华为官网，页面抓取状态 ok",
+          "applicable_models": [
+            "HUAWEI MateBook 14（鸿蒙版）"
+          ],
+          "provenance": {
+            "snapshot_id": "matebook-14-harmonyos",
+            "raw_path": "datasets/raw/matebook-14-harmonyos-0f0c0880c53fb3e1.html",
+            "text_path": "datasets/raw/matebook-14-harmonyos-0f0c0880c53fb3e1.txt",
+            "http_status": 200,
+            "raw_sha256": "0f0c0880c53fb3e1da27f9943726e36176439180c732de5b1b60f0f0cf856b34",
+            "fetched_at": "2026-10-18T08:02:24.513092+00:00",
+            "source_kind": "huawei_official_page"
+          }
+        },
+        {
+          "source_id": "src-off-9f7def1de9a2",
+          "source_type": "huawei_official",
+          "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+          "entry": "matebook-14-harmonyos-specs:matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+          "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/",
+          "retrieved_at": "2026-10-18T08:03:04.673129+00:00",
+          "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+          "excerpt": "官方页面 HUAWEI MateBook 14 规格参数 - 华为官网，页面抓取状态 ok",
+          "applicable_models": [
+            "HUAWEI MateBook 14（鸿蒙版）"
+          ],
+          "provenance": {
+            "snapshot_id": "matebook-14-harmonyos-specs",
+            "raw_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.html",
+            "text_path": "datasets/raw/matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+            "http_status": 200,
+            "raw_sha256": "7b5e38f26573f09af76246bbc17fdad0f70b32b5b22441e45b179437f77a9c67",
+            "fetched_at": "2026-10-18T08:03:04.673129+00:00",
+            "source_kind": "huawei_official_page"
+          }
+        }
+      ],
+      "huawei_mall": {
+        "snapshot_id": "vmall-matebook-14-harmonyos",
+        "url": "https://www.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196907&cid=381499",
+        "fetch_status": "failed",
+        "fetched_at": "2026-10-18T08:03:07.050910+00:00",
+        "attempts": [
+          {
+            "attempt": 1,
+            "status": "failed",
+            "at": "2026-10-18T08:03:04.673418+00:00",
+            "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+          },
+          {
+            "attempt": 2,
+            "status": "failed",
+            "at": "2026-10-18T08:03:07.050910+00:00",
+            "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+          }
+        ],
+        "limitation": "商城直连抓取历史失败，未伪造库存或可成交报价；价格仅引用带有效时间的知识库页面快照"
+      }
+    }
+  }
+}

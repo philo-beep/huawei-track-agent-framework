@@ -1,0 +1,411 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T05:09:29.772Z",
+  "product": "HUAWEI MateBook 14（鸿蒙版）",
+  "counts": {
+    "candidates": 9,
+    "verified_model": 0,
+    "rights_cleared": 0,
+    "readable": 9,
+    "sha256_verified": 9
+  },
+  "images": [
+    {
+      "image_id": "image-ima-92d111e0de6cc113",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook系列分类横幅_41.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-92d111e0de6c",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook系列分类横幅_41.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_8b01bde68f5cb90f934284e9a8cc856c7514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4",
+        "excerpt": "vmall_pc_MateBook系列分类横幅_41.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_8b01bde68f5cb90f934284e9a8cc856c7514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4",
+      "data_path": "datasets/raw/assets/92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4.jpg",
+      "bytes": 69135,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-b477ea160a038cb6",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-b477ea160a03",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_9ad102cebcf2e468bda2fe46def0854f7514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89",
+        "excerpt": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_9ad102cebcf2e468bda2fe46def0854f7514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89",
+      "data_path": "datasets/raw/assets/b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89.jpg",
+      "bytes": 70399,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-98a11c418a2d7c01",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook系列专区横幅_40.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-98a11c418a2d",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook系列专区横幅_40.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_c29713ebd6a8efd51492135a717255367514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e",
+        "excerpt": "vmall_pc_MateBook系列专区横幅_40.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_c29713ebd6a8efd51492135a717255367514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e",
+      "data_path": "datasets/raw/assets/98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e.jpg",
+      "bytes": 153168,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-0a7afff9d3a7fe83",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-0a7afff9d3a7",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_7d6411af9985494c9f0053358bc70e037514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6",
+        "excerpt": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_7d6411af9985494c9f0053358bc70e037514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6",
+      "data_path": "datasets/raw/assets/0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6.jpg",
+      "bytes": 76688,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-ima-d032a0f2fde5f3b5",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "vmall_pc_MateBook产品分类横幅_42.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-ima-d032a0f2fde5",
+        "source_type": "ima",
+        "title": "vmall_pc_MateBook产品分类横幅_42.jpg",
+        "entry": "ima-media:img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_d2a59fc21b5c7de9c6e8f20f412d8b667514565705233223",
+        "url": null,
+        "retrieved_at": "2026-10-21T12:46:18+08:00",
+        "sha256": "d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd",
+        "excerpt": "vmall_pc_MateBook产品分类横幅_42.jpg",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "ima": {
+          "capture_mode": "live_ima_media_info_and_content_download",
+          "body_status": "binary_image_verified",
+          "knowledge_base_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+          "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_d2a59fc21b5c7de9c6e8f20f412d8b667514565705233223",
+          "media_type": 9,
+          "parent_folder_id": "folder_7517317357381080",
+          "request_ids": [],
+          "data_path": "datasets/raw/assets/d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd.jpg"
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd",
+      "data_path": "datasets/raw/assets/d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd.jpg",
+      "bytes": 70328,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-9f9470747d7e3c40",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-9f9470747d7e",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+        "excerpt": "原野绿多彩配色",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-3ca5a9ccf0e62ccbfe53",
+          "local_path": "datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+      "data_path": "datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png",
+      "bytes": 569412,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-e320384c91d75f72",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-e320384c91d7",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-pink.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+        "excerpt": "HUAWEI MateBook 14 樱粉金",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-5c8f6b48f1070bcf4a40",
+          "local_path": "datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+      "data_path": "datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png",
+      "bytes": 533666,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-85fadb0cbceb8632",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-85fadb0cbceb",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-accessories-m-pen-3.jpg",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+        "excerpt": "手写笔创作场景",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-75e687c26ea2bc54291f",
+          "local_path": "datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+      "data_path": "datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg",
+      "bytes": 76576,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    },
+    {
+      "image_id": "image-local-ab085ae7d9fd83af",
+      "product": "HUAWEI MateBook 14（鸿蒙版）",
+      "caption": "hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+      "usage_scope": "internal_only",
+      "rights_status": "unknown",
+      "source": {
+        "source_id": "src-local-ab085ae7d9fd",
+        "source_type": "local_knowledge",
+        "title": "hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_深空灰沉稳配色_05.png",
+        "url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-grey.png",
+        "retrieved_at": "2026-10-18T06:45:52.318867+00:00",
+        "sha256": "ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440",
+        "excerpt": "深空灰沉稳配色",
+        "applicable_models": [
+          "HUAWEI MateBook 14（鸿蒙版）"
+        ],
+        "provenance": {
+          "index_id": "img-5cd19c769315e00f0b64",
+          "local_path": "datasets/raw/assets/ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440.png",
+          "archive_aliases": [
+            "华为PC知识库(1).zip",
+            "任德耀新建华为PC知识库.zip"
+          ],
+          "index_entries": [
+            "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/图片索引.csv"
+          ],
+          "page_urls": [
+            "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+          ],
+          "source_kind": "local_knowledge_mirror",
+          "model_association": [
+            "explicit_image_index"
+          ]
+        }
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "model_verified": false,
+      "content_sha256": "ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440",
+      "data_path": "datasets/raw/assets/ab085ae7d9fd83af91b68e1b32c9f6f2148ca22e0d656f16f89815b93650f440.png",
+      "bytes": 557277,
+      "storage_status": "reused_existing",
+      "sha256_verified": true,
+      "usable_as_verified_product_image": false
+    }
+  ],
+  "limitations": [
+    "9 张图片均为候选：5 张来自 IMA 搜索，4 张来自本地知识库显式产品图片索引",
+    "model_verified=0、rights_status=unknown；未完成画面、颜色、SKU、版权和正式使用授权核验",
+    "本地图片与 IMA 图片均复用 data-spec 中 SHA-256 完全匹配的原始资产"
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T05:09:29.772Z",
+  "target": {
+    "product": "HUAWEI MateBook 14（鸿蒙版）",
+    "aliases": [
+      "MateBook 14 鸿蒙版",
+      "HUAWEI MateBook 14 鸿蒙版"
+    ],
+    "model_pattern": "MateBook\\s*14.*鸿蒙版|鸿蒙版.*MateBook\\s*14",
+    "as_of": "2026-10-21"
+  },
+  "capture": {
+    "capture_id": "ima-live-2026-10-21-matebook14-harmonyos",
+    "status": "partial_verified_quota_blocked",
+    "skill_version": "1.1.10",
+    "quota": {
+      "code": 220021,
+      "message": "资料获取次数已达上限，请明天再尝试",
+      "request_id": "a314fe1f8587a32d16c3c692c6b87fe5",
+      "observed_at": "2026-10-21T13:04:30+08:00",
+      "effect": "Further live directory, search, media and body reads are blocked until the vendor quota resets."
+    }
+  },
+  "evidence_bundle_path": "evidence-bundle.json",
+  "image_manifest_path": "image-manifest.json",
+  "knowledge_base": {
+    "kb_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+    "kb_name": "任德耀新建华为PC知识库",
+    "content_count": 1519,
+    "member_count": 65,
+    "role_type": "普通成员",
+    "base_type": "共享知识库"
+  },
+  "search_observations": [
+    {
+      "query": "鸿蒙版",
+      "count": 9,
+      "types": {
+        "7": 9
+      },
+      "request_id": null,
+      "titles": [
+        "MateBook 14 鸿蒙版销售配置.md",
+        "01-HUAWEI MateBook Pro（鸿蒙版）.md",
+        "02-HUAWEI MateBook 14（鸿蒙版）.md",
+        "HUAWEI MateBook Pro（鸿蒙版）-价格卡.md",
+        "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "MC-053_HUAWEI MateBook 14（鸿蒙版）.md",
+        "MC-060_HUAWEI MateBook Pro（鸿蒙版）.md",
+        "03-鸿蒙版与Windows版区别.md",
+        "09-MateBook 14 鸿蒙版上市报道.md"
+      ]
+    },
+    {
+      "query": "MateBook 14 鸿蒙版",
+      "count": 75,
+      "types": {
+        "7": 70,
+        "9": 5
+      },
+      "request_id": null
+    },
+    {
+      "query": "HUAWEI MateBook 14 鸿蒙版",
+      "count": 65,
+      "types": {
+        "7": 65
+      },
+      "request_id": null
+    }
+  ],
+  "directory_observations": {
+    "root": {
+      "request_id": "1ad80c1c22cf09e4c775fdac9b2d80b0",
+      "returned": 1,
+      "entries": [
+        {
+          "media_id": "folder_7517317118306152",
+          "title": "任德耀新建华为PC知识库",
+          "parent_folder_id": "7514565705233223",
+          "media_type": 99,
+          "is_folder": true
+        }
+      ],
+      "current_path": [
+        {
+          "folder_id": "7514565705233223",
+          "name": "任德耀新建华为PC知识库",
+          "file_number": "0",
+          "folder_number": "0",
+          "parent_folder_id": "",
+          "is_top": false
+        }
+      ]
+    },
+    "child_folder_probe": {
+      "folder_id": "folder_7517317118306152",
+      "page_size_returned": 20,
+      "is_end": null,
+      "request_id": null,
+      "note": "The call succeeded, but the pagination state and entry IDs were not persisted before the daily quota was exhausted."
+    },
+    "complete": false
+  },
+  "documents": [
+    {
+      "title": "02-HUAWEI MateBook 14（鸿蒙版）.md",
+      "media_id": null,
+      "media_type": 7,
+      "sha256": "f00c695c266e6fffb3f2156271491326c27331829946ae9cddc45f5baa364339",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "capture_mode": "live_ima_get_media_info_and_download_then_local_mirror_hash_match",
+      "body_status": "verified_full_text_hash_matched_local_mirror",
+      "body_path": "sources/001-02-HUAWEI-MateBook-14(鸿蒙版).md.md",
+      "local_mirror": {
+        "document_id": "doc-58a8422c54032432df3f",
+        "entry_sha256": "f00c695c266e6fffb3f2156271491326c27331829946ae9cddc45f5baa364339"
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "request_ids": []
+    },
+    {
+      "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+      "media_id": null,
+      "media_type": 7,
+      "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "capture_mode": "live_ima_get_media_info_and_download_then_local_mirror_hash_match",
+      "body_status": "verified_full_text_hash_matched_local_mirror",
+      "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md",
+      "local_mirror": {
+        "document_id": "doc-2288de32bf812c2cd62a",
+        "entry_sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f"
+      },
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "request_ids": []
+    },
+    {
+      "title": "MateBook 14 鸿蒙版销售配置.md",
+      "media_id": null,
+      "media_type": 7,
+      "sha256": "8b3543567f2ea8d58aa7ec7f2941cd9b1ad3134979f0c1742fe69a016e79e104",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "capture_mode": "live_ima_get_media_info_and_download",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/003-MateBook-14-鸿蒙版销售配置.md.txt",
+      "local_mirror": null,
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "request_ids": []
+    },
+    {
+      "title": "03-鸿蒙版与Windows版区别.md",
+      "media_id": null,
+      "media_type": 7,
+      "sha256": "54cce3396888a821e393b502c0dafe64b78317ebd9803789bb388906d79340b3",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "capture_mode": "live_ima_get_media_info_and_download",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/004-03-鸿蒙版与Windows版区别.md.txt",
+      "local_mirror": null,
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "request_ids": []
+    },
+    {
+      "title": "09-MateBook 14 鸿蒙版上市报道.md",
+      "media_id": null,
+      "media_type": 7,
+      "sha256": "4d12af59f75fb3a060febef56301b5efb7b93759f576c182eb3819f4bef509a6",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "capture_mode": "live_ima_get_media_info_and_download",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/005-09-MateBook-14-鸿蒙版上市报道.md.txt",
+      "local_mirror": null,
+      "applicable_models": [
+        "HUAWEI MateBook 14（鸿蒙版）"
+      ],
+      "request_ids": []
+    }
+  ],
+  "summary": {
+    "documents": 5,
+    "full_text": 2,
+    "excerpts_only": 3,
+    "facts": 13,
+    "prices": 12,
+    "images": 9
+  },
+  "gaps": [
+    "IMA 当日配额仍阻断完整目录与全量正文覆盖；IMA 能力已实现，完整覆盖未声称完成",
+    "价格快照来自 2026-10-17，未核验为 2026-10-21 当前报价",
+    "9 张图片均为候选，未完成型号、配色、SKU、画面和版权核验",
+    "华为商城直连抓取曾返回 302 循环；本次不伪造商城库存或可成交报价",
+    "本地知识库两个压缩包字节一致，只作为同源镜像，不作为两份独立佐证"
+  ],
+  "supplemental_sources": {
+    "local_knowledge": [
+      {
+        "title": "HUAWEI MateBook 14（鸿蒙版） - 产品事实",
+        "source_id": "src-local-639df121d8de",
+        "sha256": "5101ff448d12cc7c70319845c3f74923656426dce7ab18fb150fda5bd17cab1f",
+        "entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/产品事实.md"
+      }
+    ],
+    "huawei_official": [
+      {
+        "title": "HUAWEI MateBook 14 - 华为官网",
+        "source_id": "src-off-dcd85721b9c3",
+        "sha256": "f2fb2f2108f7c6413e0e6d5416b7ef03be15888b6ded7c92ed1c5ab3f6ed1aa9",
+        "entry": "matebook-14-harmonyos:matebook-14-harmonyos-0f0c0880c53fb3e1.txt",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/"
+      },
+      {
+        "title": "HUAWEI MateBook 14 规格参数 - 华为官网",
+        "source_id": "src-off-9f7def1de9a2",
+        "sha256": "b2d0cbe420b2bac1bbbc306241b181768dee11a7afda63187eb6082bf812201c",
+        "entry": "matebook-14-harmonyos-specs:matebook-14-harmonyos-specs-7b5e38f26573f09a.txt",
+        "url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/specs/"
+      }
+    ],
+    "huawei_mall": {
+      "snapshot_id": "vmall-matebook-14-harmonyos",
+      "url": "https://www.vmall.com/product/comdetail/index.html?prdId=10086097339191&sbomCode=2801010196907&cid=381499",
+      "fetch_status": "failed",
+      "fetched_at": "2026-10-18T08:03:07.050910+00:00",
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed",
+          "at": "2026-10-18T08:03:04.673418+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        },
+        {
+          "attempt": 2,
+          "status": "failed",
+          "at": "2026-10-18T08:03:07.050910+00:00",
+          "error": "HTTPError: HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop.\nThe last 30x error message was:\nMoved Temporarily"
+        }
+      ],
+      "limitation": "商城直连抓取历史失败，未伪造库存或可成交报价；价格仅引用带有效时间的知识库页面快照"
+    }
+  },
+  "source_policy": "IMA 优先，本地知识库和华为官方商城/官网补充；缺失或失败项保持为空并记录状态"
+}

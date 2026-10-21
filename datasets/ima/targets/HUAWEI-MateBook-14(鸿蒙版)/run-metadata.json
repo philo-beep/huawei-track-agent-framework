@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T05:09:29.772Z",
+  "capture_file": "datasets/ima/captures/ima-verified-capture-2026-10-21.json",
+  "request_ids": {
+    "knowledge_base_search": [
+      "013ceff6f104ba4f6803b1958c52eb18"
+    ],
+    "probe_previous": [
+      "8c2e0743577ce488e65bcd25970d5a33"
+    ],
+    "directory_root": [
+      "1ad80c1c22cf09e4c775fdac9b2d80b0"
+    ],
+    "quota_error": [
+      "a314fe1f8587a32d16c3c692c6b87fe5"
+    ]
+  },
+  "quota": {
+    "code": 220021,
+    "message": "资料获取次数已达上限，请明天再尝试",
+    "request_id": "a314fe1f8587a32d16c3c692c6b87fe5",
+    "observed_at": "2026-10-21T13:04:30+08:00",
+    "effect": "Further live directory, search, media and body reads are blocked until the vendor quota resets."
+  }
+}

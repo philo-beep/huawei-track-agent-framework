@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "bundle_type": "ima_evidence_base",
+  "generated_at": "2026-10-21T05:09:29.772Z",
+  "capture_id": "ima-live-2026-10-21-matebook14-harmonyos",
+  "capture_status": "partial_verified_quota_blocked",
+  "target": {
+    "product": "HUAWEI MateBook 14（鸿蒙版）",
+    "aliases": [
+      "MateBook 14 鸿蒙版",
+      "HUAWEI MateBook 14 鸿蒙版"
+    ],
+    "model_pattern": "MateBook\\s*14.*鸿蒙版|鸿蒙版.*MateBook\\s*14",
+    "as_of": "2026-10-21"
+  },
+  "ima_context": {
+    "skill_version": "1.1.10",
+    "read_only": true,
+    "knowledge_base": {
+      "kb_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+      "kb_name": "任德耀新建华为PC知识库",
+      "content_count": 1519,
+      "member_count": 65,
+      "role_type": "普通成员",
+      "base_type": "共享知识库"
+    }
+  },
+  "capabilities": {
+    "official_skill_loaded": true,
+    "knowledge_base_search_live_verified": true,
+    "knowledge_base_detail_live_verified": true,
+    "directory_browse_live_verified": true,
+    "knowledge_search_live_verified": true,
+    "media_info_live_verified": true,
+    "body_read_live_verified": true,
+    "image_content_download_live_verified": true,
+    "complete_directory_snapshot": false,
+    "complete_target_corpus": false
+  },
+  "knowledge_bases": [
+    {
+      "kb_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+      "kb_name": "任德耀新建华为PC知识库",
+      "content_count": 1519,
+      "member_count": 65,
+      "role_type": "普通成员",
+      "base_type": "共享知识库"
+    }
+  ],
+  "directory_observations": {
+    "root": {
+      "request_id": "1ad80c1c22cf09e4c775fdac9b2d80b0",
+      "returned": 1,
+      "entries": [
+        {
+          "media_id": "folder_7517317118306152",
+          "title": "任德耀新建华为PC知识库",
+          "parent_folder_id": "7514565705233223",
+          "media_type": 99,
+          "is_folder": true
+        }
+      ],
+      "current_path": [
+        {
+          "folder_id": "7514565705233223",
+          "name": "任德耀新建华为PC知识库",
+          "file_number": "0",
+          "folder_number": "0",
+          "parent_folder_id": "",
+          "is_top": false
+        }
+      ]
+    },
+    "child_folder_probe": {
+      "folder_id": "folder_7517317118306152",
+      "page_size_returned": 20,
+      "is_end": null,
+      "request_id": null,
+      "note": "The call succeeded, but the pagination state and entry IDs were not persisted before the daily quota was exhausted."
+    },
+    "complete": false
+  },
+  "search_observations": [
+    {
+      "query": "鸿蒙版",
+      "count": 9,
+      "types": {
+        "7": 9
+      },
+      "request_id": null,
+      "titles": [
+        "MateBook 14 鸿蒙版销售配置.md",
+        "01-HUAWEI MateBook Pro（鸿蒙版）.md",
+        "02-HUAWEI MateBook 14（鸿蒙版）.md",
+        "HUAWEI MateBook Pro（鸿蒙版）-价格卡.md",
+        "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+        "MC-053_HUAWEI MateBook 14（鸿蒙版）.md",
+        "MC-060_HUAWEI MateBook Pro（鸿蒙版）.md",
+        "03-鸿蒙版与Windows版区别.md",
+        "09-MateBook 14 鸿蒙版上市报道.md"
+      ]
+    },
+    {
+      "query": "MateBook 14 鸿蒙版",
+      "count": 75,
+      "types": {
+        "7": 70,
+        "9": 5
+      },
+      "request_id": null
+    },
+    {
+      "query": "HUAWEI MateBook 14 鸿蒙版",
+      "count": 65,
+      "types": {
+        "7": 65
+      },
+      "request_id": null
+    }
+  ],
+  "verified_documents": [
+    {
+      "title": "02-HUAWEI MateBook 14（鸿蒙版）.md",
+      "sha256": "f00c695c266e6fffb3f2156271491326c27331829946ae9cddc45f5baa364339",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "body_status": "verified_full_text_hash_matched_local_mirror",
+      "body_path": "sources/001-02-HUAWEI-MateBook-14(鸿蒙版).md.md"
+    },
+    {
+      "title": "HUAWEI MateBook 14（鸿蒙版）-价格卡.md",
+      "sha256": "742064dcaa488353c7eff2f27d662627fdf92e2b84d6c9dc8630461d7b6f7b0f",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "body_status": "verified_full_text_hash_matched_local_mirror",
+      "body_path": "sources/002-HUAWEI-MateBook-14(鸿蒙版)-价格卡.md.md"
+    },
+    {
+      "title": "MateBook 14 鸿蒙版销售配置.md",
+      "sha256": "8b3543567f2ea8d58aa7ec7f2941cd9b1ad3134979f0c1742fe69a016e79e104",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/003-MateBook-14-鸿蒙版销售配置.md.txt"
+    },
+    {
+      "title": "03-鸿蒙版与Windows版区别.md",
+      "sha256": "54cce3396888a821e393b502c0dafe64b78317ebd9803789bb388906d79340b3",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/004-03-鸿蒙版与Windows版区别.md.txt"
+    },
+    {
+      "title": "09-MateBook 14 鸿蒙版上市报道.md",
+      "sha256": "4d12af59f75fb3a060febef56301b5efb7b93759f576c182eb3819f4bef509a6",
+      "retrieved_at": "2026-10-21T12:46:45+08:00",
+      "body_status": "verified_excerpt_and_full_content_sha256",
+      "body_path": "sources/verified-excerpts/005-09-MateBook-14-鸿蒙版上市报道.md.txt"
+    }
+  ],
+  "verified_images": [
+    {
+      "title": "vmall_pc_MateBook系列分类横幅_41.jpg",
+      "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_8b01bde68f5cb90f934284e9a8cc856c7514565705233223",
+      "sha256": "92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4",
+      "data_path": "datasets/raw/assets/92d111e0de6cc113b404ce527db45277b63188b1e8f98d2ed09cb55da9d9f8b4.jpg"
+    },
+    {
+      "title": "vmall_pc_MateBook Pro S分类横幅_43.jpg",
+      "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_9ad102cebcf2e468bda2fe46def0854f7514565705233223",
+      "sha256": "b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89",
+      "data_path": "datasets/raw/assets/b477ea160a038cb6ee23703c2e53a7240530497289b3a23ce361a96ceb4c5e89.jpg"
+    },
+    {
+      "title": "vmall_pc_MateBook系列专区横幅_40.jpg",
+      "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_c29713ebd6a8efd51492135a717255367514565705233223",
+      "sha256": "98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e",
+      "data_path": "datasets/raw/assets/98a11c418a2d7c0155f6a91f651754d5f67e6155e58df96f66acd47f1a58633e.jpg"
+    },
+    {
+      "title": "vmall_pc_MateBook Fold分类横幅_44.jpg",
+      "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_7d6411af9985494c9f0053358bc70e037514565705233223",
+      "sha256": "0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6",
+      "data_path": "datasets/raw/assets/0a7afff9d3a7fe83979aaa6c356c8e285cf09576b845d436112142589a1b4ad6.jpg"
+    },
+    {
+      "title": "vmall_pc_MateBook产品分类横幅_42.jpg",
+      "media_id": "img_cls1_71e8ad4dc7517dbbc07ecf776913d64a_d2a59fc21b5c7de9c6e8f20f412d8b667514565705233223",
+      "sha256": "d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd",
+      "data_path": "datasets/raw/assets/d032a0f2fde5f3b59ae2eb9824b58ac11cf0352cfc063a0bfc9b5957b0e0aacd.jpg"
+    }
+  ],
+  "target_package": {
+    "path": "targets/HUAWEI-MateBook-14(鸿蒙版)/target-evidence-package.json",
+    "documents": 5,
+    "images": 9
+  },
+  "quota": {
+    "code": 220021,
+    "message": "资料获取次数已达上限，请明天再尝试",
+    "request_id": "a314fe1f8587a32d16c3c692c6b87fe5",
+    "observed_at": "2026-10-21T13:04:30+08:00",
+    "effect": "Further live directory, search, media and body reads are blocked until the vendor quota resets."
+  },
+  "request_ids": {
+    "knowledge_base_search": [
+      "013ceff6f104ba4f6803b1958c52eb18"
+    ],
+    "probe_previous": [
+      "8c2e0743577ce488e65bcd25970d5a33"
+    ],
+    "directory_root": [
+      "1ad80c1c22cf09e4c775fdac9b2d80b0"
+    ],
+    "quota_error": [
+      "a314fe1f8587a32d16c3c692c6b87fe5"
+    ]
+  },
+  "limitations": [
+    "官方 IMA 接口在 2026-10-21T13:04:30+08:00 返回 220021：资料获取次数已达上限，请明天再尝试；未伪造缺失的正文、媒体 ID 或请求 ID",
+    "知识库目录仅完成根层与一个子文件夹首页探测，1519 条内容未在本会话全部枚举",
+    "目标产品仅 2 份全文完成 IMA 实取哈希与本地镜像逐字节匹配；其余仅保留已验证哈希/摘录",
+    "价格快照来自 2026-10-17，未核验为 2026-10-21 当前报价",
+    "5 张图片仅为 IMA 搜索候选，型号、配色、SKU、画面和版权均未核验"
+  ],
+  "supplemental_sources": {
+    "enabled": true,
+    "priority": "ima_then_local_knowledge_then_huawei_official",
+    "local_knowledge_sources": 1,
+    "huawei_official_sources": 2,
+    "huawei_mall_status": "failed",
+    "limitation": "IMA 覆盖仍为 partial_verified_quota_blocked；补充来源不把 IMA 配额缺口标为完整"
+  }
+}
