@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { runPipeline, renderMarkdown: marketingMarkdown } = require('./main');
 const { calculatePricing, NOTICE } = require('./pricing');
+const { buildDealPlan } = require('./solution-planning');
 const { loadOfficialReference } = require('./official');
 const { ROOT, outputPath, PipelineError, redact } = require('./support');
 
@@ -41,7 +42,7 @@ async function runFourSteps(marketingInput, pricingInput, options = {}) {
         pricing.diagnostics.push({ code: 'CROSS_PRODUCT_MISMATCH', message: '营销产品与报价产品不完全一致，组合报价已阻塞，禁止混配' });
         diagnostics.push({ code: 'CROSS_PRODUCT_MISMATCH', message: '请在两个输入中使用同一产品及明确的演示SKU' });
     }
-    const explicitQuantity = marketingInput?.customer?.budget?.quantity;
+    const explicitQuantity = marketingInput?.customer?.budget?.quantity ?? marketing.profile?.budget?.value?.quantity;
     if (pricing.quantity !== null && Number.isSafeInteger(explicitQuantity) && explicitQuantity > 0 && explicitQuantity !== pricing.quantity) {
         pricing.status = 'blocked'; pricing.unit_amount_cents = null; pricing.amount_cents = null; pricing.budget_check = 'not_evaluated';
         pricing.diagnostics.push({ code: 'CUSTOMER_QUANTITY_MISMATCH', message: '客户明确预算数量与演示报价数量不一致，组合金额已阻塞；请同步确认输入' });
@@ -49,6 +50,18 @@ async function runFourSteps(marketingInput, pricingInput, options = {}) {
     }
     const official = loadOfficialReference(marketing.knowledge_basis.product, pricing.sku);
     const { documents, ...officialReference } = official;
+    const dealPlan = buildDealPlan({
+        profile: marketing.profile,
+        facts: marketing.knowledge_basis?.facts || [],
+        request: {
+            product: marketing.knowledge_basis?.product || null,
+            audience: marketing.scenario_judgment?.audience || null,
+            scenario: marketing.scenario_judgment?.scenario || null,
+        },
+        marketingStatus: marketing.status,
+        pricing,
+        nextActions: marketing.sales_preparation?.next_actions || [],
+    });
     const completed = Date.now();
     const result = {
         schema_version: 'fourstep-demo-1.0', status: marketing.status === 'ready' && pricing.status === 'calculated_demo' ? 'demo_ready' : 'needs_attention',
@@ -58,8 +71,11 @@ async function runFourSteps(marketingInput, pricingInput, options = {}) {
         pricing_result: pricing,
         pricing_configuration: { policy_snapshot: pricing.input_provenance.synthetic ? structuredClone(pricingInput.policy) : null, confirmed_eligibility: pricing.input_provenance.synthetic ? [...(pricingInput.confirmed_eligibility || [])] : [], eligibility_is_synthetic: pricing.input_provenance.synthetic },
         official_reference: officialReference,
-        solution: { marketing_content: marketing.marketing_content, demonstration_plan: demonstrationPlan(marketing, pricing) },
-        next_actions: marketing.sales_preparation.next_actions,
+        solution: { marketing_content: marketing.marketing_content, base_solution: dealPlan.base_solution, budget_assessment: dealPlan.budget_assessment, quote_status: dealPlan.quote_status, demonstration_plan: demonstrationPlan(marketing, pricing) },
+        budget_assessment: dealPlan.budget_assessment,
+        quote_status: dealPlan.quote_status,
+        action_plan: dealPlan.action_plan,
+        next_actions: dealPlan.next_actions,
         marketing_result: marketing,
         timing: { started_at: startedAt, completed_at: new Date(completed).toISOString(), generation_elapsed_seconds: (completed - started) / 1000, generation_under_30_minutes: completed - started < 1800000, onsite_elapsed_seconds: null, onsite_within_30_minutes_verified: false },
         limitations: ['demo_ready仅表示本地准备稿与已显式提供的合成算术可演示，不是正式参赛全部硬要求达成', '营销自由文案采用程序化核对式叙述，模型用于策略和事实选择；原模型自由文案质量未证明通过', '用户已彻底停用IMA，旧mode=ima亦不发起调用；以任德耀本地原文及核验官网快照替代，与旧赛事IMA要求的差异如实保留', '官网规格为精确代际的系列选项，不代表指定SKU；公开价格参考、合成四级与真实交易报价分别记录，后者金额始终null', '正式图片未通过视觉/SKU/版权核验；真实报价、现场半小时完成和咨询转化均无实证', '仅在显式输入时启用演示SKU及假设政策，不证明配置实际存在或库存可售；实际完整SKU须由销售确认'],
@@ -85,7 +101,13 @@ function renderMarkdown(result) {
     const policy = result.pricing_configuration.policy_snapshot;
     const content = result.content.marketing_content;
     const official = result.official_reference;
-    lines.push(...result.customer_analysis.clarification_questions.map(question => `- 待确认：${question.question}`), '# 第二步：写出内容', '> 这是程序化核对式准备稿；真实模型用于策略和事实选择，模型自由标题/导语/过渡/CTA未直接采用，原模型自由文案质量未证明通过。正式配图仍为0，候选图在附录供人工核对。', content ? `## ${content.title}\n\n${content.lead}\n\n${content.body}\n\n**行动引导**：${content.cta}` : '内容未生成：营销流程需澄清或已阻塞，请查看附录诊断。', '# 第三步：给出方案', '## 官网规格与公开零售价参考');
+    lines.push(...result.customer_analysis.clarification_questions.map(question => `- 待确认：${question.question}`), '# 第二步：写出内容', '> 这是程序化核对式准备稿；真实模型用于策略和事实选择，模型自由标题/导语/过渡/CTA未直接采用，原模型自由文案质量未证明通过。正式配图仍为0，候选图在附录供人工核对。', content ? `## ${content.title}\n\n${content.lead}\n\n${content.body}\n\n**行动引导**：${content.cta}` : '内容未生成：营销流程需澄清或已阻塞，请查看附录诊断。', '# 第三步：给出方案');
+    const baseSolution = result.solution.base_solution;
+    const quoteStatus = result.quote_status;
+    const budgetAssessment = result.budget_assessment;
+    lines.push('## 基础方案（基于画像与来源证据）', `状态：${baseSolution.status}（${baseSolution.label}）；目标：${cell(baseSolution.goal)}。`, '### 客户上下文', ...baseSolution.customer_context.filter(item => item.value !== null).map(item => `- ${cell(item.field)}：${cell(item.value)}（${item.status}；证据${item.evidence_refs.length}条）`), ...(baseSolution.customer_context.every(item => item.value === null) ? ['- 尚无明确客户画像，先完成需求澄清。'] : []), '### 执行方法');
+    for (const step of baseSolution.approach) lines.push(`#### ${step.priority}. ${step.id}`, `负责人：${step.owner_role}；建议时间：${step.timing}。`, `动作：${step.action}`, `交付：${step.output}`, `完成标准：${step.completion_criteria}`);
+    lines.push('### 交付物', ...baseSolution.deliverables.map(item => `- ${item.label}：${item.status}`), '### 证据依据', `画像证据引用：${baseSolution.evidence_basis.profile_evidence_refs.length}条；产品事实：${baseSolution.evidence_basis.fact_ids.join('、') || '无可用事实ID'}。`, '### 方案边界', ...baseSolution.exclusions.map(item => `- ${item}`), '## 报价状态', `状态：${quoteStatus.status}（${quoteStatus.label}）；正式价格：${quoteStatus.price === null ? 'null（缺失/待确认）' : money(quoteStatus.price)}。`, ...(quoteStatus.synthetic_reference ? [`合成演算参考：${money(quoteStatus.synthetic_reference.amount_cents)}；policy=${cell(quoteStatus.synthetic_reference.policy_id)}；不是客户报价。`] : []), ...quoteStatus.missing_information.map(item => `- 缺少：${item}`), '## 预算判断', `状态：${budgetAssessment.status}；预算范围：${budgetAssessment.range ? `${budgetAssessment.range.min}–${budgetAssessment.range.max} ${budgetAssessment.range.currency || '币种待确认'}（${budgetAssessment.range.scope || '口径待确认'}）` : 'null（缺失）'}；可行度：${budgetAssessment.feasibility.label}。`, `判断依据：${budgetAssessment.feasibility.reason}`, ...(budgetAssessment.demo_comparison ? [`合成比较：${budgetAssessment.demo_comparison.budget_check}；${budgetAssessment.demo_comparison.notice}`] : []), ...budgetAssessment.missing_information.map(item => `- 待确认：${item}`), '## 官网规格与公开零售价参考');
     if (official) {
         lines.push(`核验状态：${official.status}；完整代际产品：${cell(official.product)}；请求SKU：${cell(official.requested_sku)}；核验时间：${official.checked_at}。规格仅为原文系列选项，不拼凑SKU。`);
         for (const source of official.sources) lines.push(`- 官网：${source.url}；抓取：${source.fetched_at}；型号：${source.product}；SKU：${source.sku || '未知'}；原文：${source.raw_path}；SHA256：${source.raw_sha256}；限制：${source.limitations.join('；')}`);

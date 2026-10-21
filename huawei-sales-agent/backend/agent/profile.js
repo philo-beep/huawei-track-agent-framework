@@ -86,7 +86,7 @@ function parseInput(input) {
             else if (!budget.currency || !budget.scope || budget.scope === '待确认') addQuestion('customer.budget', '请确认预算币种及单台/总额口径。', 'quote');
         }
     }
-    const budgetMatches = [...raw.matchAll(/(?:总预算|每台预算|单台预算|现金预算|预算)(?:为|是|约|不超过|[:：])?\s*(-?\d+(?:\.\d+)?)(万|千)?\s*(元|人民币|美元|USD|CNY)?/g)];
+    const budgetMatches = [...raw.matchAll(/(?:总预算|每台预算|单台预算|现金预算|预算)(?:为|是|约|不超过|只有|仅|最多|不高于|[:：])?\s*(-?\d+(?:\.\d+)?)(万|千)?\s*(元|人民币|美元|USD|CNY)?/g)];
     if (budgetMatches.length && !/把预算猜|预算猜成|虚构(?:预算|基价)|编造预算/.test(raw)) {
         const amounts = budgetMatches.map(match => Number(match[1]) * (match[2] === '万' ? 10000 : match[2] === '千' ? 1000 : 1));
         const evidence = budgetMatches.map(match => ({ input_path: '/raw_request', quote: match[0] }));
@@ -99,7 +99,7 @@ function parseInput(input) {
             const match = budgetMatches[0];
             const scope = /总预算|总额/.test(raw) ? '总额' : /每台|单台/.test(raw) ? '单台' : '待确认';
             const currency = /美元|USD/.test(match[0]) ? 'USD' : /元|人民币|CNY/.test(match[0]) ? 'CNY' : null;
-            const quantityMatch = /(?:采购|购机|购|买|加购|增加)\s*(\d+)\s*台/.exec(raw);
+            const quantityMatch = /(?:采购|购机|购|买|加购|增加|数量)\s*(\d+)\s*台/.exec(raw);
             const budget = { ...(profile.budget.value || {}), min: amounts[0], max: amounts[0], source_text: match[0] };
             if (scope !== '待确认' || !budget.scope) budget.scope = scope;
             if (currency) budget.currency = currency;

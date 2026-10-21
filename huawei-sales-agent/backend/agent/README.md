@@ -42,6 +42,7 @@
 | `release-verification.js` | A | 发布前六项强制核验、阻塞/降级冲突处理、风险清单与安全版本输出 |
 | `pricing.js` | A | 四级价格假设模型和限制 |
 | `sales.js` | A | 下一步动作、负责人和人工确认边界 |
+| `solution-planning.js` | A | 基础方案、预算判断、报价状态和成交动作编排；缺可靠依据时正式价格保持 null |
 | `prompts/system.md` | A | 主 Agent 系统提示词 |
 | `prompts/sub_agent.md` | A | 子 Agent 提示词 |
 | `cloud-server.js` | B | Web API、会话、任务、导出和限流 |
