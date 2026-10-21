@@ -1,0 +1,81 @@
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const net = require('node:net');
+const { createCloudServer } = require('../backend/agent/cloud-server');
+const { productMatchExamples } = require('../backend/agent/product-match');
+
+async function freePort() {
+    return new Promise((resolve, reject) => {
+        const probe = net.createServer();
+        probe.once('error', reject);
+        probe.listen(0, '127.0.0.1', () => {
+            const port = probe.address().port;
+            probe.close(error => error ? reject(error) : resolve(port));
+        });
+    });
+}
+
+async function waitJob(origin, id, cookie) {
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+        const response = await fetch(`${origin}/api/runs/${id}`, { headers: { Cookie: cookie } });
+        const job = await response.json();
+        if (job.status !== 'running') return job;
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    throw new Error('job timeout');
+}
+
+test('content-draft API regenerates match evidence and serves reviewed IMA images', async () => {
+    const port = await freePort();
+    const origin = `http://127.0.0.1:${port}`;
+    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false });
+    await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
+    try {
+        const pageResponse = await fetch(`${origin}/`);
+        assert.equal(pageResponse.status, 200);
+        assert.match(await pageResponse.text(), /content-draft-results/);
+        const scriptResponse = await fetch(`${origin}/static/js/app.js`);
+        assert.equal(scriptResponse.status, 200);
+        assert.match(await scriptResponse.text(), /startContentDraft/);
+        const examplesResponse = await fetch(`${origin}/api/examples`);
+        const examples = await examplesResponse.json();
+        const cookie = examplesResponse.headers.get('set-cookie').split(';')[0];
+        const headers = { 'Content-Type': 'application/json; charset=utf-8', Origin: origin, Cookie: cookie, 'X-CSRF-Token': examples.csrf_token };
+        const input = productMatchExamples()[0].input;
+        input.mode = 'local';
+        input.use_cloud_model = false;
+        const matchResponse = await fetch(`${origin}/api/product-matches`, { method: 'POST', headers, body: JSON.stringify(input) });
+        assert.equal(matchResponse.status, 202);
+        const matchJob = await matchResponse.json();
+        const completedMatch = await waitJob(origin, matchJob.id, cookie);
+        assert.equal(completedMatch.status, 'completed');
+        await new Promise(resolve => setTimeout(resolve, 2100));
+        const candidateId = completedMatch.result.candidates[0].candidate_id;
+        const contentResponse = await fetch(`${origin}/api/content-drafts`, {
+            method: 'POST', headers,
+            body: JSON.stringify({ schema_version: '1.0', match_input: input, candidate_id: candidateId, platform: '公众号', image_limit: 4 }),
+        });
+        assert.equal(contentResponse.status, 202);
+        const contentJob = await contentResponse.json();
+        assert.equal(contentJob.kind, 'content-draft');
+        const completedContent = await waitJob(origin, contentJob.id, cookie);
+        assert.equal(completedContent.status, 'completed');
+        assert.equal(completedContent.result.status, 'ready_for_review');
+        assert.equal(completedContent.result.image_sources.length, 4);
+        assert.equal(completedContent.result.verification.publication_ready, false);
+        assert.match(completedContent.markdown, /图片来源清单/);
+        const exportResponse = await fetch(`${origin}/api/runs/${contentJob.id}/export?format=markdown`, { headers: { Cookie: cookie } });
+        assert.equal(exportResponse.status, 200);
+        assert.match(await exportResponse.text(), /建议|配图/);
+        const imageUrl = completedContent.result.image_sources[0].asset_url;
+        const imageResponse = await fetch(`${origin}${imageUrl}`);
+        assert.equal(imageResponse.status, 200);
+        assert.equal(imageResponse.headers.get('content-type'), 'image/png');
+        const bytes = Buffer.from(await imageResponse.arrayBuffer());
+        assert.ok(bytes.length > 10000);
+    } finally {
+        await new Promise(resolve => server.close(resolve));
+    }
+});

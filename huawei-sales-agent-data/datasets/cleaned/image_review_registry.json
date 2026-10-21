@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T22:20:00+08:00",
+  "knowledge_base": {
+    "kb_name": "任德耀新建华为PC知识库",
+    "kb_id": "rlFXVWSgzzyllb8nKnATSvMBxVJGQ1-CwarZdVMKhMI=",
+    "live_search_request_ids": [
+      "6dc75fcf7bf6b61aa5ecf2996d770b25",
+      "d2047a6e631f48b0c3a2c9fd59da32a3"
+    ],
+    "note": "图片条目来自该 IMA 知识库的本地镜像索引；2026-10-21 通过 IMA OpenAPI 检索确认同一知识库。"
+  },
+  "review_method": "逐张对照 IMA 条目路径、文件名中的型号、官方原图 URL、画面内容和使用场景；视觉核验由 AI 辅助完成，正式发布前仍需人工复核及图片授权。",
+  "products": [
+    {
+      "product_name": "HUAWEI MateBook 14（鸿蒙版）",
+      "aliases": [
+        "HUAWEI MateBook 14 鸿蒙版",
+        "HUAWEI MateBook 14 HarmonyOS"
+      ],
+      "family": "MateBook 14",
+      "category": "消费笔记本",
+      "operating_system": "HarmonyOS",
+      "images": [
+        {
+          "image_id": "image-9f9470747d7e3c40",
+          "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+          "sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+          "local_path": "datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png",
+          "mime_type": "image/png",
+          "caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+          "position": "cover",
+          "marker": "after_title",
+          "ima_entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+          "original_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+          "page_url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+          "source_status": "http_200",
+          "source_checked_at": "2026-10-21",
+          "visual_review_status": "assisted_visual_pass_pending_human",
+          "visual_review_note": "画面为原野绿笔记本 3/4 外观，HUAWEI 标识清晰；官方产品页路径与型号一致。",
+          "reviewed_at": "2026-10-21",
+          "model_verified": true,
+          "formal_publication_verified": false,
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "image_id": "image-85fadb0cbceb8632",
+          "file_name": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+          "sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+          "local_path": "datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg",
+          "mime_type": "image/jpeg",
+          "caption": "文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。",
+          "position": "scene",
+          "marker": "after_requirements",
+          "ima_entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+          "original_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-accessories-m-pen-3.jpg",
+          "page_url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+          "source_status": "http_200",
+          "source_checked_at": "2026-10-21",
+          "visual_review_status": "assisted_visual_pass_pending_human",
+          "visual_review_note": "画面显示笔记本屏幕打开 WPS 文档界面，HUAWEI 标识可见；原索引描述“手写笔创作场景”与画面不一致，正文不据此宣称手写笔功能。",
+          "reviewed_at": "2026-10-21",
+          "model_verified": true,
+          "formal_publication_verified": false,
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "image_id": "image-b2a991f2763fd7d6",
+          "file_name": "vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+          "sha256": "b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b",
+          "local_path": "datasets/raw/assets/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b.png",
+          "mime_type": "image/png",
+          "caption": "机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。",
+          "position": "detail",
+          "marker": "after_facts",
+          "ima_entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/商城款式图片/vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+          "original_url": "https://res2.vmallres.com/pimages/FssCdnProxy/vmall_product_uom/pmsSalesFile/428_428_35A94B08C66B2031CE4AF5C901CF37D7.png",
+          "page_url": null,
+          "source_status": "http_200",
+          "source_checked_at": "2026-10-21",
+          "visual_review_status": "assisted_visual_pass_pending_human",
+          "visual_review_note": "画面为机身合盖侧面，接口位置可见；VMall 条目及文件名标注 matebook-14-harmonyos，与目标鸿蒙版一致。",
+          "reviewed_at": "2026-10-21",
+          "model_verified": true,
+          "formal_publication_verified": false,
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "image_id": "image-e320384c91d75f72",
+          "file_name": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+          "sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+          "local_path": "datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png",
+          "mime_type": "image/png",
+          "caption": "HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。",
+          "position": "before_cta",
+          "marker": "before_cta",
+          "ima_entry": "华为PC全板块深度知识库_v7/P1-产品参数库/01-鸿蒙电脑/HUAWEI MateBook 14/images/hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+          "original_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-pink.png",
+          "page_url": "https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/",
+          "source_status": "http_200",
+          "source_checked_at": "2026-10-21",
+          "visual_review_status": "assisted_visual_pass_pending_human",
+          "visual_review_note": "画面为樱粉金笔记本 3/4 外观，HUAWEI 标识清晰；官方产品页路径与型号一致。",
+          "reviewed_at": "2026-10-21",
+          "model_verified": true,
+          "formal_publication_verified": false,
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        }
+      ]
+    }
+  ]
+}

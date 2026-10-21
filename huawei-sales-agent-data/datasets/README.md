@@ -25,6 +25,7 @@ D 数据与知识库工程师负责数据、清洗、切片、入库准备和质
 - 原始资料、清洗索引和测试样例分开存放。
 - 不加入真实客户隐私、凭据、日志、原始 ZIP 或模型权重。
 - 图片候选不等于正式配图；未核验时保持 `model_verified=false`。
+- `cleaned/image_review_registry.json` 只登记逐张核对型号、IMA 条目、原图 URL 和画面的草稿配图；即使 `model_verified=true`，人工终审或授权未完成时仍必须保持 `publication_ready=false`。
 - 价格必须区分公开参考价、历史快照、起售价、补贴估算和可成交报价。
 
 ## 验证与交接

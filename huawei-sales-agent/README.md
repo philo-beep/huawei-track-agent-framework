@@ -11,6 +11,18 @@
 
 当前版本支持**按请求显式启用**云端模型、IMA OpenAPI 知识库检索和联网公开网页抓取。云端模型默认配置为 `deepseek-v4.1-flash`；凭据仅从本地 `.env` 或部署环境变量读取。结果仍用于演示和人工复核，不冒充真实成交建议。
 
+## 公众号图文生成
+
+产品匹配结果中的每个候选都可进入“生成公众号图文”：
+
+- 服务端重新执行产品匹配，按 `candidate_id` 校验候选、客户画像和 E1 证据，不信任前端传来的现成正文。
+- 产品事实逐字取自可定位原文，并在 JSON 与 Markdown 中保留事实 ID、来源条目、URL 和 SHA-256。
+- 图片只从 `datasets/cleaned/image_review_registry.json` 中选取**具体型号一致**的 IMA 条目；每张图给出画面说明、原图 URL、产品页面、IMA 条目和指纹。
+- 草稿正文用 `<!-- IMAGE:... -->` 标注插入位置，并另附图片来源清单和插入建议。
+- 当前图片核验是 AI 辅助视觉核对，授权和人工终审尚未完成，因此输出固定为 `ready_for_review`、`publication_ready=false`；不得当作已获准发布的正式图文。
+
+接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`。
+
 ## 公开演示
 
 - 魔搭空间：<https://modelscope.cn/studios/philosophia/promotion-agent>
@@ -49,6 +61,8 @@ bash start.sh
 
 ```bash
 node --test tests/product_match.test.js
+node --test tests/content_generation.test.js
+node --test tests/content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -m unittest discover -s tests -v
 ```
@@ -88,7 +102,7 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -m unittest discover -s tests -v
 
 - 数据源：`任德耀新建华为 PC 知识库`为主，原库保留去重别名；产品参数与价格参考优先华为官网/商城快照。
 - 每条产品事实保留来源条目、SHA-256、适用型号和抓取时间；官网快照有效窗口为 7 天，过期即阻塞。
-- 当前公开价格、完整 SKU 和正式图片仍待核实：`public_price_reference=null`、`actual_transaction_quote=false`、正式图片数为 0。
+- 当前公开价格、完整 SKU 和正式图片仍待核实：`public_price_reference=null`、`actual_transaction_quote=false`、正式图片数为 0。新增的 4 张 MateBook 14 鸿蒙版图片仅为“精确型号匹配、辅助视觉核验、待人工与授权确认”的审稿配图建议。
 - 四级价格是**基于行业惯例与赛题推断的可配置假设模型**，基价、折扣、资格、地区均为人为设定，待官方确认；演示金额不是华为真实政策或交易报价。
 - 咨询与转化效果没有真实数据，不报告提升；30 分钟演示是待执行计划，`onsite_within_30_minutes_verified=false`。
 - IMA OpenAPI 已接入并完成只读知识库搜索验证；产品匹配保留请求 ID、知识库 ID、媒体 ID 和元数据指纹。仅有标题或摘要时只能作为 E3 线索并标记【待确认】；写入、导入和全量正文提取未在本轮验证。
@@ -98,5 +112,5 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -m unittest discover -s tests -v
 ## 已知缺口
 
 - 产品匹配的 `backend/agent/prompts/product-match.md` 已进入受控云端理由选择链路，模型必须返回逐字 `cited_span`，由程序验证其存在于所引产品证据。四步营销策略和事实选择提示词仍内嵌在 `backend/agent/model.js`。
-- 客户端图片候选未完成画面、SKU 与版权核验，不能作为正式配图。
+- 客户端原始图片候选仍全部保持 `model_verified=false`；单独的图片审稿清单只允许精确型号图片进入草稿，且 `publication_ready=false`。
 - 公开演示只接受合成或脱敏文本，拒绝文件上传，避免客户隐私落盘。

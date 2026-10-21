@@ -10,6 +10,8 @@
 
 - `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
+- `content_generation.test.js`：公众号图文草稿、事实回溯、精确型号图片、插入位置、授权边界和错误型号拒绝测试。
+- `content_api.test.js`：图文接口、CSRF、任务轮询、双格式导出、图片路由和哈希清单测试；沙箱内回环连接受限时须在沙箱外运行。
 - `verify_product_data.js`：校验产品注册表、结构化事实、报价、兼容性和质量统计的一致性。
 - `test_cases.json`：明确的合成测试样例。`verify_integrations.js`：按需验证云端模型、IMA 与联网抓取的独立调用；加 `--full` 运行同时启用三项能力的端到端联调。
 - 维护可复现命令、通过/失败证据、回归结论和已知限制。
@@ -36,6 +38,8 @@
 
 ```powershell
 node --test tests/product_match.test.js
+node --test tests/content_generation.test.js
+node --test tests/content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -B -m unittest discover -s tests -v
 $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v

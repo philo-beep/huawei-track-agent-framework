@@ -1,6 +1,6 @@
 {
   "schema_version": "3.0",
-  "contract_version": "3.2",
+  "contract_version": "3.3",
   "updated": "2026-10-21",
   "status": "active",
   "authority": "huawei-sales-agent/backend/agent/contracts/",
@@ -112,7 +112,9 @@
     "module_input": "huawei-sales-agent/backend/agent/contracts/module-input.schema.json",
     "module_envelope": "huawei-sales-agent/backend/agent/contracts/module-envelope.schema.json",
     "product_match_input": "huawei-sales-agent/backend/agent/contracts/product-match-input.schema.json",
-    "product_match_output": "huawei-sales-agent/backend/agent/contracts/product-match-output.schema.json"
+    "product_match_output": "huawei-sales-agent/backend/agent/contracts/product-match-output.schema.json",
+    "content_generation_input": "huawei-sales-agent/backend/agent/contracts/content-generation-input.schema.json",
+    "content_generation_output": "huawei-sales-agent/backend/agent/contracts/content-generation-output.schema.json"
   },
   "examples": {
     "pipeline_input": "huawei-sales-agent-data/datasets/test_sample/pipeline_input.json",
@@ -120,6 +122,9 @@
     "portrait_cases": "huawei-sales-agent-data/datasets/test_sample/portrait_cases.json",
     "product_match_cases": "huawei-sales-agent-data/datasets/test_sample/product_match_cases.json",
     "product_registry": "huawei-sales-agent-data/datasets/cleaned/product_registry.json",
+    "image_review_registry": "huawei-sales-agent-data/datasets/cleaned/image_review_registry.json",
+    "content_draft_example_json": "huawei-sales-agent-data/datasets/test_sample/content_draft.example.json",
+    "content_draft_example_markdown": "huawei-sales-agent-data/datasets/test_sample/content_draft.example.md",
     "product_facts": "huawei-sales-agent-data/datasets/cleaned/product_facts.json",
     "product_offers": "huawei-sales-agent-data/datasets/cleaned/product_offers.json",
     "compatibility_records": "huawei-sales-agent-data/datasets/cleaned/compatibility_records.json"
@@ -129,7 +134,8 @@
     "model_adapter_present": "存在模型适配和提示词文件，不表示模型调用已验证。",
     "verified": "已通过 A 的联调、E 的辅助验收和相应测试。",
     "pending_external": "缺少真实政策、许可、客户验证或赛事认可，不能由内部推定关闭。",
-    "product_match": "产品匹配 v1.1 已实现规范产品注册表、多查询 IMA 召回、逐条件覆盖、逐字证据引文和证据失败回退；当前报价和兼容矩阵仍不完整。"
+    "product_match": "产品匹配 v1.1 已实现规范产品注册表、多查询 IMA 召回、逐条件覆盖、逐字证据引文和证据失败回退；当前报价和兼容矩阵仍不完整。",
+    "content_generation": "公众号图文生成 v1.0 已实现基于画像与证据的审稿稿、精确型号 IMA 图片来源清单和插入位置；图片公开发布授权与人工终审仍待确认。"
   },
   "change_policy": {
     "owner": "B 维护契约，A 审核 Agent 生产方影响，C 复核前端消费，D 复核数据字段",

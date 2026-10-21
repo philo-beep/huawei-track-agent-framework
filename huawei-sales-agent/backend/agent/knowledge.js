@@ -71,7 +71,7 @@ function sourceReference(document, excerpt) {
 }
 
 // 模块4：保留完整章节和全文限制，避免把脚注拆掉后形成更强承诺。
-function extractFacts(knowledge, product) {
+function extractFacts(knowledge, product, options = {}) {
     if (knowledge.source_mode === 'official_snapshot') {
         const facts = [];
         for (const document of knowledge.documents) for (const field of document.official_fields || []) {
@@ -81,7 +81,7 @@ function extractFacts(knowledge, product) {
             if (!facts.some(fact => fact.claim === claim)) facts.push({ id: `official-${facts.length + 1}-${crypto.createHash('sha256').update(claim).digest('hex').slice(0, 8)}`, product, claim, conditions, source_refs: [sourceReference(document, document.text)] });
         }
         if (!facts.length) throw new PipelineError('KNOWLEDGE_NOT_FOUND', '官网没有经过逐字段原文定位的参数');
-        return facts.slice(0, 4);
+        return facts.slice(0, options.maxFacts || 4);
     }
     const documents = knowledge.documents.filter(document => document.kind === 'product_fact' || knowledge.source_mode === 'ima');
     assertNoSourceConflict(knowledge.documents, product);
@@ -90,7 +90,7 @@ function extractFacts(knowledge, product) {
     if (primary.product_names?.length && !primary.product_names.some(name => normalizeProduct(name) === normalizeProduct(product))) throw new PipelineError('SOURCE_CONFLICT', '原文关联型号与目标型号不同');
     const sections = primary.text.split(/(?=^## )/m).filter(section => /^## (?:操作系统|尺寸|屏幕|处理器|存储|内存|连接|电池)/.test(section));
     const globalLimits = primary.text.split(/^## /m)[0].split('\n').filter(line => /^>/.test(line) && line.trim().length > 2);
-    const selected = sections.filter(section => section.length < 2200).slice(0, 4);
+    const selected = sections.filter(section => section.length < 2200).slice(0, options.maxFacts || 4);
     if (!selected.length) selected.push(primary.text);
     return selected.map((section, index) => {
         const claim = section.trim();

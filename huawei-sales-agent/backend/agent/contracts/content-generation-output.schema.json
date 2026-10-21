@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:content-generation-output:1.0",
+  "title": "公众号图文生成输出 v1.0",
+  "description": "基于客户画像、所选候选和可追溯证据生成的审稿稿；只包含精确型号匹配且来源可核对的IMA图片建议，不把图片建议冒充公开发布授权。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "synthetic", "generated_at", "platform", "product", "profile_basis", "draft", "image_sources", "insertion_plan", "citations", "verification", "article_markdown", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["ready_for_review", "blocked"]},
+    "synthetic": {"type": "boolean"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "platform": {"const": "公众号"},
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "requested_name", "resolved_name", "family", "category", "operating_system", "model_verified"],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "requested_name": {"type": "string", "minLength": 1},
+        "resolved_name": {"type": "string", "minLength": 1},
+        "family": {"type": ["string", "null"]},
+        "category": {"type": ["string", "null"]},
+        "operating_system": {"type": ["string", "null"]},
+        "model_verified": {"const": true}
+      }
+    },
+    "profile_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audience", "scenario", "industry", "company_size", "needs", "preferences", "pain_points", "budget_status"],
+      "properties": {
+        "audience": {"type": ["string", "null"]},
+        "scenario": {"type": ["string", "null"]},
+        "industry": {"type": ["string", "null"]},
+        "company_size": {"type": ["integer", "null"]},
+        "needs": {"type": "array", "items": {"type": "string"}},
+        "preferences": {"type": "array", "items": {"type": "string"}},
+        "pain_points": {"type": "array", "items": {"type": "string"}},
+        "budget_status": {"type": "string", "minLength": 1}
+      }
+    },
+    "draft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "lead", "body_markdown", "cta", "tags"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "lead": {"type": "string", "minLength": 1},
+        "body_markdown": {"type": "string", "minLength": 1},
+        "cta": {"type": "string", "minLength": 1},
+        "tags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "image_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["image_id", "product", "file_name", "caption", "position", "marker", "asset_url", "original_url", "page_url", "source_name", "ima_entry", "ima_kb_name", "ima_kb_id", "ima_search_request_ids", "sha256", "mime_type", "model_match_status", "visual_review_status", "rights_status", "publication_ready"],
+        "properties": {
+          "image_id": {"type": "string", "minLength": 1},
+          "product": {"type": "string", "minLength": 1},
+          "file_name": {"type": "string", "minLength": 1},
+          "caption": {"type": "string", "minLength": 1},
+          "position": {"type": "string", "minLength": 1},
+          "marker": {"type": "string", "minLength": 1},
+          "asset_url": {"type": "string", "minLength": 1},
+          "original_url": {"type": "string", "minLength": 1},
+          "page_url": {"type": ["string", "null"]},
+          "source_name": {"type": "string", "minLength": 1},
+          "ima_entry": {"type": "string", "minLength": 1},
+          "ima_kb_name": {"type": "string", "minLength": 1},
+          "ima_kb_id": {"type": "string", "minLength": 1},
+          "ima_search_request_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "sha256": {"type": "string", "minLength": 1},
+          "mime_type": {"type": "string", "minLength": 1},
+          "model_match_status": {"type": "string", "minLength": 1},
+          "visual_review_status": {"type": "string", "minLength": 1},
+          "rights_status": {"type": "string", "minLength": 1},
+          "publication_ready": {"const": false}
+        }
+      }
+    },
+    "insertion_plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["after_marker", "position", "image_id", "caption", "instruction"],
+        "properties": {
+          "after_marker": {"type": "string", "minLength": 1},
+          "position": {"type": "string", "minLength": 1},
+          "image_id": {"type": "string", "minLength": 1},
+          "caption": {"type": "string", "minLength": 1},
+          "instruction": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact_id", "claim", "used_in", "source_title", "source_url", "source_entry", "source_sha256"],
+        "properties": {
+          "fact_id": {"type": "string", "minLength": 1},
+          "claim": {"type": "string", "minLength": 1},
+          "used_in": {"const": "body"},
+          "source_title": {"type": "string", "minLength": 1},
+          "source_url": {"type": ["string", "null"]},
+          "source_entry": {"type": "string", "minLength": 1},
+          "source_sha256": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_model_match", "evidence_traceable", "image_count", "compliance", "publication_ready", "pending"],
+      "properties": {
+        "product_model_match": {"const": "verified"},
+        "evidence_traceable": {"const": true},
+        "image_count": {"type": "integer", "minimum": 1},
+        "compliance": {"const": "pass"},
+        "publication_ready": {"const": false},
+        "pending": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "article_markdown": {"type": "string", "minLength": 1},
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "minLength": 1},
+          "message": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

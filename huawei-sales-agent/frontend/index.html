@@ -66,6 +66,15 @@
         <h3>候选、理由与证据</h3><div id="match-candidates"></div>
         <h3>匹配诊断</h3><div id="match-diagnostics"></div>
       </div>
+      <p id="content-status" role="status" aria-live="polite">选择候选后可生成公众号图文草稿；不会自动发布。</p>
+      <div id="content-draft-results" hidden>
+        <div class="toolbar"><a id="content-download-json" download>下载图文 JSON</a><a id="content-download-markdown" download>下载图文 Markdown</a></div>
+        <p id="content-summary" class="notice"></p>
+        <h3>图文草稿</h3><div id="content-draft"></div>
+        <h3>图片来源清单</h3><div id="content-image-sources"></div>
+        <h3>建议插入位置</h3><div id="content-insertion-plan"></div>
+        <details><summary>完整图文 Markdown（含图片位置、来源与限制）</summary><pre id="content-markdown"></pre></details>
+      </div>
     </section>
     <section>
       <h2>输入客户信息</h2>

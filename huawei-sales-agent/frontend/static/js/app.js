@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
+const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -344,6 +344,7 @@ function clearMatchResult() {
     byId('match-candidates').replaceChildren();
     byId('match-diagnostics').replaceChildren();
     state.matchMarkdown = '';
+    clearContentResult();
 }
 
 function fillMatchExample(index) {
@@ -424,6 +425,7 @@ async function startProductMatch(event) {
     if (state.running || !state.csrf) return;
     let request;
     try { request = collectMatchInput(); } catch (error) { matchStatus(error.message, true); return; }
+    state.matchInput = request;
     clearMatchResult();
     setRunning(true);
     state.startedAt = Date.now();
@@ -457,6 +459,115 @@ async function pollProductMatch() {
     }
 }
 
+function contentStatus(message, isError = false) {
+    byId('content-status').textContent = message;
+    byId('content-status').classList.toggle('error', isError);
+}
+
+function clearContentResult() {
+    byId('content-draft-results').hidden = true;
+    byId('content-draft').replaceChildren();
+    byId('content-image-sources').replaceChildren();
+    byId('content-insertion-plan').replaceChildren();
+    byId('content-markdown').textContent = '';
+    state.contentJobId = null;
+    state.contentPolling = false;
+    state.contentMarkdown = '';
+    contentStatus('选择候选后可生成公众号图文草稿；不会自动发布。');
+}
+
+async function startContentDraft(candidateId) {
+    if (state.running || !state.csrf) return;
+    if (!state.matchInput) { contentStatus('请先完成一次产品匹配，再生成图文。', true); return; }
+    clearContentResult();
+    setRunning(true);
+    state.startedAt = Date.now();
+    contentStatus('正在重新核验候选、事实原文与精确型号图片，不会使用近似型号替代。');
+    try {
+        const payload = { schema_version: '1.0', match_input: state.matchInput, candidate_id: candidateId, platform: '公众号', image_limit: 4 };
+        const job = await api('/api/content-drafts', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(payload) });
+        state.contentJobId = job.id;
+        state.contentPolling = true;
+        await pollContentDraft();
+    } catch (error) {
+        setRunning(false);
+        contentStatus(`图文生成未完成：${error.message}。`, true);
+    }
+}
+
+async function pollContentDraft() {
+    if (!state.contentPolling || !state.contentJobId) return;
+    try {
+        const job = await api(`/api/runs/${encodeURIComponent(state.contentJobId)}`);
+        if (job.status === 'running') {
+            contentStatus(`正在生成图文，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。`);
+            setTimeout(pollContentDraft, 1000);
+            return;
+        }
+        state.contentPolling = false;
+        setRunning(false);
+        if (job.status === 'failed') { contentStatus(`图文生成失败：${job.error?.message || '未知错误'}。`, true); return; }
+        if (job.status !== 'completed' || !job.result) throw new Error('服务结果不完整');
+        renderContentDraftResult(job.result, job.markdown || '');
+    } catch (error) {
+        state.contentPolling = false;
+        setRunning(false);
+        contentStatus(`图文查询暂停：${error.message}。请勿重复提交，可刷新后重试。`, true);
+    }
+}
+
+function safeSourceLink(value, label) {
+    try {
+        const url = new URL(value);
+        if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return null;
+        const link = element('a', label); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; return link;
+    } catch { return null; }
+}
+
+function renderContentDraftResult(result, markdown) {
+    byId('content-draft').replaceChildren();
+    byId('content-image-sources').replaceChildren();
+    byId('content-insertion-plan').replaceChildren();
+    byId('content-summary').textContent = `状态：${result.status}；产品：${result.product.resolved_name}；图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。\n该稿是可审稿版本，不是已获准公开发布版本；图片授权、软件兼容性和正式报价仍需人工确认。`;
+    const article = element('article'); article.className = 'content-draft-copy';
+    article.append(element('h3', result.draft.title), element('p', result.draft.lead));
+    const body = element('pre', result.draft.body_markdown); body.className = 'content-body';
+    article.append(body, element('strong', '行动引导'), element('p', result.draft.cta));
+    article.append(element('p', `标签：${result.draft.tags.join('、')}`));
+    byId('content-draft').append(article);
+
+    const imageGrid = element('div'); imageGrid.className = 'content-image-grid';
+    for (const image of result.image_sources) {
+        const figure = element('figure'); figure.className = 'content-image-card';
+        const picture = element('img'); picture.src = image.asset_url; picture.alt = image.caption; picture.loading = 'lazy';
+        const caption = element('figcaption');
+        caption.append(element('strong', image.caption), element('span', `型号匹配：${image.model_match_status}；发布状态：${image.rights_status}`));
+        const original = safeSourceLink(image.original_url, '打开原图来源'); if (original) caption.append(original);
+        figure.append(picture, caption); imageGrid.append(figure);
+    }
+    byId('content-image-sources').append(imageGrid);
+    const sourceList = element('div'); sourceList.className = 'content-source-list';
+    for (const image of result.image_sources) {
+        const item = element('details'); item.className = 'content-source-item';
+        item.append(element('summary', `${image.image_id}｜${image.file_name}`));
+        item.append(element('p', `说明：${image.caption}`), element('p', `IMA 条目：${image.ima_entry}`), element('p', `IMA 知识库：${image.ima_kb_name}｜KB ID：${image.ima_kb_id}｜检索请求：${image.ima_search_request_ids.join('、')}`), element('p', `来源：${image.source_name}`));
+        const original = safeSourceLink(image.original_url, '原始图片 URL'); if (original) item.append(original);
+        const page = image.page_url ? safeSourceLink(image.page_url, '产品页面') : null; if (page) item.append(page);
+        item.append(element('p', `SHA-256：${image.sha256}`), element('p', `核验状态：${image.model_match_status}｜${image.visual_review_status}｜${image.rights_status}`));
+        sourceList.append(item);
+    }
+    byId('content-image-sources').append(sourceList);
+
+    const plan = element('ol');
+    for (const item of result.insertion_plan) plan.append(element('li', `${item.position}｜${item.instruction}｜${item.caption}（${item.image_id}）`));
+    byId('content-insertion-plan').append(plan);
+    byId('content-markdown').textContent = markdown;
+    state.contentMarkdown = markdown;
+    byId('content-download-json').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=json`;
+    byId('content-download-markdown').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=markdown`;
+    byId('content-draft-results').hidden = false;
+    contentStatus('图文草稿已生成；请逐项核对图片来源、插入位置、事实脚注和发布授权。');
+}
 function appendMatchText(container, label, values) {
     const title = element('strong', label);
     container.append(title);
@@ -514,11 +625,17 @@ function renderProductMatchResult(result, markdown) {
             details.append(restList);
             article.append(details);
         }
+        const actions = element('div'); actions.className = 'match-actions';
         if (sourceProducts.includes(candidate.product_name)) {
             const use = element('button', '用此候选进入四步流程'); use.type = 'button'; use.className = 'match-use-candidate';
             use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); byId('input-fields').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-            article.append(use);
+            actions.append(use);
         }
+        const content = element('button', '生成公众号图文'); content.type = 'button'; content.className = 'content-generate-candidate';
+        content.title = '重新核验候选、事实原文和精确型号 IMA 图片后生成可审稿图文';
+        content.addEventListener('click', () => startContentDraft(candidate.candidate_id));
+        actions.append(content);
+        article.append(actions);
         byId('match-candidates').append(article);
     }
     if (!result.candidates.length) byId('match-candidates').append(element('p', '未取得候选，未使用模型常识补造产品。'));

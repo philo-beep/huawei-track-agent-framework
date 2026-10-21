@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:content-generation-input:1.0",
+  "title": "公众号图文生成输入 v1.0",
+  "description": "输入必须包含可重新执行的产品匹配请求和已选候选ID。服务端重新核验画像、候选与证据，不信任调用方提供的现成正文或图片结论。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "match_input", "candidate_id", "platform"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "match_input": {"type": "object"},
+    "candidate_id": {"type": "string", "pattern": "^candidate-[a-f0-9]{12}$"},
+    "platform": {"enum": ["公众号"]},
+    "image_limit": {"type": "integer", "minimum": 1, "maximum": 6, "default": 4}
+  }
+}
