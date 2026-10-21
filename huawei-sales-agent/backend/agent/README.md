@@ -33,8 +33,8 @@
 | `ima.js` | A | IMA OpenAPI 知识库搜索与来源回传 |
 | `tools.py` | A | 检索、模型工具和验收辅助 |
 | `cloud-fact-selector.js` | A | 内容聚焦、事实选择和策略理由 |
-| `product-catalog.js` | A | 产品名称归一、目录召回和证据卡适配 |
-| `product-match.js` | A | 客户画像产品匹配、规则门禁和云端理由编排 |
+| `product-catalog.js` | A | 规范产品注册表、目录召回、证据卡和质量数据适配 |
+| `product-match.js` | A | 产品匹配、多查询 IMA 召回、逐条件覆盖和云端理由编排 |
 | `product-match-verification.js` | A | 模型理由、数值、价格和兼容性证据核验 |
 | `prompts/product-match.md` | A | 产品匹配证据选择和输出边界提示词 |
 | `verification.js` | A | 事实、图片、合规和适配核验 |

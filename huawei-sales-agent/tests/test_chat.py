@@ -206,8 +206,11 @@ class GatewayTests(unittest.TestCase):
             self.assertIn(candidate["status"], {"recommended", "pending_confirmation", "not_recommended"})
             self.assertTrue(candidate["limitations"])
             self.assertTrue(candidate["evidence"])
+            self.assertTrue(candidate["criteria_coverage"])
+            self.assertIn("operating_system", candidate)
             for reason in candidate["matching_reasons"]:
                 self.assertTrue(reason["evidence_ids"])
+                self.assertTrue(reason["cited_span"])
         for fmt in ("json", "markdown"):
             with self.opener.open(f"{self.origin}/api/runs/{job['id']}/export?format={fmt}", timeout=10) as response:
                 self.assertEqual(response.status, 200)

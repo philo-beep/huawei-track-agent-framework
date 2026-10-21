@@ -1,34 +1,92 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:huawei-growth:product-match-output:1.0",
-  "title": "客户画像产品匹配输出 ProductMatchOutput v1.0",
-  "description": "每个候选均保留匹配理由、限制、缺失项、证据和状态。状态由程序门禁决定，模型不能把待确认项升级为已确认推荐。",
+  "$id": "urn:huawei-growth:product-match-output:1.1",
+  "title": "客户画像产品匹配输出 ProductMatchOutput v1.1",
+  "description": "v1.1 增加规范产品来源、逐条件覆盖和逐字证据片段；状态仍由程序门禁决定。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "status", "request_id", "criteria", "candidates", "excluded_candidates", "questions", "provenance", "verification", "diagnostics"],
+  "required": [
+    "schema_version",
+    "status",
+    "request_id",
+    "criteria",
+    "candidates",
+    "excluded_candidates",
+    "questions",
+    "provenance",
+    "verification",
+    "diagnostics"
+  ],
   "properties": {
-    "schema_version": {"const": "1.0"},
-    "status": {"enum": ["ready", "partial", "needs_clarification", "failed"]},
-    "request_id": {"type": "string", "minLength": 1, "maxLength": 100},
+    "schema_version": {
+      "const": "1.1"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "partial",
+        "needs_clarification",
+        "failed"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
     "criteria": {
       "type": "array",
       "maxItems": 40,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["criterion_id", "kind", "value", "status"],
+        "required": [
+          "criterion_id",
+          "kind",
+          "value",
+          "status"
+        ],
         "properties": {
-          "criterion_id": {"type": "string", "minLength": 1, "maxLength": 100},
-          "kind": {"enum": ["need", "preference", "pain_point", "scenario", "product_type", "budget", "excluded"]},
-          "value": {"type": ["string", "number", "object", "array", "null"]},
-          "status": {"enum": ["explicit", "pending"]}
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "kind": {
+            "enum": [
+              "need",
+              "preference",
+              "pain_point",
+              "scenario",
+              "product_type",
+              "budget",
+              "excluded"
+            ]
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "explicit",
+              "pending"
+            ]
+          }
         }
       }
     },
     "candidates": {
       "type": "array",
       "maxItems": 8,
-      "items": {"$ref": "#/$defs/candidate"}
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
     },
     "excluded_candidates": {
       "type": "array",
@@ -36,62 +94,210 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["candidate_id", "product_name", "reason"],
+        "required": [
+          "candidate_id",
+          "product_name",
+          "reason"
+        ],
         "properties": {
-          "candidate_id": {"type": "string", "minLength": 1, "maxLength": 100},
-          "product_name": {"type": "string", "minLength": 1, "maxLength": 300},
-          "reason": {"type": "string", "minLength": 1, "maxLength": 500}
+          "candidate_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "product_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
         }
       }
     },
     "questions": {
       "type": "array",
       "maxItems": 20,
-      "items": {"type": "string", "minLength": 1, "maxLength": 500}
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
     },
     "provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["requested_mode", "effective_mode", "index_built_at", "index_sha256", "ima_request_ids", "knowledge_base", "model"],
+      "required": [
+        "requested_mode",
+        "effective_mode",
+        "index_built_at",
+        "index_sha256",
+        "ima_request_ids",
+        "knowledge_base",
+        "model",
+        "registry_version",
+        "product_fact_count",
+        "current_quote_count"
+      ],
       "properties": {
-        "requested_mode": {"enum": ["local", "ima", "hybrid"]},
-        "effective_mode": {"enum": ["local", "ima", "hybrid", "none"]},
-        "index_built_at": {"type": ["string", "null"], "maxLength": 100},
-        "index_sha256": {"type": ["string", "null"], "maxLength": 64},
-        "ima_request_ids": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 200}},
+        "requested_mode": {
+          "enum": [
+            "local",
+            "ima",
+            "hybrid"
+          ]
+        },
+        "effective_mode": {
+          "enum": [
+            "local",
+            "ima",
+            "hybrid",
+            "none"
+          ]
+        },
+        "index_built_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "index_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "ima_request_ids": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
         "knowledge_base": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
-          "required": ["knowledge_base_id", "knowledge_base_name"],
+          "required": [
+            "knowledge_base_id",
+            "knowledge_base_name"
+          ],
           "properties": {
-            "knowledge_base_id": {"type": ["string", "null"], "maxLength": 200},
-            "knowledge_base_name": {"type": ["string", "null"], "maxLength": 300}
+            "knowledge_base_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 200
+            },
+            "knowledge_base_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 300
+            }
           }
         },
         "model": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["requested", "status", "name", "fallback_reason"],
+          "required": [
+            "requested",
+            "status",
+            "name",
+            "fallback_reason"
+          ],
           "properties": {
-            "requested": {"type": "boolean"},
-            "status": {"enum": ["not_requested", "called", "configured_not_called", "failed_fallback"]},
-            "name": {"type": ["string", "null"], "maxLength": 200},
-            "fallback_reason": {"type": ["string", "null"], "maxLength": 500}
+            "requested": {
+              "type": "boolean"
+            },
+            "status": {
+              "enum": [
+                "not_requested",
+                "called",
+                "configured_not_called",
+                "failed_fallback"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 200
+            },
+            "fallback_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 500
+            }
           }
+        },
+        "registry_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "product_fact_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "current_quote_count": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     },
     "verification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["candidate_count", "recommended_count", "pending_count", "excluded_count", "evidence_count", "unsupported_claims_dropped"],
+      "required": [
+        "candidate_count",
+        "recommended_count",
+        "pending_count",
+        "excluded_count",
+        "evidence_count",
+        "unsupported_claims_dropped"
+      ],
       "properties": {
-        "candidate_count": {"type": "integer", "minimum": 0},
-        "recommended_count": {"type": "integer", "minimum": 0},
-        "pending_count": {"type": "integer", "minimum": 0},
-        "excluded_count": {"type": "integer", "minimum": 0},
-        "evidence_count": {"type": "integer", "minimum": 0},
-        "unsupported_claims_dropped": {"type": "integer", "minimum": 0}
+        "candidate_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recommended_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsupported_claims_dropped": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "diagnostics": {
@@ -100,11 +306,25 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["code", "message", "retryable"],
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
         "properties": {
-          "code": {"type": "string", "minLength": 1, "maxLength": 100},
-          "message": {"type": "string", "minLength": 1, "maxLength": 800},
-          "retryable": {"type": "boolean"}
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          },
+          "retryable": {
+            "type": "boolean"
+          }
         }
       }
     }
@@ -113,53 +333,285 @@
     "candidate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["candidate_id", "product_name", "product_family", "category", "status", "status_label", "match_score", "matching_reasons", "limitations", "missing_information", "evidence", "source_mode"],
+      "required": [
+        "candidate_id",
+        "product_name",
+        "product_family",
+        "category",
+        "status",
+        "status_label",
+        "match_score",
+        "matching_reasons",
+        "limitations",
+        "missing_information",
+        "evidence",
+        "source_mode",
+        "operating_system",
+        "generation",
+        "evidence_status",
+        "criteria_coverage"
+      ],
       "properties": {
-        "candidate_id": {"type": "string", "minLength": 1, "maxLength": 100},
-        "product_name": {"type": "string", "minLength": 1, "maxLength": 300},
-        "product_family": {"type": "string", "minLength": 1, "maxLength": 200},
-        "category": {"type": "string", "minLength": 1, "maxLength": 200},
-        "status": {"enum": ["recommended", "pending_confirmation", "not_recommended"]},
-        "status_label": {"enum": ["推荐候选", "【待确认】", "不推荐"]},
-        "match_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "candidate_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "product_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "product_family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "status": {
+          "enum": [
+            "recommended",
+            "pending_confirmation",
+            "not_recommended"
+          ]
+        },
+        "status_label": {
+          "enum": [
+            "推荐候选",
+            "【待确认】",
+            "不推荐"
+          ]
+        },
+        "match_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
         "matching_reasons": {
           "type": "array",
           "maxItems": 6,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["text", "evidence_ids", "origin"],
+            "required": [
+              "text",
+              "evidence_ids",
+              "origin",
+              "cited_span"
+            ],
             "properties": {
-              "text": {"type": "string", "minLength": 1, "maxLength": 600},
-              "evidence_ids": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
-              "origin": {"enum": ["rules", "cloud_model"]}
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 8,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "origin": {
+                "enum": [
+                  "rules",
+                  "cloud_model"
+                ]
+              },
+              "cited_span": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
             }
           }
         },
-        "limitations": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 500}},
-        "missing_information": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 500}},
+        "limitations": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "missing_information": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
         "evidence": {
           "type": "array",
           "maxItems": 30,
-          "items": {"$ref": "#/$defs/evidence"}
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
         },
-        "source_mode": {"enum": ["local", "ima", "hybrid"]}
+        "source_mode": {
+          "enum": [
+            "local",
+            "ima",
+            "hybrid"
+          ]
+        },
+        "operating_system": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "generation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 50
+        },
+        "evidence_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "criteria_coverage": {
+          "type": "array",
+          "maxItems": 40,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "criterion_id",
+              "kind",
+              "status",
+              "evidence_ids",
+              "note"
+            ],
+            "properties": {
+              "criterion_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50
+              },
+              "status": {
+                "enum": [
+                  "supported",
+                  "partial",
+                  "pending",
+                  "mismatch"
+                ]
+              },
+              "evidence_ids": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          }
+        }
       }
     },
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evidence_id", "source_type", "source_level", "title", "locator", "url", "retrieved_at", "sha256", "excerpt"],
+      "required": [
+        "evidence_id",
+        "source_type",
+        "source_level",
+        "title",
+        "locator",
+        "url",
+        "retrieved_at",
+        "sha256",
+        "excerpt"
+      ],
       "properties": {
-        "evidence_id": {"type": "string", "minLength": 1, "maxLength": 100},
-        "source_type": {"enum": ["customer_input", "local_product_fact", "local_product_catalog", "local_price_snapshot", "ima_metadata"]},
-        "source_level": {"enum": ["E1", "E2", "E3", "E4"]},
-        "title": {"type": "string", "minLength": 1, "maxLength": 300},
-        "locator": {"type": "string", "minLength": 1, "maxLength": 500},
-        "url": {"type": ["string", "null"], "maxLength": 500},
-        "retrieved_at": {"type": ["string", "null"], "maxLength": 100},
-        "sha256": {"type": ["string", "null"], "maxLength": 64},
-        "excerpt": {"type": "string", "minLength": 1, "maxLength": 2000}
+        "evidence_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "source_type": {
+          "enum": [
+            "customer_input",
+            "local_product_fact",
+            "local_product_catalog",
+            "local_price_snapshot",
+            "ima_metadata",
+            "ima_content"
+          ]
+        },
+        "source_level": {
+          "enum": [
+            "E1",
+            "E2F",
+            "E2",
+            "E3",
+            "E4"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "retrieved_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
       }
     }
   }

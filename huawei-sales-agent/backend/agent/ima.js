@@ -87,7 +87,7 @@ async function imaKnowledge(query, options = {}) {
     if (!kb && config.knowledgeBaseId) kb = { kb_id: config.knowledgeBaseId, kb_name: config.knowledgeBaseName || '已配置知识库' };
     if (!kb) return { status: 'no_knowledge_base', query, knowledge_bases: [], results: [], request_ids: [baseSearch.request_id].filter(Boolean), knowledge_base: null };
     const found = await searchKnowledge(query, { knowledgeBaseId: kb.kb_id, limit: options.limit || 20 });
-    const results = (Array.isArray(found.info_list) ? found.info_list : []).map(item => ({
+    const results = (Array.isArray(found.info_list) ? found.info_list : []).slice(0, options.limit || 20).map(item => ({
         media_id: item.media_id,
         title: item.title,
         parent_folder_id: item.parent_folder_id,

@@ -9,7 +9,8 @@
 ## 职责
 
 - `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
-- `product_match.test.js`：产品匹配召回、证据绑定、预算、IMA、【待确认】和模型幻觉测试。
+- `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
+- `verify_product_data.js`：校验产品注册表、结构化事实、报价、兼容性和质量统计的一致性。
 - `test_cases.json`：明确的合成测试样例。`verify_integrations.js`：按需验证云端模型、IMA 与联网抓取的独立调用；加 `--full` 运行同时启用三项能力的端到端联调。
 - 维护可复现命令、通过/失败证据、回归结论和已知限制。
 
@@ -35,6 +36,7 @@
 
 ```powershell
 node --test tests/product_match.test.js
+$env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -B -m unittest discover -s tests -v
 $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```

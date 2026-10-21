@@ -44,7 +44,10 @@ function inferProductType(profile) {
 function inferNeeds(profile) {
     const needs = uniqStrings(profile.needs);
     const text = `${profile.raw_request || ''} ${profile.scenario || ''}`;
-    for (const term of KNOWN_NEEDS) if (text.includes(term) && !needs.includes(term)) needs.push(term);
+    for (const term of KNOWN_NEEDS) {
+        const covered = needs.some(existing => existing.includes(term) || term.includes(existing));
+        if (text.includes(term) && !covered) needs.push(term);
+    }
     return needs.slice(0, 20);
 }
 
@@ -108,6 +111,69 @@ function matchQuery(profile, criteria) {
     return String(primary || profile.raw_request || '华为 产品').slice(0, 80);
 }
 
+function buildImaQueries(profile, criteria) {
+    const anchor = matchQuery(profile, criteria);
+    const values = criteria
+        .filter(item => ['scenario', 'need', 'preference'].includes(item.kind) && typeof item.value === 'string')
+        .map(item => item.value.trim())
+        .filter(value => value.length >= 2 && value.length <= 24);
+    const queries = [anchor];
+    if (/MateBook 14/.test(anchor)) queries.push('MateBook Pro', 'MateBook D 14');
+    else if (/打印机/.test(anchor)) queries.push('毕昇 打印机', 'PixLab');
+    else if (/显示器/.test(anchor)) queries.push('MateView 显示器', '擎云 显示器');
+    else if (values[0]) queries.push(`${anchor} ${values[0]}`.slice(0, 60));
+    return [...new Set(queries)].slice(0, 3);
+}
+
+function usableImaResult(result) {
+    const title = String(result?.title || '');
+    if (!title.trim()) return false;
+    if (/\.(?:jpe?g|png|webp|gif|bmp|svg)(?:$|[?#])/i.test(title)) return false;
+    if (/^(?:image|图片|附件)/i.test(title)) return false;
+    return true;
+}
+
+function mergeImaSearchResults(searches) {
+    const results = [];
+    const seen = new Set();
+    const requestIds = [];
+    const knowledgeBase = searches.map(item => item?.knowledge_base).find(Boolean) || null;
+    for (const search of searches) {
+        for (const requestId of search?.request_ids || []) if (!requestIds.includes(requestId)) requestIds.push(requestId);
+        for (const result of (search?.results || []).filter(usableImaResult)) {
+            const key = result.media_id || result.source_ref?.entry || result.title;
+            if (!key || seen.has(key)) continue;
+            seen.add(key);
+            results.push(result);
+        }
+    }
+    return {
+        status: searches.some(item => item?.status === 'connected') ? 'connected' : searches[0]?.status || 'no_result',
+        results: results.slice(0, 24),
+        request_ids: requestIds,
+        knowledge_base: knowledgeBase,
+    };
+}
+
+async function imaRecall(queries, runner) {
+    const searches = [];
+    for (const query of queries) {
+        try {
+            const result = await runner(query, { limit: 12 });
+            searches.push(result);
+            if (searches.length === 1 && (result?.results || []).filter(usableImaResult).length >= 8) break;
+            if (searches.length >= 2) break;
+        } catch (error) {
+            searches.push({ status: 'failed', results: [], request_ids: [], error });
+            if (!searches.length) throw error;
+            break;
+        }
+    }
+    const merged = mergeImaSearchResults(searches);
+    if (!merged.results.length && searches.some(item => item?.error)) throw searches.find(item => item?.error).error;
+    return merged;
+}
+
 function dedupeEvidence(values) {
     return [...new Map((values || []).filter(Boolean).map(item => [item.evidence_id, item])).values()].slice(0, 30);
 }
@@ -121,7 +187,11 @@ function prepareCandidate(candidate, criteria, profilesEvidence, indexBuiltAt) {
     const base = { ...candidate, evidence };
     base.matching_reasons = deterministicReasons(base, criteria, profilesEvidence);
     base.limitations = candidateLimitations(base);
-    base.missing_information = candidateMissingInformation(base, criteria);
+    base.criteria_coverage = criteriaCoverage(base, criteria);
+    base.missing_information = [...new Set([
+        ...candidateMissingInformation(base, criteria),
+        ...base.criteria_coverage.filter(item => ['pending', 'partial'].includes(item.status)).map(item => item.note),
+    ])].slice(0, 12);
     return base;
 }
 
@@ -130,6 +200,45 @@ function criterionEvidence(candidate, criterion) {
     return (candidate.evidence || []).find(item => ['E1', 'E2'].includes(item.source_level) && termTerms(criterion.value).some(term => item.excerpt.toLowerCase().includes(term))) || null;
 }
 
+function criteriaCoverage(candidate, criteria) {
+    return criteria.map(criterion => {
+        const profileEvidenceId = (candidate.evidence || []).find(item => item.source_type === 'customer_input' && item.locator === `input.profile.${criterion.kind}`)?.evidence_id;
+        const base = { criterion_id: criterion.criterion_id, kind: criterion.kind, status: 'pending', evidence_ids: profileEvidenceId ? [profileEvidenceId] : [], note: '尚无对应证据' };
+        if (criterion.kind === 'product_type') {
+            const matched = productTypeMatches(candidate, criterion.value);
+            return { ...base, status: matched ? 'supported' : 'mismatch', note: matched ? '候选类别与明确产品类型一致' : '候选类别与明确产品类型不一致' };
+        }
+        if (criterion.kind === 'budget') {
+            const current = (candidate.offers || []).filter(offer => offer.current_transaction_quote === true && Number.isFinite(offer.amount));
+            if (!current.length) return { ...base, note: '当前成交价未核实，不能判断预算是否满足' };
+            const budget = criterion.value || {};
+            const scoped = current.map(offer => {
+                if (budget.scope === '总额' && budget.quantity) return offer.amount * budget.quantity;
+                return offer.amount;
+            });
+            const within = scoped.some(amount => (budget.min === null || amount >= budget.min) && (budget.max === null || amount <= budget.max));
+            return { ...base, status: within ? 'supported' : 'mismatch', note: within ? '当前有效价格落在预算范围内' : '当前有效价格超出预算范围' };
+        }
+        if (/兼容|软件|插件|系统版本/.test(String(criterion.value || ''))) {
+            return { ...base, note: '缺少已核验的软件版本与系统兼容矩阵' };
+        }
+        const usable = (candidate.evidence || []).filter(item => ['E1', 'E2', 'E2F'].includes(item.source_level) && termTerms(criterion.value).some(term => item.excerpt.toLowerCase().includes(term)));
+        if (criterion.kind === 'excluded') return usable.length ? { ...base, status: 'mismatch', evidence_ids: [...base.evidence_ids, ...usable.map(item => item.evidence_id)].slice(0, 8), note: '候选证据出现客户明确排除项，需人工复核' } : { ...base, note: '未在候选证据中发现客户排除项；不等于已完全排除' };
+        if (!usable.length) return base;
+        return {
+            ...base,
+            status: usable.some(item => item.source_level === 'E1') ? 'supported' : 'partial',
+            evidence_ids: [...base.evidence_ids, ...usable.map(item => item.evidence_id)].slice(0, 8),
+            note: usable.some(item => item.source_level === 'E1') ? '存在可定位完整事实' : '仅有目录、IMA 或非完整事实线索',
+        };
+    });
+}
+
+function coverageSatisfied(coverage) {
+    const hardKinds = new Set(['product_type', 'need', 'budget']);
+    const hard = coverage.filter(item => hardKinds.has(item.kind) || (item.kind === 'pain_point' && /兼容|软件|插件|系统版本/.test(String(item.note))));
+    return !hard.some(item => ['pending', 'partial', 'mismatch'].includes(item.status));
+}
 function scoreCandidate(candidate, criteria) {
     let score = Math.min(40, Number(candidate.recall_score || 0) * 4);
     score += Math.min(30, (candidate.matching_reasons || []).length * 10);
@@ -140,14 +249,11 @@ function scoreCandidate(candidate, criteria) {
 }
 
 function finalStatus(candidate, criteria) {
-    const budget = criteria.find(item => item.kind === 'budget');
-    const compatibility = criteria.find(item => typeof item.value === 'string' && /兼容|软件|插件|系统版本/.test(item.value));
+    const coverage = criteriaCoverage(candidate, criteria);
     const hasE1Reason = (candidate.matching_reasons || []).some(reason => reason.evidence_ids.some(id => (candidate.evidence || []).some(item => item.evidence_id === id && item.source_level === 'E1')));
-    const categoryConflict = criteria.some(item => item.kind === 'product_type' && !productTypeMatches(candidate, item.value));
-    if (categoryConflict) return 'not_recommended';
+    if (coverage.some(item => item.status === 'mismatch')) return 'not_recommended';
+    if (!coverageSatisfied(coverage)) return 'pending_confirmation';
     if (!hasE1Reason) return 'pending_confirmation';
-    if (budget) return 'pending_confirmation';
-    if (compatibility) return 'pending_confirmation';
     const unresolvedConflict = criteria.some(item => typeof item.value === 'string' && /冲突|无法统一|两个型号/.test(item.value));
     if (unresolvedConflict) return 'pending_confirmation';
     return 'recommended';
@@ -162,11 +268,11 @@ function modelEvidenceCard(candidate) {
         candidate_id: candidate.candidate_id,
         product_name: candidate.product_name,
         category: candidate.category,
-        evidence: (candidate.evidence || []).slice(0, 10).map(item => ({
+        evidence: (candidate.evidence || []).slice(0, 6).map(item => ({
             evidence_id: item.evidence_id,
             source_type: item.source_type,
             source_level: item.source_level,
-            excerpt: item.excerpt.slice(0, 600),
+            excerpt: item.excerpt.slice(0, 400),
         })),
     };
 }
@@ -174,11 +280,11 @@ function modelEvidenceCard(candidate) {
 async function requestModelReasons(criteria, candidates, runner) {
     const system = fs.readFileSync(PROMPT_PATH, 'utf8');
     const prompt = JSON.stringify({
-        task: '仅依据证据ID为每个候选选择或组织最多3条克制、可核验的匹配理由。没有足够证据时返回空数组。',
+        task: '仅依据证据ID为前3个候选各组织最多2条短理由，每条不超过120字。必须提供逐字cited_span。没有足够证据时返回空数组。',
         criteria,
-        candidates: candidates.slice(0, 5).map(modelEvidenceCard),
+        candidates: candidates.slice(0, 3).map(modelEvidenceCard),
     });
-    const generated = await runner(system, prompt, 1800);
+    const generated = await runner(system, prompt, 900);
     const decisions = Array.isArray(generated?.value?.decisions) ? generated.value.decisions : null;
     if (!decisions) throw new PipelineError('MODEL_OUTPUT_INVALID', '产品匹配模型未返回decisions数组');
     return { decisions, model: generated.model || null, provider: generated.provider || null };
@@ -199,11 +305,12 @@ function applyModelReasons(candidates, decisions) {
 
 function blankResult(input, requestId, requestedMode, diagnostics = []) {
     return {
-        schema_version: '1.0', status: 'needs_clarification', request_id: requestId,
+        schema_version: '1.1', status: 'needs_clarification', request_id: requestId,
         criteria: [], candidates: [], excluded_candidates: [],
         questions: ['请补充至少一项产品类型、使用场景或明确需求，再开始产品匹配。'],
         provenance: {
             requested_mode: requestedMode, effective_mode: 'none', index_built_at: null, index_sha256: null,
+            registry_version: null, product_fact_count: 0, current_quote_count: 0,
             ima_request_ids: [], knowledge_base: null,
             model: { requested: Boolean(input?.use_cloud_model), status: 'not_requested', name: null, fallback_reason: null },
         },
@@ -221,8 +328,8 @@ async function runProductMatch(rawInput, options = {}) {
     if (!matchable.some(item => item.kind !== 'budget')) return blankResult(input, requestId, requestedMode, [{ code: 'MATCH_CRITERIA_MISSING', message: '客户画像缺少可用于选品的产品类型、场景或需求；未猜测推荐', retryable: false }]);
 
     const diagnostics = [];
-    const loaded = options.indexData ? { data: options.indexData, raw: JSON.stringify(options.indexData) } : readIndex();
-    const localCatalog = buildLocalCatalog(loaded.data);
+    const loaded = options.indexData ? { data: options.indexData, raw: JSON.stringify(options.indexData), registry: options.registryData || { products: [] }, facts: options.factsData || { facts: [] }, offers: options.offersData || { offers: [] }, compatibility: options.compatibilityData || { records: [] } } : readIndex();
+    const localCatalog = buildLocalCatalog(loaded.data, loaded.registry, loaded.offers);
     const localRecalled = requestedMode === 'ima' ? [] : recallLocalCandidates(localCatalog, criteria, 10);
 
     let ima = null;
@@ -230,10 +337,12 @@ async function runProductMatch(rawInput, options = {}) {
     if (requestedMode === 'ima' || requestedMode === 'hybrid') {
         try {
             const imaRunner = options.imaRunner || imaKnowledge;
-            ima = await imaRunner(matchQuery(input.profile, criteria), { limit: 12 });
+            const imaQueries = buildImaQueries(input.profile, criteria);
+            ima = await imaRecall(imaQueries, imaRunner);
+            ima.queries = imaQueries;
             if (ima?.status === 'connected' || ima?.status === 'no_knowledge_base') {
                 effectiveMode = requestedMode === 'ima' ? 'ima' : 'hybrid';
-                diagnostics.push({ code: ima.results?.length ? 'MATCH_IMA_SEARCH_COMPLETED' : 'MATCH_IMA_SEARCH_NO_MATCH', message: JSON.stringify({ knowledge_base: ima.knowledge_base || null, request_ids: ima.request_ids || [], result_count: ima.results?.length || 0 }), retryable: false });
+                diagnostics.push({ code: ima.results?.length ? 'MATCH_IMA_SEARCH_COMPLETED' : 'MATCH_IMA_SEARCH_NO_MATCH', message: JSON.stringify({ knowledge_base: ima.knowledge_base || null, request_ids: ima.request_ids || [], result_count: ima.results?.length || 0, query_count: ima.queries?.length || 0, queries: ima.queries || [] }), retryable: false });
             }
         } catch (error) {
             diagnostics.push({ code: error?.code || 'MATCH_IMA_FAILED', message: error?.message || 'IMA 检索失败，已按请求模式降级', retryable: Boolean(error?.retryable) });
@@ -273,9 +382,13 @@ async function runProductMatch(rawInput, options = {}) {
             status,
             status_label: statusLabel(status),
             match_score: scoreCandidate(candidate, criteria),
+            operating_system: candidate.operating_system || null,
+            generation: candidate.generation || null,
+            evidence_status: candidate.evidence_status || null,
             matching_reasons: candidate.matching_reasons.slice(0, 4),
             limitations: candidate.limitations,
             missing_information: candidate.missing_information,
+            criteria_coverage: candidate.criteria_coverage || [],
             evidence: candidate.evidence,
             source_mode: candidate.source_mode || (candidate.ima_evidence?.length ? 'ima' : 'local'),
         };
@@ -292,7 +405,7 @@ async function runProductMatch(rawInput, options = {}) {
     if (prepared.length && !recommendedCount) diagnostics.push({ code: 'MATCH_PENDING_REVIEW', message: '候选已返回，但证据、价格或兼容性尚未闭环，因此全部标记【待确认】', retryable: false });
 
     const result = {
-        schema_version: '1.0',
+        schema_version: '1.1',
         status: recommendedCount ? 'ready' : 'partial',
         request_id: requestId,
         criteria,
@@ -304,6 +417,9 @@ async function runProductMatch(rawInput, options = {}) {
             effective_mode: effectiveMode,
             index_built_at: loaded.data.built_at || null,
             index_sha256: sha256(loaded.raw),
+            registry_version: loaded.registry?.registry_version || null,
+            product_fact_count: Array.isArray(loaded.facts?.facts) ? loaded.facts.facts.length : 0,
+            current_quote_count: Array.isArray(loaded.offers?.offers) ? loaded.offers.offers.filter(offer => offer.current_transaction_quote === true).length : 0,
             ima_request_ids: ima?.request_ids || [],
             knowledge_base: ima?.knowledge_base ? { knowledge_base_id: ima.knowledge_base.kb_id || null, knowledge_base_name: ima.knowledge_base.kb_name || null } : null,
             model,
@@ -339,7 +455,8 @@ function renderProductMatchMarkdown(result) {
     for (const candidate of result.candidates) {
         lines.push(`### ${candidate.status_label}｜${candidate.product_name}`, `系列：${candidate.product_family}；类别：${candidate.category}；排序分：${candidate.match_score}；来源：${candidate.source_mode}`, '', '**匹配理由**');
         if (!candidate.matching_reasons.length) lines.push('- 当前没有通过证据核验的匹配理由，状态保持【待确认】。');
-        for (const reason of candidate.matching_reasons) lines.push(`- ${reason.text}（证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`);
+        for (const reason of candidate.matching_reasons) lines.push(`- ${reason.text}（引文：${reason.cited_span || '未提供'}；证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`);
+        lines.push('', '**逐条件覆盖**', ...(candidate.criteria_coverage || []).map(item => `- ${item.kind}｜${item.status}｜${item.note}${item.evidence_ids.length ? `（${item.evidence_ids.join('、')}）` : ''}`));
         lines.push('', '**限制**', ...candidate.limitations.map(item => `- ${item}`), '', '**缺失信息**');
         if (!candidate.missing_information.length) lines.push('- 暂无已识别的阻塞缺失项；仍不等于完成真实报价或兼容性确认。');
         else lines.push(...candidate.missing_information.map(item => `- ${item}`));

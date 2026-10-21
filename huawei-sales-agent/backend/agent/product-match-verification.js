@@ -15,18 +15,22 @@ function numericTokens(text) {
 }
 
 function verifyModelReason(candidate, reason, evidenceById) {
-    if (!reason || typeof reason.text !== 'string' || !Array.isArray(reason.evidence_ids)) return { ok: false, code: 'STRUCTURE' };
-    const text = reason.text.trim().replace(/\s+/g, ' ').slice(0, 600);
-    if (!text || reason.evidence_ids.length < 1 || reason.evidence_ids.length > 8) return { ok: false, code: 'STRUCTURE' };
+    if (!reason || typeof reason.text !== 'string' || !Array.isArray(reason.evidence_ids) || typeof reason.cited_span !== 'string') return { ok: false, code: 'STRUCTURE' };
+    const normalize = value => String(value || '').replace(/\s+/g, ' ').trim();
+    const text = normalize(reason.text).slice(0, 600);
+    const citedSpan = normalize(reason.cited_span).slice(0, 500);
+    if (!text || citedSpan.length < 4 || reason.evidence_ids.length < 1 || reason.evidence_ids.length > 8) return { ok: false, code: 'STRUCTURE' };
     if (FORBIDDEN.test(text)) return { ok: false, code: 'COMPLIANCE' };
     const referenced = [...new Set(reason.evidence_ids)].map(id => evidenceById.get(id)).filter(Boolean);
     if (referenced.length !== new Set(reason.evidence_ids).size) return { ok: false, code: 'UNKNOWN_EVIDENCE' };
+    const productReferences = referenced.filter(item => item.source_type !== 'customer_input');
+    if (!productReferences.length || !productReferences.some(item => normalize(item.excerpt).includes(citedSpan))) return { ok: false, code: 'UNSUPPORTED_CITATION' };
     const sourceText = referenced.map(item => item.excerpt).join('\n');
     if (numericTokens(text).some(token => !sourceText.includes(token))) return { ok: false, code: 'UNSUPPORTED_NUMBER' };
     if (PRICE_TERMS.test(text) && !referenced.some(item => item.source_type === 'local_price_snapshot')) return { ok: false, code: 'UNSUPPORTED_PRICE' };
     if (COMPATIBILITY_TERMS.test(text) && !COMPATIBILITY_TERMS.test(sourceText)) return { ok: false, code: 'UNSUPPORTED_COMPATIBILITY' };
     if (/https?:\/\//i.test(text) && !referenced.some(item => item.url && text.includes(item.url))) return { ok: false, code: 'UNSUPPORTED_URL' };
-    return { ok: true, value: { text, evidence_ids: [...new Set(reason.evidence_ids)], origin: 'cloud_model' } };
+    return { ok: true, value: { text, evidence_ids: [...new Set(reason.evidence_ids)], cited_span: citedSpan, origin: 'cloud_model' } };
 }
 
 function verifyModelReasons(candidate, reasons) {
@@ -56,7 +60,7 @@ function deterministicReasons(candidate, criteria, profileEvidence) {
         const label = criterion.kind === 'product_type' ? '产品类型' : criterion.kind === 'scenario' ? '使用场景' : '需求线索';
         kept.push({
             text: `客户${label}明确表达“${criterion.value}”；候选资料存在对应可追溯线索，仍需按具体任务、配置和限制复核。`,
-            evidence_ids: [profile.evidence_id, matching.evidence_id], origin: 'rules',
+            evidence_ids: [profile.evidence_id, matching.evidence_id], cited_span: matching.excerpt.replace(/\s+/g, ' ').trim().slice(0, 240), origin: 'rules',
         });
         if (kept.length >= 3) break;
     }

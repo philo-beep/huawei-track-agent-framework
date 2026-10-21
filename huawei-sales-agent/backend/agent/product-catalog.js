@@ -8,6 +8,10 @@ const { ROOT, PipelineError } = require('./support');
 const DEFAULT_DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const DATA_ROOT = process.env.HUAWEI_DATA_ROOT ? path.resolve(process.env.HUAWEI_DATA_ROOT) : DEFAULT_DATA_ROOT;
 const INDEX_PATH = process.env.HUAWEI_MATCH_INDEX_PATH ? path.resolve(process.env.HUAWEI_MATCH_INDEX_PATH) : path.join(DATA_ROOT, 'datasets', 'cleaned', 'local_kb_index.json');
+const REGISTRY_PATH = process.env.HUAWEI_MATCH_REGISTRY_PATH ? path.resolve(process.env.HUAWEI_MATCH_REGISTRY_PATH) : path.join(DATA_ROOT, 'datasets', 'cleaned', 'product_registry.json');
+const FACTS_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'product_facts.json');
+const OFFERS_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'product_offers.json');
+const COMPATIBILITY_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'compatibility_records.json');
 
 const TERM_ALIASES = Object.freeze({
     '移动办公': ['移动办公', '差旅', '便携', '轻薄', '重量'],
@@ -92,8 +96,17 @@ function inferFamily(name) {
 function termTerms(value) {
     const base = String(value || '').trim().toLowerCase();
     if (!base) return [];
-    const aliases = TERM_ALIASES[String(value || '').trim()] || [];
-    return [...new Set([base, ...aliases.map(item => item.toLowerCase())].filter(Boolean))];
+    const terms = [base];
+    for (const [key, aliases] of Object.entries(TERM_ALIASES)) {
+        const normalizedKey = key.toLowerCase();
+        if (base.includes(normalizedKey) || aliases.some(alias => base.includes(alias.toLowerCase()))) {
+            terms.push(normalizedKey, ...aliases);
+        }
+    }
+    for (const token of base.split(/[，,。；;、\s/与和及]+/)) {
+        if (token.length >= 2 && token.length <= 16) terms.push(token);
+    }
+    return [...new Set(terms.map(item => String(item).toLowerCase()).filter(Boolean))];
 }
 
 function criterionMatches(text, value) {
@@ -120,55 +133,87 @@ function retrievedAt(text, fallback) {
     return match ? match[1].trim() : fallback || null;
 }
 
+function readOptionalJson(filePath, fallback) {
+    try {
+        if (!fs.existsSync(filePath) || fs.lstatSync(filePath).isSymbolicLink()) return fallback;
+        return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
+    } catch {
+        return fallback;
+    }
+}
+
 function readIndex(indexOverride) {
     try {
-        const raw = indexOverride ? JSON.stringify(indexOverride) : fs.readFileSync(INDEX_PATH, 'utf8').replace(/^\uFEFF/, '');
+        const injected = Boolean(indexOverride);
+        const raw = injected ? JSON.stringify(indexOverride) : fs.readFileSync(INDEX_PATH, 'utf8').replace(/^\uFEFF/, '');
         const parsed = JSON.parse(raw);
         if (!parsed || !Array.isArray(parsed.documents)) throw new Error('documents missing');
-        return { data: parsed, raw, indexPath: indexOverride ? 'injected-index' : INDEX_PATH };
+        const registry = injected ? { products: [] } : readOptionalJson(REGISTRY_PATH, { products: [] });
+        const facts = injected ? { facts: [] } : readOptionalJson(FACTS_PATH, { facts: [] });
+        const offers = injected ? { offers: [] } : readOptionalJson(OFFERS_PATH, { offers: [] });
+        const compatibility = injected ? { records: [] } : readOptionalJson(COMPATIBILITY_PATH, { records: [] });
+        return { data: parsed, raw, indexPath: injected ? 'injected-index' : INDEX_PATH, registry, facts, offers, compatibility };
     } catch (error) {
         throw new PipelineError('MATCH_INDEX_UNAVAILABLE', '产品匹配索引不可读或结构异常；未生成候选');
     }
 }
-
-function buildLocalCatalog(indexData) {
+function buildLocalCatalog(indexData, registryData = { products: [] }, offersData = { offers: [] }) {
     const documents = Array.isArray(indexData?.documents) ? indexData.documents : [];
     const prices = Array.isArray(indexData?.price_records) ? indexData.price_records : [];
+    const registryProducts = Array.isArray(registryData?.products) ? registryData.products : [];
+    const offers = Array.isArray(offersData?.offers) ? offersData.offers : [];
+    const aliasMap = new Map();
+    for (const product of registryProducts) for (const alias of [product.canonical_name, ...(product.aliases || [])].filter(Boolean)) aliasMap.set(normalizeName(alias), product);
     const groups = new Map();
+    const ensureGroup = (rawName, registryProduct = null, document = null) => {
+        const productName = cleanProductTitle(registryProduct?.canonical_name || rawName);
+        const key = registryProduct?.product_id || `derived:${normalizeName(productName)}`;
+        if (!groups.has(key)) groups.set(key, {
+            key, registry: registryProduct, productName, aliases: new Set(), documents: [], prices: [], offers: [],
+        });
+        const group = groups.get(key);
+        group.aliases.add(String(rawName));
+        for (const alias of registryProduct?.aliases || []) group.aliases.add(alias);
+        if (document && !group.documents.some(item => item.id === document.id)) group.documents.push(document);
+        return group;
+    };
     for (const document of documents) {
         const names = Array.isArray(document.product_names) ? document.product_names.filter(Boolean) : [];
-        for (const rawName of names) {
-            const productName = cleanProductTitle(rawName);
-            const key = normalizeName(productName);
-            if (!key) continue;
-            if (!groups.has(key)) groups.set(key, { key, productName, aliases: new Set(), documents: [], prices: [] });
-            const group = groups.get(key);
-            group.aliases.add(String(rawName));
-            group.documents.push(document);
-        }
+        if (!names.length) continue;
+        const registryProduct = names.map(name => aliasMap.get(normalizeName(name))).find(Boolean) || null;
+        ensureGroup(names[0], registryProduct, document);
     }
     for (const price of prices) {
-        const name = cleanProductTitle(price?.raw_fields?.['规范产品名称'] || '');
-        const group = groups.get(normalizeName(name));
+        const name = cleanProductTitle(price?.raw_fields?.['规范产品名称'] || price?.raw_fields?.['原始产品名称'] || '');
+        const registryProduct = aliasMap.get(normalizeName(name));
+        const group = [...groups.values()].find(item => item.registry?.product_id && item.registry.product_id === registryProduct?.product_id) || groups.get(`derived:${normalizeName(name)}`);
         if (group) group.prices.push(price);
+    }
+    for (const offer of offers) {
+        const group = [...groups.values()].find(item => item.registry?.product_id && item.registry.product_id === offer.product_id);
+        if (group) group.offers.push(offer);
     }
     return [...groups.values()].map(group => {
         const combinedText = group.documents.map(document => document.text || '').join('\n');
-        const category = inferCategory(combinedText, group.productName);
+        const category = group.registry?.category || inferCategory(combinedText, group.productName);
         return {
-            candidate_id: `candidate-${sha256(group.key).slice(0, 12)}`,
+            candidate_id: `candidate-${sha256(normalizeName(group.productName)).slice(0, 12)}`,
             product_name: group.productName,
             aliases: [...group.aliases],
-            product_family: inferFamily(group.productName),
+            product_family: group.registry?.family || inferFamily(group.productName),
             category,
+            operating_system: group.registry?.operating_system || null,
+            generation: group.registry?.generation || null,
+            evidence_status: group.registry?.evidence_status || (group.documents.some(document => document.kind === 'product_fact') ? 'verified_fact_partial' : 'discovery_only'),
+            priority_product: group.registry?.priority === true,
             documents: group.documents,
             prices: group.prices,
+            offers: group.offers,
             source_mode: 'local',
             combined_text: combinedText,
         };
-    }).sort((first, second) => first.product_name.localeCompare(second.product_name, 'zh-CN'));
+    }).sort((first, second) => Number(second.priority_product) - Number(first.priority_product) || first.product_name.localeCompare(second.product_name, 'zh-CN'));
 }
-
 function localRecallScore(candidate, criteria) {
     let score = 0;
     const values = criteria.filter(item => ['need', 'preference', 'pain_point', 'scenario'].includes(item.kind) && typeof item.value === 'string');
@@ -317,13 +362,14 @@ function imaCandidateFromResult(result, localCatalog, includeLocalBase = true) {
 
 function mergeCandidates(localCandidates, imaCandidates) {
     const merged = new Map(localCandidates.map(candidate => [candidate.candidate_id, { ...candidate }]));
+    const dedupeEvidence = values => [...new Map((values || []).filter(Boolean).map(item => [item.evidence_id, item])).values()].slice(0, 6);
     for (const candidate of imaCandidates.filter(Boolean)) {
         const existing = [...merged.values()].find(item => item.aliases.some(alias => candidate.aliases.some(other => normalizeName(alias) === normalizeName(other))));
         if (existing) {
-            existing.ima_evidence = [...(existing.ima_evidence || []), ...(candidate.ima_evidence || [])];
+            existing.ima_evidence = dedupeEvidence([...(existing.ima_evidence || []), ...(candidate.ima_evidence || [])]);
             existing.source_mode = 'hybrid';
         } else {
-            merged.set(candidate.candidate_id, candidate);
+            merged.set(candidate.candidate_id, { ...candidate, ima_evidence: dedupeEvidence(candidate.ima_evidence) });
         }
     }
     return [...merged.values()];
@@ -331,6 +377,10 @@ function mergeCandidates(localCandidates, imaCandidates) {
 
 module.exports = {
     INDEX_PATH,
+    REGISTRY_PATH,
+    FACTS_PATH,
+    OFFERS_PATH,
+    COMPATIBILITY_PATH,
     DATA_ROOT,
     TERM_ALIASES,
     PRODUCT_TYPE_ALIASES,

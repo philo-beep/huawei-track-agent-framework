@@ -15,7 +15,10 @@ async function main() {
     if (!capabilities.ima_configured || !capabilities.cloud_model_configured) throw new Error('IMA 或云端模型未配置，拒绝伪造联调成功');
     const input = productMatchExamples()[0].input;
     const result = await runProductMatch(input);
-    output.status = result.provenance.effective_mode === 'hybrid' && result.provenance.model.status === 'called' ? 'ok' : 'needs_attention';
+    const allReasons = result.candidates.flatMap(candidate => candidate.matching_reasons || []);
+    const citationsReady = allReasons.length > 0 && allReasons.every(reason => typeof reason.cited_span === 'string' && reason.cited_span.trim());
+    const coverageReady = result.candidates.every(candidate => Array.isArray(candidate.criteria_coverage) && candidate.criteria_coverage.length > 0);
+    output.status = result.provenance.effective_mode === 'hybrid' && result.provenance.model.status === 'called' && citationsReady && coverageReady ? 'ok' : 'needs_attention';
     output.result = {
         match_status: result.status,
         effective_mode: result.provenance.effective_mode,
@@ -26,10 +29,17 @@ async function main() {
         recommended_count: result.verification.recommended_count,
         pending_count: result.verification.pending_count,
         unsupported_claims_dropped: result.verification.unsupported_claims_dropped,
+        registry_version: result.provenance.registry_version,
+        product_fact_count: result.provenance.product_fact_count,
+        current_quote_count: result.provenance.current_quote_count,
+        citations_ready: citationsReady,
+        coverage_ready: coverageReady,
         candidates: result.candidates.slice(0, 3).map(candidate => ({
             product: candidate.product_name,
             status: candidate.status,
             reason_count: candidate.matching_reasons.length,
+            cited_span_count: candidate.matching_reasons.filter(reason => reason.cited_span).length,
+            coverage_statuses: candidate.criteria_coverage.map(item => item.status),
             evidence_levels: [...new Set(candidate.evidence.map(item => item.source_level))],
             source_mode: candidate.source_mode,
         })),

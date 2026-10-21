@@ -469,7 +469,7 @@ function renderProductMatchResult(result, markdown) {
     byId('match-candidates').replaceChildren();
     byId('match-diagnostics').replaceChildren();
     const modelStatus = result.provenance?.model?.status || '未确认';
-    byId('match-summary').textContent = `匹配状态：${result.status}；候选${result.verification.candidate_count}项；推荐${result.verification.recommended_count}项；【待确认】${result.verification.pending_count}项。\n请求模式：${result.provenance.requested_mode}；实际模式：${result.provenance.effective_mode}；模型：${modelStatus}${result.provenance.model?.name ? `（${result.provenance.model.name}）` : ''}。\n匹配分数只用于排序，不是匹配概率或成交概率。`;
+    byId('match-summary').textContent = `匹配状态：${result.status}；候选${result.verification.candidate_count}项；推荐${result.verification.recommended_count}项；【待确认】${result.verification.pending_count}项。\n请求模式：${result.provenance.requested_mode}；实际模式：${result.provenance.effective_mode}；模型：${modelStatus}${result.provenance.model?.name ? `（${result.provenance.model.name}）` : ''}。\n注册表：${result.provenance.registry_version || '未加载'}；结构化事实：${result.provenance.product_fact_count}条；当前成交报价：${result.provenance.current_quote_count}条。\n匹配分数只用于排序，不是匹配概率或成交概率。`;
     const criteria = element('div', `匹配条件：${result.criteria.map(item => `${item.kind}=${typeof item.value === 'object' ? JSON.stringify(item.value) : item.value}`).join('；') || '待确认'}`);
     criteria.className = 'notice';
     byId('match-candidates').append(criteria);
@@ -477,29 +477,43 @@ function renderProductMatchResult(result, markdown) {
         const article = element('article');
         article.className = `result-card match-card ${candidate.status}`;
         const heading = element('div'); heading.className = 'match-heading';
-        heading.append(element('strong', `${candidate.status_label}｜${candidate.product_name}`), element('span', `${candidate.category} · 排序分 ${candidate.match_score}`));
+        const evidenceLabel = candidate.evidence_status === 'verified_fact_partial' ? '部分E1事实' : candidate.evidence_status === 'discovery_only' ? '仅目录发现' : candidate.evidence_status || '证据待确认';
+        heading.append(element('strong', `${candidate.status_label}｜${candidate.product_name}`), element('span', `${candidate.category}${candidate.operating_system ? ` · ${candidate.operating_system}` : ''} · ${evidenceLabel} · 排序分 ${candidate.match_score}`));
         const badge = element('span', candidate.status_label); badge.className = 'status-badge'; heading.append(badge);
         article.append(heading);
-        appendMatchText(article, '匹配理由', candidate.matching_reasons.map(reason => `${reason.text}（证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`));
+        appendMatchText(article, '匹配理由', candidate.matching_reasons.map(reason => `${reason.text}（引文：${reason.cited_span || '未提供'}；证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`));
+        appendMatchText(article, '逐条件覆盖', (candidate.criteria_coverage || []).map(item => `${item.kind}：${item.status}｜${item.note}`));
         appendMatchText(article, '限制', candidate.limitations);
         appendMatchText(article, '缺失信息', candidate.missing_information);
-        const evidenceTitle = element('strong', '证据');
+        const evidenceTitle = element('strong', '核心证据');
         const evidenceList = element('ul'); evidenceList.className = 'match-evidence';
-        for (const evidence of candidate.evidence) {
-            const item = element('li', `${evidence.evidence_id}｜${evidence.source_level}｜${evidence.title}｜${evidence.locator}`);
-            const excerpt = element('div', evidence.excerpt.slice(0, 500)); excerpt.className = 'notice';
-            item.append(excerpt);
-            if (evidence.url) {
-                try {
-                    const url = new URL(evidence.url);
-                    if (['http:', 'https:'].includes(url.protocol)) {
-                        const link = element('a', '打开来源页面'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; item.append(link);
-                    }
-                } catch { }
+        const renderEvidenceItems = (target, items) => {
+            for (const evidence of items) {
+                const item = element('li', `${evidence.evidence_id}｜${evidence.source_level}｜${evidence.title}｜${evidence.locator}`);
+                const excerpt = element('div', evidence.excerpt.slice(0, 500)); excerpt.className = 'notice';
+                item.append(excerpt);
+                if (evidence.url) {
+                    try {
+                        const url = new URL(evidence.url);
+                        if (['http:', 'https:'].includes(url.protocol)) {
+                            const link = element('a', '打开来源页面'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; item.append(link);
+                        }
+                    } catch { }
+                }
+                target.append(item);
             }
-            evidenceList.append(item);
-        }
+        };
+        const evidence = candidate.evidence || [];
+        renderEvidenceItems(evidenceList, evidence.slice(0, 5));
         article.append(evidenceTitle, evidenceList);
+        if (evidence.length > 5) {
+            const details = element('details');
+            details.append(element('summary', `查看其余 ${evidence.length - 5} 条证据`));
+            const restList = element('ul'); restList.className = 'match-evidence';
+            renderEvidenceItems(restList, evidence.slice(5));
+            details.append(restList);
+            article.append(details);
+        }
         if (sourceProducts.includes(candidate.product_name)) {
             const use = element('button', '用此候选进入四步流程'); use.type = 'button'; use.className = 'match-use-candidate';
             use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); byId('input-fields').scrollIntoView({ behavior: 'smooth', block: 'start' }); });

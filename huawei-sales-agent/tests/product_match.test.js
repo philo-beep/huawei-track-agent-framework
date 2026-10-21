@@ -12,7 +12,7 @@ function fixtureIndex() {
                 id: 'doc-fact-1', kind: 'product_fact', product_names: ['HUAWEI MateBook 14'],
                 title: 'HUAWEI MateBook 14 - 产品事实',
                 source: { entry: 'local/MateBook14.md', entry_sha256: 'a'.repeat(64), urls: ['https://consumer.huawei.com/cn/laptops/matebook-14/'] },
-                text: '# HUAWEI MateBook 14\n\n> 抓取日期：2026-10-21\n\n## 电池\n\n电池容量 70 Wh，官网标注长续航。\n\n## 屏幕\n\n14.2 英寸 OLED 屏幕。\n\n## 接口\n\n支持 USB-C。',
+                text: '# HUAWEI MateBook 14\n\n> 抓取日期：2026-10-21\n\n## 尺寸与重量\n\n重量约 1.33 kg，适合移动携带。\n\n## 电池\n\n电池容量 70 Wh，官网标注长续航。\n\n## 屏幕\n\n14.2 英寸 OLED 屏幕。\n\n## 接口\n\n支持 USB-C。',
             },
             {
                 id: 'doc-catalog-1', kind: 'product_catalog', product_names: ['HUAWEI MateBook 14'],
@@ -94,11 +94,11 @@ test('model reason with unsupported number is dropped', async () => {
         const payload = JSON.parse(prompt);
         const candidate = payload.candidates[0];
         const profileEvidence = candidate.evidence.find(item => item.source_type === 'customer_input');
-        const factEvidence = candidate.evidence.find(item => item.source_level === 'E1');
+        const factEvidence = candidate.evidence.find(item => item.source_level === 'E1' && item.excerpt.includes('容量'));
         return {
             model: 'test-model', value: { decisions: [{ candidate_id: candidate.candidate_id, reasons: [
-                { text: '客户需要移动办公，候选原文包含移动办公与长续航线索，仍需任务核验。', evidence_ids: [profileEvidence.evidence_id, factEvidence.evidence_id] },
-                { text: '续航可达到99小时。', evidence_ids: [factEvidence.evidence_id] },
+                { text: '候选资料列出电池容量 70 Wh，是否满足长续航仍需任务核验。', cited_span: '电池容量 70 Wh', evidence_ids: [profileEvidence.evidence_id, factEvidence.evidence_id] },
+                { text: '续航可达到99小时。', cited_span: '电池容量 70 Wh', evidence_ids: [factEvidence.evidence_id] },
             ] }] },
         };
     };
@@ -116,6 +116,36 @@ test('software compatibility without a verified matrix stays pending', async () 
     assert.ok(result.candidates.length >= 1);
     assert.equal(result.candidates[0].status, 'pending_confirmation');
     assert.ok(result.candidates[0].matching_reasons.every(reason => !/完全兼容|已确认兼容/.test(reason.text)));
+});
+
+test('registry canonicalizes aliases and preserves system metadata', async () => {
+    const index = fixtureIndex();
+    index.documents[0].product_names = ['MateBook 14 别名'];
+    index.documents[1].product_names = ['MateBook 14 别名'];
+    index.documents[2].product_names = ['PixLab X1'];
+    const registryData = { registry_version: 'test-registry', products: [{
+        product_id: 'product-abc123', canonical_name: 'HUAWEI MateBook 14（鸿蒙版）', aliases: ['MateBook 14 别名'],
+        category: '消费笔记本', family: 'MateBook 14', operating_system: 'HarmonyOS', generation: '2026', evidence_status: 'verified_fact_partial', priority: true,
+    }] };
+    const result = await runProductMatch(baseInput(), { indexData: index, registryData });
+    assert.equal(result.provenance.registry_version, 'test-registry');
+    assert.equal(result.candidates[0].product_name, 'HUAWEI MateBook 14（鸿蒙版）');
+    assert.equal(result.candidates[0].operating_system, 'HarmonyOS');
+});
+
+test('model reason must cite an exact span from product evidence', async () => {
+    const input = baseInput(); input.use_cloud_model = true;
+    const modelRunner = async (system, prompt) => {
+        const payload = JSON.parse(prompt); const candidate = payload.candidates[0];
+        const profileEvidence = candidate.evidence.find(item => item.source_type === 'customer_input');
+        const factEvidence = candidate.evidence.find(item => item.source_level === 'E1' && item.excerpt.includes('重量'));
+        return { model: 'test-model', value: { decisions: [{ candidate_id: candidate.candidate_id, reasons: [
+            { text: '客户需要移动办公，候选有重量线索。', cited_span: '不存在的引文', evidence_ids: [profileEvidence.evidence_id, factEvidence.evidence_id] },
+        ] }] } };
+    };
+    const result = await runProductMatch(input, { indexData: fixtureIndex(), modelRunner });
+    assert.equal(result.verification.unsupported_claims_dropped, 1);
+    assert.ok(result.candidates[0].matching_reasons.every(reason => reason.origin === 'rules'));
 });
 
 test('unknown input fields are rejected', () => {
