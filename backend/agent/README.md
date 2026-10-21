@@ -30,7 +30,13 @@
 | `knowledge.js` | A | 本地知识检索调用和结果适配 |
 | `official.js` | A | 官网事实、型号、价格和图片证据消费 |
 | `source-health.js` | A | 来源健康和时效检查 |
-| `ima.js` | A | IMA OpenAPI 知识库搜索与来源回传 |
+| `ima.js` | A | 官方 IMA Skill 适配、知识库检索、目录浏览、媒体信息和笔记正文 |
+| `ima-evidence.js` | A | IMA 只读证据抓取、正文抽取、EvidenceBundle 与图片清单构建 |
+| `ima-evidence-cli.js` | A | 在线证据构建 CLI；输出强制限定到 data-spec 工作区 |
+| `ima-evidence-replay.js` | A | 已验证抓取记录的离线回放与哈希复核；配额受阻时使用 |
+| `evidence-supplement.js` | A | 将本地知识库和华为官网/商城证据补充到目标产品包，保留来源与失败状态 |
+| `ima_extract.py` | A | Markdown/HTML/PDF/Office 正文提取，标准库优先 |
+| `skills/ima-skill/` | A | 腾讯 IMA 官方 Skill 1.1.10 原包文件与来源说明 |
 | `tools.py` | A | 检索、模型工具和验收辅助 |
 | `cloud-fact-selector.js` | A | 内容聚焦、事实选择和策略理由 |
 | `verification.js` | A | 事实、图片、合规和适配核验 |
@@ -59,4 +65,25 @@
 ## 验证与交接
 
 从 `huawei-sales-agent/` 运行离线测试和 HTTP 冒烟。A 负责最终联调，E 协助全流程验收。交付需说明文件责任、改动范围、模型状态、接口和来源契约版本、测试结果、已知限制及需要其他角色确认的事项。
+
+
+## IMA 证据底座
+
+- 官方 Skill 固定在 `skills/ima-skill/`，版本由 `meta.json` 记录；协议请求统一调用其 `ima_api.cjs`。
+- 业务适配只执行只读操作：知识库列表/详情、目录浏览、知识检索、媒体信息和正文读取；不上传、不导入、不写入 IMA。
+- 凭据只从运行区 `.env` 或部署环境注入，不写入 Skill、数据快照、日志或 Git。
+- IMA 返回的临时签名 URL、访问 headers 不落盘；保留知识库 ID、媒体 ID、请求 ID、检索时间、内容 SHA-256、正文快照路径和适用型号。
+- 在线构建必须把输出放在 `../huawei-sales-agent-data/` 下：
+
+```powershell
+node backend/agent/ima-evidence-cli.js
+```
+
+- 已验证抓取记录可离线回放；回放会重新校验本地镜像与原始内容 SHA-256，不伪造缺失 ID：
+
+```powershell
+node backend/agent/ima-evidence-replay.js
+```
+
+- 官方接口频控或每日配额失败时停止请求并记录真实错误码；不得把 `partial_verified` 写成完整目录或完整产品证据。
 

@@ -10,6 +10,8 @@
 
 - `test_chat.py`：Agent 四步契约、来源、边界、HTTP 页面和导出测试。
 - `test_cases.json`：明确的合成测试样例。`verify_integrations.js`：按需验证云端模型、IMA 与联网抓取的独立调用；加 `--full` 运行同时启用三项能力的端到端联调。
+- `test_ima_evidence.js`：官方 IMA Skill 媒体映射、目录递归、价格快照、EvidenceBundle 契约与正文提取器测试；不访问网络。
+- `validate_ima_evidence_outputs.js`：复验数据区 EvidenceBundle 契约、全文 SHA-256、图片 SHA-256、价格未核验状态和配额阻断口径。
 - 维护可复现命令、通过/失败证据、回归结论和已知限制。
 
 ## 开始工作前
@@ -34,6 +36,9 @@
 
 ```powershell
 python -B -m unittest discover -s tests -v
+node --test tests/test_ima_evidence.js
+node backend/agent/evidence-supplement.js
+node tests/validate_ima_evidence_outputs.js
 $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```
 
@@ -46,3 +51,7 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```powershell
 node tests/verify_integrations.js --full
 ```
+
+
+
+

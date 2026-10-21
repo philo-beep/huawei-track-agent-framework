@@ -8,6 +8,9 @@
   "required": ["schema_version", "query", "facts", "images", "pricing_refs", "conflicts", "coverage"],
   "properties": {
     "schema_version": {"const": "1.0"},
+    "bundle_id": {"type": "string", "pattern": "^ima-bundle-[A-Za-z0-9._-]{1,60}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "extensions": {"type": "object"},
     "query": {
       "type": "object",
       "additionalProperties": false,
@@ -32,7 +35,8 @@
           "sku": {"type": ["string", "null"]},
           "claim": {"type": "string", "minLength": 1, "maxLength": 1000},
           "conditions": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
-          "source": {"$ref": "#/$defs/source"}
+          "source": {"$ref": "#/$defs/source"},
+          "applicable_models": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}}
         }
       }
     },
@@ -49,7 +53,15 @@
           "caption": {"type": "string", "minLength": 1, "maxLength": 300},
           "usage_scope": {"enum": ["internal_only", "demo", "public_release"]},
           "rights_status": {"enum": ["cleared", "unknown", "restricted"]},
-          "source": {"$ref": "#/$defs/source"}
+          "source": {"$ref": "#/$defs/source"},
+          "applicable_models": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
+          "model_verified": {"type": "boolean"},
+          "content_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "data_path": {"type": ["string", "null"]},
+          "bytes": {"type": "integer", "minimum": 0},
+          "storage_status": {"enum": ["reused_existing", "downloaded", "unavailable"]},
+          "sha256_verified": {"type": "boolean"},
+          "usable_as_verified_product_image": {"type": "boolean"}
         }
       }
     },
@@ -111,13 +123,16 @@
       "required": ["source_id", "source_type", "title", "entry", "url", "retrieved_at", "sha256", "excerpt"],
       "properties": {
         "source_id": {"type": "string", "pattern": "^src-[A-Za-z0-9._-]{1,60}$"},
-        "source_type": {"enum": ["local_knowledge", "huawei_official", "competition_manual", "synthetic"]},
+        "source_type": {"enum": ["local_knowledge", "huawei_official", "competition_manual", "synthetic", "ima"]},
         "title": {"type": "string", "minLength": 1, "maxLength": 300},
         "entry": {"type": "string", "minLength": 1, "maxLength": 300},
         "url": {"type": ["string", "null"], "maxLength": 500},
         "retrieved_at": {"type": "string", "format": "date-time"},
         "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
-        "excerpt": {"type": "string", "minLength": 1, "maxLength": 2000}
+        "excerpt": {"type": "string", "minLength": 1, "maxLength": 2000},
+        "applicable_models": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1}},
+        "ima": {"type": "object"},
+        "provenance": {"type": "object"}
       }
     }
   }

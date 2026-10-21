@@ -33,3 +33,7 @@ B 接口负责人。
 
 交付需附变更字段、兼容性判断、受影响角色、测试结果和回滚方案。
 
+
+## EvidenceBundle IMA 扩展
+
+`evidence-bundle.schema.json` 保持 v1.0 兼容，仅做加性扩展：允许 `source_type=ima`，来源可记录 `applicable_models` 与 `ima` 审计块；图片可记录 `model_verified`、`content_sha256`、`data_path`、`bytes`、`storage_status` 和 SHA-256 核验状态。下游必须区分 `verified_full_text_hash_matched_local_mirror` 与 `verified_excerpt_and_full_content_sha256`，不得把摘录升级为全文。
