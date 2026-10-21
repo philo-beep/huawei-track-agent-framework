@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:huawei-growth:content-generation-output:1.0",
-  "title": "公众号图文生成输出 v1.0",
-  "description": "基于客户画像、所选候选和可追溯证据生成的审稿稿；只包含精确型号匹配且来源可核对的IMA图片建议，不把图片建议冒充公开发布授权。",
+  "$id": "urn:huawei-growth:content-generation-output:1.1",
+  "title": "公众号图文生成与强制核验输出 v1.1",
+  "description": "基于客户画像、所选候选和可追溯证据生成的审稿稿。所有结果先经六项强制核验，输出逐项结论、风险清单和移除降级项后的安全版本。",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "status", "synthetic", "generated_at", "platform", "product", "profile_basis", "draft", "image_sources", "insertion_plan", "citations", "verification", "article_markdown", "diagnostics"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "1.1"},
     "status": {"enum": ["ready_for_review", "blocked"]},
     "synthetic": {"type": "boolean"},
     "generated_at": {"type": "string", "minLength": 1},
@@ -23,7 +23,7 @@
         "family": {"type": ["string", "null"]},
         "category": {"type": ["string", "null"]},
         "operating_system": {"type": ["string", "null"]},
-        "model_verified": {"const": true}
+        "model_verified": {"type": "boolean"}
       }
     },
     "profile_basis": {
@@ -55,11 +55,11 @@
     },
     "image_sources": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["image_id", "product", "file_name", "caption", "position", "marker", "asset_url", "original_url", "page_url", "source_name", "ima_entry", "ima_kb_name", "ima_kb_id", "ima_search_request_ids", "sha256", "mime_type", "model_match_status", "visual_review_status", "rights_status", "publication_ready"],
+        "required": ["image_id", "product", "file_name", "caption", "position", "marker", "asset_url", "original_url", "page_url", "source_name", "ima_entry", "ima_kb_name", "ima_kb_id", "ima_search_request_ids", "sha256", "mime_type", "model_match_status", "visual_review_status", "rights_status", "source_status", "source_checked_at", "reviewed_at", "visual_review_note", "formal_publication_verified", "publication_ready"],
         "properties": {
           "image_id": {"type": "string", "minLength": 1},
           "product": {"type": "string", "minLength": 1},
@@ -80,13 +80,18 @@
           "model_match_status": {"type": "string", "minLength": 1},
           "visual_review_status": {"type": "string", "minLength": 1},
           "rights_status": {"type": "string", "minLength": 1},
-          "publication_ready": {"const": false}
+          "source_status": {"type": "string", "minLength": 1},
+          "source_checked_at": {"type": ["string", "null"]},
+          "reviewed_at": {"type": ["string", "null"]},
+          "visual_review_note": {"type": ["string", "null"]},
+          "formal_publication_verified": {"type": "boolean"},
+          "publication_ready": {"type": "boolean"}
         }
       }
     },
     "insertion_plan": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -102,7 +107,7 @@
     },
     "citations": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -121,13 +126,89 @@
     "verification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["product_model_match", "evidence_traceable", "image_count", "compliance", "publication_ready", "pending"],
+      "required": ["schema_version", "policy_version", "checked_at", "overall_status", "status_label", "publication_ready", "safe_content_ready", "items", "risk_items", "summary", "safe_content", "product_model_match", "evidence_traceable", "image_count", "compliance", "pending"],
       "properties": {
-        "product_model_match": {"const": "verified"},
-        "evidence_traceable": {"const": true},
-        "image_count": {"type": "integer", "minimum": 1},
-        "compliance": {"const": "pass"},
-        "publication_ready": {"const": false},
+        "schema_version": {"const": "1.0"},
+        "policy_version": {"const": "mandatory-release-verification-v1"},
+        "checked_at": {"type": "string", "minLength": 1},
+        "overall_status": {"enum": ["passed", "downgraded", "blocked"]},
+        "status_label": {"enum": ["通过", "降级", "阻塞"]},
+        "publication_ready": {"type": "boolean"},
+        "safe_content_ready": {"type": "boolean"},
+        "items": {
+          "type": "array", "minItems": 6, "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "status", "status_label", "summary", "details"],
+            "properties": {
+              "id": {"enum": ["product_model", "parameters", "price", "image_identity", "overreach", "source_completeness"]},
+              "label": {"enum": ["型号", "参数", "价格", "图片身份", "超范围承诺", "来源完整性"]},
+              "status": {"enum": ["pass", "fail", "downgrade"]},
+              "status_label": {"enum": ["通过", "不通过", "降级"]},
+              "summary": {"type": "string", "minLength": 1},
+              "details": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "risk_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "check_id", "title", "risk_level", "risk_level_label", "issue", "recommendation", "affected", "status"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "check_id": {"enum": ["product_model", "parameters", "price", "image_identity", "overreach", "source_completeness"]},
+              "title": {"type": "string", "minLength": 1},
+              "risk_level": {"enum": ["blocking", "downgrade"]},
+              "risk_level_label": {"enum": ["阻塞", "降级"]},
+              "issue": {"type": "string", "minLength": 1},
+              "recommendation": {"type": "string", "minLength": 1},
+              "affected": {"type": "array", "items": {"type": "string"}},
+              "status": {"enum": ["open", "mitigated_in_safe_version"]}
+            }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pass_count", "downgrade_count", "fail_count", "blocking_risk_count", "downgrade_risk_count"],
+          "properties": {
+            "pass_count": {"type": "integer", "minimum": 0, "maximum": 6},
+            "downgrade_count": {"type": "integer", "minimum": 0, "maximum": 6},
+            "fail_count": {"type": "integer", "minimum": 0, "maximum": 6},
+            "blocking_risk_count": {"type": "integer", "minimum": 0},
+            "downgrade_risk_count": {"type": "integer", "minimum": 0}
+          }
+        },
+        "safe_content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ready", "disclosures", "content", "rendered_markdown"],
+          "properties": {
+            "ready": {"type": "boolean"},
+            "disclosures": {"type": "array", "items": {"type": "string"}},
+            "content": {
+              "type": ["object", "null"],
+              "additionalProperties": false,
+              "required": ["title", "lead", "body_markdown", "cta", "tags", "image_ids"],
+              "properties": {
+                "title": {"type": "string", "minLength": 1},
+                "lead": {"type": "string", "minLength": 1},
+                "body_markdown": {"type": "string", "minLength": 1},
+                "cta": {"type": "string", "minLength": 1},
+                "tags": {"type": "array", "items": {"type": "string"}},
+                "image_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+              }
+            },
+            "rendered_markdown": {"type": "string"}
+          }
+        },
+        "product_model_match": {"enum": ["verified", "failed"]},
+        "evidence_traceable": {"type": "boolean"},
+        "image_count": {"type": "integer", "minimum": 0},
+        "compliance": {"enum": ["pass", "downgraded", "fail"]},
         "pending": {"type": "array", "items": {"type": "string"}}
       }
     },

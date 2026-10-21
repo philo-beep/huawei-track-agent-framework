@@ -38,7 +38,8 @@
 | `product-match-verification.js` | A | 模型理由、数值、价格和兼容性证据核验 |
 | `content-generation.js` | A | 客户画像与事实证据约束的公众号图文草稿、精确型号 IMA 图片来源清单和插入建议 |
 | `prompts/product-match.md` | A | 产品匹配证据选择和输出边界提示词 |
-| `verification.js` | A | 事实、图片、合规和适配核验 |
+| `verification.js` | A | 事实、图片、合规和适配核验；同时导出发布门禁能力 |
+| `release-verification.js` | A | 发布前六项强制核验、阻塞/降级冲突处理、风险清单与安全版本输出 |
 | `pricing.js` | A | 四级价格假设模型和限制 |
 | `sales.js` | A | 下一步动作、负责人和人工确认边界 |
 | `prompts/system.md` | A | 主 Agent 系统提示词 |
@@ -64,4 +65,3 @@
 ## 验证与交接
 
 从 `huawei-sales-agent/` 运行离线测试和 HTTP 冒烟。A 负责最终联调，E 协助全流程验收。交付需说明文件责任、改动范围、模型状态、接口和来源契约版本、测试结果、已知限制及需要其他角色确认的事项。
-

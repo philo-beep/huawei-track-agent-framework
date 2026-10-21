@@ -466,6 +466,10 @@ function contentStatus(message, isError = false) {
 
 function clearContentResult() {
     byId('content-draft-results').hidden = true;
+    byId('content-verification-summary').replaceChildren();
+    byId('content-verification-items').replaceChildren();
+    byId('content-risk-items').replaceChildren();
+    byId('content-safe-version').replaceChildren();
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
@@ -524,11 +528,84 @@ function safeSourceLink(value, label) {
     } catch { return null; }
 }
 
+function verificationBadge(status, label) {
+    const badge = element('span', label);
+    badge.className = `verification-badge ${status}`;
+    return badge;
+}
+
+function renderVerificationResult(verification) {
+    const overallClass = verification.overall_status === 'blocked' ? 'fail' : verification.overall_status === 'downgraded' ? 'downgrade' : 'pass';
+    const summary = element('div'); summary.className = 'verification-summary';
+    const heading = element('div'); heading.className = 'verification-heading';
+    heading.append(element('strong', '发布门禁结论'), verificationBadge(overallClass, verification.status_label));
+    summary.append(heading);
+    summary.append(element('p', `六项核验：通过 ${verification.summary.pass_count}｜降级 ${verification.summary.downgrade_count}｜不通过 ${verification.summary.fail_count}`));
+    summary.append(element('p', `原稿公开发布就绪：${verification.publication_ready ? '是' : '否'}；可发布安全版本：${verification.safe_content_ready ? '可用' : '不可用'}。`));
+    summary.append(element('p', `策略版本：${verification.policy_version}；核验时间：${verification.checked_at}`));
+    byId('content-verification-summary').append(summary);
+
+    const itemList = element('div'); itemList.className = 'verification-item-list';
+    for (const item of verification.items) {
+        const card = element('article'); card.className = 'verification-item';
+        const head = element('div'); head.className = 'verification-heading';
+        head.append(element('strong', item.label), verificationBadge(item.status, item.status_label));
+        card.append(head, element('p', item.summary));
+        const itemDetails = item.details || [];
+        if (itemDetails.length) {
+            const details = element('ul');
+            for (const detail of itemDetails) details.append(element('li', detail));
+            card.append(details);
+        }
+        itemList.append(card);
+    }
+    byId('content-verification-items').append(itemList);
+
+    if (!verification.risk_items.length) {
+        byId('content-risk-items').append(element('p', '未发现需要阻塞或降级的风险项。', ''));
+    } else {
+        const riskList = element('div'); riskList.className = 'verification-risk-list';
+        for (const risk of verification.risk_items) {
+            const card = element('article'); card.className = `verification-risk ${risk.risk_level}`;
+            const head = element('div'); head.className = 'verification-heading';
+            head.append(element('strong', risk.title), verificationBadge(risk.risk_level === 'blocking' ? 'fail' : 'downgrade', risk.risk_level_label));
+            card.append(head, element('p', `问题：${risk.issue}`), element('p', `处理建议：${risk.recommendation}`));
+            const affected = risk.affected || [];
+            if (affected.length) card.append(element('p', `影响项：${affected.join('、')}`));
+            riskList.append(card);
+        }
+        byId('content-risk-items').append(riskList);
+    }
+
+    const safe = verification.safe_content;
+    if (safe.ready && safe.content) {
+        const article = element('article'); article.className = 'content-safe-copy';
+        article.append(element('h4', safe.content.title), element('p', safe.content.lead));
+        const body = element('pre', safe.content.body_markdown); body.className = 'content-body';
+        article.append(body, element('strong', '行动引导'), element('p', safe.content.cta));
+        const imageIds = safe.content.image_ids || [];
+        article.append(element('p', `本版本纳入图片：${imageIds.length ? imageIds.join('、') : '无（图片已作为降级项移除）'}`));
+        if (safe.disclosures.length) {
+            const disclosure = element('div'); disclosure.className = 'verification-disclosures';
+            disclosure.append(element('strong', '降级说明'));
+            const list = element('ul');
+            for (const item of safe.disclosures) list.append(element('li', item));
+            disclosure.append(list); article.append(disclosure);
+        }
+        byId('content-safe-version').append(article);
+    } else {
+        const blocked = element('p', '当前没有可发布版本。请按风险项清单完成修复并重新核验。', '');
+        blocked.className = 'error';
+        byId('content-safe-version').append(blocked);
+    }
+}
+
 function renderContentDraftResult(result, markdown) {
+    renderVerificationResult(result.verification);
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
-    byId('content-summary').textContent = `状态：${result.status}；产品：${result.product.resolved_name}；图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。\n该稿是可审稿版本，不是已获准公开发布版本；图片授权、软件兼容性和正式报价仍需人工确认。`;
+    byId('content-summary').textContent = `强制核验：${result.verification.status_label}；可发布安全版本：${result.verification.safe_content_ready ? '可用' : '不可用'}；产品：${result.product.resolved_name}；原稿图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。原稿、图片和完整 Markdown 仅用于审稿。`;
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', result.draft.title), element('p', result.draft.lead));
     const body = element('pre', result.draft.body_markdown); body.className = 'content-body';
@@ -536,6 +613,7 @@ function renderContentDraftResult(result, markdown) {
     article.append(element('p', `标签：${result.draft.tags.join('、')}`));
     byId('content-draft').append(article);
 
+    if (!result.image_sources.length) byId('content-image-sources').append(element('p', '原稿未纳入图片；未使用其他型号或未核验候选图替代。'));
     const imageGrid = element('div'); imageGrid.className = 'content-image-grid';
     for (const image of result.image_sources) {
         const figure = element('figure'); figure.className = 'content-image-card';
@@ -558,15 +636,19 @@ function renderContentDraftResult(result, markdown) {
     }
     byId('content-image-sources').append(sourceList);
 
-    const plan = element('ol');
-    for (const item of result.insertion_plan) plan.append(element('li', `${item.position}｜${item.instruction}｜${item.caption}（${item.image_id}）`));
-    byId('content-insertion-plan').append(plan);
+    if (!result.insertion_plan.length) {
+        byId('content-insertion-plan').append(element('p', '无可建议的图片插入位置。'));
+    } else {
+        const plan = element('ol');
+        for (const item of result.insertion_plan) plan.append(element('li', `${item.position}｜${item.instruction}｜${item.caption}（${item.image_id}）`));
+        byId('content-insertion-plan').append(plan);
+    }
     byId('content-markdown').textContent = markdown;
     state.contentMarkdown = markdown;
     byId('content-download-json').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=json`;
     byId('content-download-markdown').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=markdown`;
     byId('content-draft-results').hidden = false;
-    contentStatus('图文草稿已生成；请逐项核对图片来源、插入位置、事实脚注和发布授权。');
+    contentStatus(`强制核验完成：${result.verification.status_label}。${result.verification.safe_content_ready ? '可发布安全版本已生成，请仍由发布责任人做最终确认。' : '当前版本被阻塞，请先处理风险项。'}`);
 }
 function appendMatchText(container, label, values) {
     const title = element('strong', label);

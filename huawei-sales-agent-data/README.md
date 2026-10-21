@@ -43,7 +43,7 @@ huawei-sales-agent-data/
 - 图文审稿图片：`cleaned/image_review_registry.json` 登记 4 张 HUAWEI MateBook 14（鸿蒙版）精确型号图片，均完成来源与辅助画面核验；`publication_ready=false`，等待人工终审与发布授权。
 - 图文示例：`test_sample/content_draft.example.json` 和 `.md` 为合成客户样例，含图片来源清单、插入位置和事实来源索引。
 - 运行样例：11 个合成样例，覆盖完整闭环、信息不足、模糊预算、比价、续约、兼容性、极端预算、政企流程、负面诱导和平台差异。
-- 运行验证（2026-10-21）：Node 离线 16 项通过；Python 离线 5 项通过、2 项按环境跳过；图文本地 HTTP 链路 1 项通过（回环测试在沙箱外执行）。
+- 运行验证（2026-10-21）：Node 20/20 通过（含图文本地 HTTP 链路）；Python 7/7 通过（含 HUAWEI_HTTP_SMOKE=1 冒烟）。强制核验样例为 5 项通过、1 项降级、0 项不通过，安全版本已移除未授权图片。
 
 ## 数据边界
 
@@ -66,4 +66,3 @@ huawei-sales-agent-data/
 3. 按 `agent_spec/constraint.md` 检查价格、图片、话术和真实性边界。
 4. 按 `agent_spec/acceptance.md` 完成交付验收。
 5. 产品与赛事文档按 `docs/README.md` 维护；已知缺口记录在 `docs/issue_record.md`，结构调整和验证结果写入 `docs/变更日志.md`。
-

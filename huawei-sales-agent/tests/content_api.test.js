@@ -35,10 +35,16 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
     try {
         const pageResponse = await fetch(`${origin}/`);
         assert.equal(pageResponse.status, 200);
-        assert.match(await pageResponse.text(), /content-draft-results/);
+        const page = await pageResponse.text();
+        assert.match(page, /content-draft-results/);
+        assert.match(page, /content-verification-summary/);
+        assert.match(page, /content-risk-items/);
+        assert.match(page, /content-safe-version/);
         const scriptResponse = await fetch(`${origin}/static/js/app.js`);
         assert.equal(scriptResponse.status, 200);
-        assert.match(await scriptResponse.text(), /startContentDraft/);
+        const script = await scriptResponse.text();
+        assert.match(script, /startContentDraft/);
+        assert.match(script, /renderVerificationResult/);
         const examplesResponse = await fetch(`${origin}/api/examples`);
         const examples = await examplesResponse.json();
         const cookie = examplesResponse.headers.get('set-cookie').split(';')[0];
@@ -62,9 +68,17 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(contentJob.kind, 'content-draft');
         const completedContent = await waitJob(origin, contentJob.id, cookie);
         assert.equal(completedContent.status, 'completed');
+        assert.equal(completedContent.result.schema_version, '1.1');
         assert.equal(completedContent.result.status, 'ready_for_review');
         assert.equal(completedContent.result.image_sources.length, 4);
+        assert.equal(completedContent.result.verification.overall_status, 'downgraded');
         assert.equal(completedContent.result.verification.publication_ready, false);
+        assert.equal(completedContent.result.verification.safe_content_ready, true);
+        assert.equal(completedContent.result.verification.items.length, 6);
+        assert.equal(completedContent.result.verification.risk_items[0].risk_level, 'downgrade');
+        assert.deepEqual(completedContent.result.verification.safe_content.content.image_ids, []);
+        assert.match(completedContent.markdown, /强制核验结果/);
+        assert.match(completedContent.markdown, /风险项清单/);
         assert.match(completedContent.markdown, /图片来源清单/);
         const exportResponse = await fetch(`${origin}/api/runs/${contentJob.id}/export?format=markdown`, { headers: { Cookie: cookie } });
         assert.equal(exportResponse.status, 200);

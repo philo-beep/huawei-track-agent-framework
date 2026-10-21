@@ -23,6 +23,23 @@
 
 接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`。
 
+## 发布前强制核验
+
+所有公众号图文结果在返回前必须经过同一门禁，不允许由前端或调用方跳过：
+
+1. 型号：候选、发布型号与 E1 证据中的具体型号一致。
+2. 参数：每条参数事实逐字存在于来源原文，限制脚注同步保留。
+3. 价格：不发布未经当前口径确认的金额、成交价、优惠或折扣。
+4. 图片身份：图片必须与具体型号匹配，文件指纹、原图 URL、IMA 条目和发布授权完整。
+5. 超范围承诺：拦截绝对化、效果、成交和未经证实的兼容承诺。
+6. 来源完整性：事实与图片保留来源名称、具体条目、公开 URL 和 SHA-256。
+
+冲突处理只有两级：
+
+- **阻塞**：型号错配、事实无法回溯、核心文案含未核验价格或超范围承诺、来源链缺失。不得生成可发布版本。
+- **降级**：问题可在不改变事实的前提下剥离，例如图片授权未完成、正文出现可删除的价格段落、正文出现可删除的夸大句。安全版本会移除对应内容并保留风险说明。
+
+接口结果中的 `verification.items` 返回六项“通过/不通过/降级”，`verification.risk_items` 返回问题、等级与处理建议，`verification.safe_content` 返回移除降级项后的最终安全文本。原始稿仍只用于审稿；发布责任人必须完成最终确认，不得把自动核验写成已自动发布。
 ## 公开演示
 
 - 魔搭空间：<https://modelscope.cn/studios/philosophia/promotion-agent>
@@ -62,6 +79,7 @@ bash start.sh
 ```bash
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
+node --test tests/release_verification.test.js
 node --test tests/content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -m unittest discover -s tests -v

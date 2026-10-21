@@ -8,6 +8,7 @@ B 接口负责人。
 
 - 维护 marketing、pricing、product-match、content-generation、module input/envelope 和各业务输出 Schema。
 - 图文生成输入只接收重新核验所需的 `match_input` 与 `candidate_id`；输出固定保留图片来源、插入位置、事实引用和披露边界。
+- 图文输出 v1.1 增加发布前六项强制核验：`verification.items` 逐项返回通过/不通过/降级，`risk_items` 返回问题、等级和处理建议，`safe_content` 返回移除降级项后的安全版本；任何不通过项设置 `overall_status=blocked` 且不提供安全版本。
 - 保证生产方、消费方和测试使用同一契约版本。
 - 对客户画像、产品匹配 v1.1、证据包、内容任务书、文章、交付评审和价格结果执行兼容性检查。
 - 产品匹配理由必须包含逐字 `cited_span`，候选必须包含 `criteria_coverage`；字段变更需同步 A/C 和测试。
@@ -34,4 +35,3 @@ B 接口负责人。
 - 相关单元测试和全链路测试通过。
 
 交付需附变更字段、兼容性判断、受影响角色、测试结果和回滚方案。
-

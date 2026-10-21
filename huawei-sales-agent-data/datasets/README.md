@@ -27,8 +27,8 @@ D 数据与知识库工程师负责数据、清洗、切片、入库准备和质
 - 图片候选不等于正式配图；未核验时保持 `model_verified=false`。
 - `cleaned/image_review_registry.json` 只登记逐张核对型号、IMA 条目、原图 URL 和画面的草稿配图；即使 `model_verified=true`，人工终审或授权未完成时仍必须保持 `publication_ready=false`。
 - 价格必须区分公开参考价、历史快照、起售价、补贴估算和可成交报价。
+- `test_sample/content_draft.example.json` 与 `.md` 为合成审稿包，包含六项强制核验、风险清单和原始来源；`content_draft.safe.example.md` 为移除未授权图片等降级项后的安全版本，不得反向作为图片授权证据。
 
 ## 验证与交接
 
 交付附数据计数、来源清单、清洗命令、测试结果、失败项和待核实项。A、B、C 或 E 发现问题时提交给 D 评估数据修正，A 复验检索链路，E 协助验收。
-

@@ -57,4 +57,6 @@ function composeContent(value, facts, request = {}) {
     return { title: narrative.title, lead: narrative.lead, body, cta: narrative.cta, images: [], fact_ids: selectedFacts.map(fact => fact.id) };
 }
 
-module.exports = { verifyGenerated, verifySelection, composeContent, constrainedNarrative };
+const releaseVerification = require('./release-verification');
+
+module.exports = { verifyGenerated, verifySelection, composeContent, constrainedNarrative, ...releaseVerification };
