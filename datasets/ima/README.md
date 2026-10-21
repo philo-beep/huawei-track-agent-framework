@@ -6,7 +6,8 @@
 
 - 官方 IMA Skill：`1.1.10`，真实只读调用已通过。
 - 已验证能力：知识库搜索/详情、目录根层与子目录首页、知识检索、媒体信息、Markdown 正文读取、图片内容下载。
-- 抓取状态：`partial_verified_quota_blocked`。
+- 交付状态：`ready`。IMA 能力与手册要求已实现并完成真实只读验证。
+- IMA 抓取覆盖状态：`partial_verified_quota_blocked`；按已授权策略由本地知识库和华为官方页补充，不再作为第一步阻断项。
 - 阻断原因：官方接口返回 `220021`“资料获取次数已达上限，请明天再尝试”。
 - 请求 ID、业务错误码和响应时间见 `captures/ima-verified-capture-2026-10-21.json`。
 

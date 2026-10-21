@@ -1551,7 +1551,9 @@
         "No credential or authorization error occurred; the live API returned a daily acquisition quota error.",
         "Only IDs, hashes, excerpts and request IDs actually observed were retained.",
         "Full text is present only where a local mirror matched the live IMA SHA-256 byte-for-byte."
-      ]
+      ],
+      "delivery_status": "ready",
+      "ima_coverage_status": "partial_verified_quota_blocked"
     },
     "supplemental": {
       "source_policy": [

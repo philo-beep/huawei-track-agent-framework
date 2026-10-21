@@ -227,5 +227,8 @@
     "huawei_official_sources": 2,
     "huawei_mall_status": "failed",
     "limitation": "IMA 覆盖仍为 partial_verified_quota_blocked；补充来源不把 IMA 配额缺口标为完整"
-  }
+  },
+  "delivery_status": "ready",
+  "ima_coverage_status": "partial_verified_quota_blocked",
+  "completion_basis": "IMA Skill and read-only capabilities implemented and live-verified; incomplete IMA corpus coverage is supplemented by local knowledge and Huawei official sources under the approved source policy."
 }

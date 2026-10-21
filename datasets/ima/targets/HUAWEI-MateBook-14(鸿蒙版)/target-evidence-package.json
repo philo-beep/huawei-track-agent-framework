@@ -248,5 +248,8 @@
       "limitation": "商城直连抓取历史失败，未伪造库存或可成交报价；价格仅引用带有效时间的知识库页面快照"
     }
   },
-  "source_policy": "IMA 优先，本地知识库和华为官方商城/官网补充；缺失或失败项保持为空并记录状态"
+  "source_policy": "IMA 优先，本地知识库和华为官方商城/官网补充；缺失或失败项保持为空并记录状态",
+  "delivery_status": "ready",
+  "ima_coverage_status": "partial_verified_quota_blocked",
+  "completion_basis": "IMA Skill and read-only capabilities implemented and live-verified; incomplete IMA corpus coverage is supplemented by local knowledge and Huawei official sources under the approved source policy."
 }
