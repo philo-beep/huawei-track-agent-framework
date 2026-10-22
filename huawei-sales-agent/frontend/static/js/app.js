@@ -139,6 +139,9 @@ const diagnosticText = value => {
     return plainText(typeof value === 'string' ? value : value?.message || '需要进一步确认。');
 };
 const profileDimensionIds = Object.keys(profileDimensionLabels);
+const demoBundle = JSON.parse(byId('demo-presets').textContent);
+const demoReplay = { active: false, scenario: null, round: 0, phase: 'idle', paused: false, timer: null, urls: [], confirmed: [], saveNote: '' };
+const demoStorageKey = 'huawei.demo.confirmed.v1';
 
 const sourceProducts = ['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024'];
 const sourceHosts = new Set(['consumer.huawei.com', 'www.vmall.com', 'vmall.com', 'm.vmall.com', 'item.vmall.com']);
@@ -214,6 +217,7 @@ function card(identifier, title, value) {
 }
 
 function engineStatus(engine) {
+    if (engine?.mode === 'preset') return '预置样例回放 · 未调用模型、资料库或联网查询。产品资料为录制时快照，最终结论仍需人工确认。';
     const features = [];
     if (engine && (engine.mode?.includes('cloud') || engine.model_status !== 'disabled')) features.push('智能分析');
     if (engine?.ima_enabled) features.push('产品资料查询');
@@ -231,6 +235,7 @@ function applyAccessControl(session) {
 
 function renderCapabilities(capabilities) {
     state.capabilities = capabilities || null;
+    if (demoReplay.active) { lockDemoControls(); return; }
     const mapping = [
         ['use-cloud-model', Boolean(capabilities?.cloud_model_configured), '智能生成建议'],
         ['use-ima', Boolean(capabilities?.ima_configured), '产品资料库查询'],
@@ -277,6 +282,8 @@ function setRunning(running) {
     byId('profile-restart-complete').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
     if (!running) byId('resume-polling').hidden = true;
+    for (const id of ['demo-procurement', 'demo-creator']) byId(id).disabled = blocked;
+    if (demoReplay.active) lockDemoControls();
     updateWizardChrome();
 }
 
@@ -342,6 +349,7 @@ function showWizardStep(step, options = {}) {
 
 function goToNextWizardStep() {
     if (state.running) return;
+    if (demoReplay.active) { demoNavigateStep(state.wizardStep === 4 ? 1 : state.wizardStep + 1); return; }
     if (state.wizardStep === 4) showWizardStep(1);
     else showWizardStep(state.wizardStep + 1);
 }
@@ -393,6 +401,7 @@ function selectedSourceReady() {
 }
 
 function renderSourceStatus() {
+    if (demoReplay.active) { lockDemoControls(); return; }
     if (state.sourceTimer !== null) clearTimeout(state.sourceTimer);
     state.sourceTimer = null;
     byId('source-status-products').replaceChildren();
@@ -421,6 +430,7 @@ function renderSourceStatus() {
 }
 
 async function refreshSourceStatus() {
+    if (demoReplay.active) return false;
     if (state.sourceLoading) return false;
     state.sourceLoading = true;
     state.sourceError = '';
@@ -454,6 +464,7 @@ function clearResult() {
 }
 
 function fillExample(index) {
+    if (demoReplay.active) { demoNotice('请先退出预置演示，再加载普通示例。'); return; }
     const example = state.examples[index];
     if (!example || state.running) return;
     const input = example.marketing_input;
@@ -467,6 +478,7 @@ function fillExample(index) {
 }
 
 function clearCustomer() {
+    if (demoReplay.active) { demoNotice('请先退出预置演示，再创建客户。'); return; }
     if (state.running) return;
     for (const identifier of ['raw-request', 'audience', 'scenario']) byId(identifier).value = '';
     byId('demo-pricing').checked = false;
@@ -489,6 +501,7 @@ function collectInput() {
 }
 
 async function api(url, options = {}) {
+    if (demoReplay.active) throw new Error('预置演示期间不发送业务请求；请先退出演示');
     let response;
     try {
         response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', ...options });
@@ -514,6 +527,7 @@ async function api(url, options = {}) {
 
 async function startRun(event) {
     if (event) event.preventDefault();
+    if (demoReplay.active) { if (state.access.canRun) demoShowSales(); return; }
     if (state.running || !state.csrf || !state.access.canRun) return;
     showWizardStep(4, { scroll: false });
     let request;
@@ -782,6 +796,7 @@ function appendProfileMessage(role, content) {
 }
 
 function resetProfileInterview(options = {}) {
+    if (demoReplay.active) { startDemo(demoReplay.scenario.id); return; }
     if (state.running) return;
     state.profileMessages = [];
     state.profileTurn = 0;
@@ -909,6 +924,7 @@ async function sendProfileMessages(messages, restart = false) {
 
 async function startGuidedProfile(event) {
     if (event) event.preventDefault();
+    if (demoReplay.active) return;
     if (state.running || !state.access.canRun) return;
     const opening = byId('profile-opening').value.trim();
     if (opening.length > 800) { profileStatus('已知背景最多 800 字。', true); return; }
@@ -934,6 +950,7 @@ async function startGuidedProfile(event) {
 
 async function submitProfileAnswer(event) {
     if (event) event.preventDefault();
+    if (demoReplay.active) { if (state.access.canRun) demoConfirmRound(true); return; }
     if (state.running || !state.profileQuestion) return;
     const answer = byId('profile-answer').value.trim();
     if (!answer) { profileStatus('请先填写当前这一问的回答。', true); return; }
@@ -953,6 +970,7 @@ async function submitProfileAnswer(event) {
 }
 
 function fillMatchFromProfile() {
+    if (demoReplay.active) { demoShowMatch(); return; }
     const profile = state.profileResult?.product_match_profile;
     if (!profile) return;
     const setValue = (identifier, value) => {
@@ -1001,6 +1019,7 @@ function clearMatchResult() {
 }
 
 function fillMatchExample(index) {
+    if (demoReplay.active) { demoNotice('请使用上方两个预置演示按键切换客户。'); return; }
     const example = state.matchExamples[index];
     if (!example || state.running) return;
     const input = example.input;
@@ -1028,6 +1047,7 @@ function fillMatchExample(index) {
 }
 
 function clearMatchCustomer() {
+    if (demoReplay.active) return;
     if (state.running) return;
     byId('match-form').reset();
     renderCapabilities(state.capabilities || {});
@@ -1075,6 +1095,7 @@ function collectMatchInput() {
 
 async function startProductMatch(event) {
     if (event) event.preventDefault();
+    if (demoReplay.active) { if (state.access.canRun) demoShowMatch(); return; }
     if (state.running || !state.csrf || !state.access.canRun) return;
     let request;
     try { request = collectMatchInput(); } catch (error) { matchStatus(error.message, true); return; }
@@ -1140,6 +1161,12 @@ function clearContentResult() {
 }
 
 async function startContentDraft(candidateId) {
+    if (demoReplay.active) {
+        if (!state.access.canRun) return;
+        if (candidateId !== demoReplay.scenario.candidateId) { contentStatus('该候选未录制内容，请选择演示样例的 MateBook 14 候选。'); return; }
+        demoShowContent(byId('content-platform').value);
+        return;
+    }
     if (state.running || !state.csrf) return;
     if (!state.matchInput) { contentStatus('请先完成一次产品匹配，再生成图文。', true); return; }
     showWizardStep(3, { scroll: false });
@@ -1271,7 +1298,7 @@ function createContentImagePreview(image, options = {}) {
     picture.loading = options.lazy === false ? 'eager' : 'lazy'; picture.decoding = 'async';
     const caption = element('figcaption');
     const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
-    caption.append(element('strong', plainText(image.caption)), element('span', `型号核对：一致；图片状态：${rights}`));
+    caption.append(element('strong', plainText(image.caption)), element('span', image.demo_illustration ? '项目原创场景插图 · 非产品实拍' : `型号核对：一致；图片状态：${rights}`));
     const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) caption.append(original);
     picture.addEventListener('error', () => {
         figure.classList.add('image-load-error');
@@ -1496,7 +1523,7 @@ function renderContentDraftResult(result, markdown, options = {}) {
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', plainText(result.draft.title)), element('p', plainText(result.draft.lead)));
     const body = element('div'); body.className = 'content-body-with-images';
-    appendDraftBodyWithImages(body, result.draft.body_markdown, result.image_sources);
+    appendDraftBodyWithImages(body, result.draft.body_markdown, result.demo_illustrations || result.image_sources);
     article.append(body, element('strong', '下一步沟通'), element('p', plainText(result.draft.cta)));
     article.append(element('p', `内容标签：${result.draft.tags.map(tag => plainText(tag)).join('、')}`));
     byId('content-draft').append(article);
@@ -1620,8 +1647,322 @@ function renderProductMatchResult(result, markdown) {
     updateWizardChrome();
 }
 
-for (const button of document.querySelectorAll('.wizard-step')) button.addEventListener('click', () => showWizardStep(Number(button.dataset.stepTarget)));
-byId('wizard-prev').addEventListener('click', () => { if (state.wizardStep > 1) showWizardStep(state.wizardStep - 1); });
+function demoNotice(message) {
+    byId('demo-status').textContent = message;
+}
+
+function lockDemoControls() {
+    byId('input-fields').disabled = true;
+    byId('match-fields').disabled = true;
+    byId('profile-opening').disabled = true;
+    byId('profile-answer').readOnly = true;
+    byId('profile-start').disabled = true;
+    byId('profile-answer-button').disabled = !state.access.canRun || demoReplay.phase !== 'answer';
+    byId('profile-answer-button').textContent = '确认本轮并保存';
+    for (const id of ['use-cloud-model', 'use-ima', 'use-web-research', 'match-use-cloud-model', 'match-use-ima']) {
+        byId(id).checked = false;
+        byId(id).disabled = true;
+    }
+    for (const id of ['refresh-source-status', 'new-customer', 'match-clear', 'profile-reset', 'profile-restart-complete']) byId(id).disabled = true;
+    for (const button of document.querySelectorAll('[id^="example-"], [id^="match-example-"]')) if (button.tagName === 'BUTTON') button.disabled = true;
+    byId('run-button').disabled = !state.access.canRun || demoReplay.scenario?.rounds.at(-1).result !== state.profileResult;
+    byId('match-button').disabled = !state.access.canRun || state.profileResult?.status !== 'complete';
+    byId('profile-to-match').disabled = state.profileResult?.status !== 'complete';
+    byId('engine-status').textContent = engineStatus({ mode: 'preset' });
+    byId('capability-status').textContent = '预置演示：全部外部能力已关闭。';
+    byId('match-capability-status').textContent = '预置演示：直接读取已保存结果。';
+    byId('profile-model-status').textContent = '预置六轮访谈 · 无模型调用';
+    byId('source-status-summary').textContent = `使用预置资料快照，录制于 ${formatDate(demoBundle.recorded_at)}；本次未查询当前资料。`;
+}
+
+function clearDemoTimer() {
+    clearTimeout(demoReplay.timer);
+    demoReplay.timer = null;
+}
+
+function scheduleDemo(delay = 3800) {
+    clearDemoTimer();
+    if (!demoReplay.active || demoReplay.paused || !byId('demo-auto').checked || demoReplay.phase === 'complete') return;
+    demoReplay.timer = setTimeout(() => {
+        demoReplay.timer = null;
+        if (demoReplay.active && !demoReplay.paused && state.access.canRun) advanceDemo(false);
+    }, delay);
+}
+
+function updateDemoControls() {
+    byId('demo-title').closest('.demo-panel').classList.add('is-playing');
+    for (const id of ['demo-pause', 'demo-next', 'demo-exit']) byId(id).hidden = !demoReplay.active;
+    byId('demo-pause').textContent = demoReplay.paused ? '继续播放' : '暂停讲解';
+    byId('demo-pause').setAttribute('aria-pressed', String(demoReplay.paused));
+    byId('demo-next').disabled = !state.access.canRun || demoReplay.phase === 'complete';
+    byId('demo-next').textContent = ({ question: '填入本轮回答', answer: '确认本轮并保存', profile: '查看预置产品匹配', match: '查看三平台图文', content: '查看下一平台 / 成交准备', complete: '完整演示已结束' })[demoReplay.phase] || '下一步';
+    for (const id of ['procurement', 'creator']) {
+        byId(`demo-${id}`).classList.toggle('is-selected', demoReplay.active && demoReplay.scenario?.id === id);
+        byId(`demo-${id}`).setAttribute('aria-pressed', String(demoReplay.active && demoReplay.scenario?.id === id));
+    }
+    lockDemoControls();
+}
+
+function readDemoConfirmation(scenarioId = null) {
+    try {
+        const saved = JSON.parse(localStorage.getItem(scenarioId ? `${demoStorageKey}.${scenarioId}` : demoStorageKey) || 'null');
+        const scenario = demoBundle.scenarios.find(item => item.id === saved?.scenario_id);
+        if (!scenario || saved.version !== demoBundle.version || saved.fingerprint !== demoBundle.fingerprint || !Array.isArray(saved.rounds) || saved.rounds.length > scenario.rounds.length) return null;
+        // Stored data cannot replace the bundled results or introduce customer text.
+        if (!saved.rounds.every((round, index) => round.index === index && round.answer === scenario.rounds[index].answer && round.question === scenario.rounds[index].question.text)) return null;
+        return saved;
+    } catch { return null; }
+}
+
+function persistDemoConfirmation(index) {
+    const round = demoReplay.scenario.rounds[index];
+    demoReplay.confirmed[index] = { index, question: round.question.text, answer: round.answer, result: round.result, confirmed_at: new Date().toISOString() };
+    // Only a contiguous, explicitly confirmed prefix is offered for restoration.
+    const rounds = [];
+    for (const item of demoReplay.confirmed) { if (!item) break; rounds.push(item); }
+    try {
+        const record = JSON.stringify({ version: demoBundle.version, fingerprint: demoBundle.fingerprint, scenario_id: demoReplay.scenario.id, rounds });
+        localStorage.setItem(`${demoStorageKey}.${demoReplay.scenario.id}`, record);
+        localStorage.setItem(demoStorageKey, record);
+        byId('demo-save-status').textContent = `本轮回答与预置结果已确认并保存到本机；连续确认 ${rounds.length}/6 轮。随页面保存的完整预置不受影响。`;
+    } catch {
+        byId('demo-save-status').textContent = '本轮已确认，浏览器未允许本机保存；请导出演示包保留确认记录。完整预置仍可回放。';
+    }
+}
+
+function setDemoDownload(identifier, payload, fileName, mime = 'application/json;charset=utf-8') {
+    const blob = new Blob([typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2)], { type: mime });
+    const url = URL.createObjectURL(blob);
+    demoReplay.urls.push(url);
+    byId(identifier).href = url;
+    byId(identifier).download = fileName;
+}
+
+function demoDownloads(prefix, snapshot) {
+    setDemoDownload(`${prefix}json`, snapshot.result, `${demoReplay.scenario.id}-${prefix}preset.json`);
+    setDemoDownload(`${prefix}markdown`, snapshot.markdown, `${demoReplay.scenario.id}-${prefix}preset.md`, 'text/markdown;charset=utf-8');
+}
+
+function startDemo(id) {
+    if (state.running || !state.access.canRun) return;
+    const scenario = demoBundle.scenarios.find(item => item.id === id);
+    if (!scenario) return;
+    clearDemoTimer();
+    demoReplay.active = false;
+    resetProfileInterview({ silent: true });
+    clearMatchResult();
+    clearResult();
+    for (const url of demoReplay.urls) URL.revokeObjectURL(url);
+    Object.assign(demoReplay, { active: true, scenario, round: 0, phase: 'question', paused: false, urls: [], confirmed: readDemoConfirmation(id)?.rounds || [] });
+    clearTimeout(state.sourceTimer);
+    state.sourceTimer = null;
+    state.polling = state.matchPolling = state.contentPolling = state.profilePolling = false;
+    state.contentHistory = [];
+    renderContentHistory();
+    byId('growth-form').reset();
+    byId('match-form').reset();
+    byId('profile-start-form').hidden = true;
+    state.profileStarted = true;
+    state.profileMessages = [];
+    byId('demo-save-status').textContent = '预置答案和各步结果已随页面保存。自动播放读取预置；点击“确认本轮并保存”可另存本机确认记录。';
+    byId('demo-resume').hidden = !readDemoConfirmation(id)?.rounds.length;
+    showWizardStep(1);
+    demoAskRound();
+}
+
+function demoAskRound() {
+    const round = demoReplay.scenario.rounds[demoReplay.round];
+    demoReplay.phase = 'question';
+    state.profileMessages.push({ role: 'assistant', content: round.question.text });
+    appendProfileMessage('assistant', round.question.text);
+    setProfileQuestion(round.question);
+    byId('profile-answer').value = '';
+    demoNotice(`${demoReplay.scenario.label} · 第 ${demoReplay.round + 1}/6 轮追问：先展示问题，再填入本轮预置回答。`);
+    profileStatus('正在回放预置追问；本轮回答尚未填入，不调用智能分析。');
+    updateDemoControls();
+    scheduleDemo(1600);
+}
+
+function demoFillAnswer() {
+    demoReplay.phase = 'answer';
+    byId('profile-answer').value = demoReplay.scenario.rounds[demoReplay.round].answer;
+    profileStatus('本轮预置回答已填入。点击确认可保存本机记录；自动播放只读取随页面保存的样例。');
+    demoNotice(`第 ${demoReplay.round + 1}/6 轮回答已逐步填入。可暂停讲解，点击“确认本轮并保存”留下本机确认记录。`);
+    updateDemoControls();
+    scheduleDemo(4600);
+}
+
+function demoConfirmRound(explicit) {
+    if (!demoReplay.active || demoReplay.phase !== 'answer' || !state.access.canRun) return;
+    clearDemoTimer();
+    const round = demoReplay.scenario.rounds[demoReplay.round];
+    if (explicit) persistDemoConfirmation(demoReplay.round);
+    state.profileMessages.push({ role: 'user', content: round.answer });
+    appendProfileMessage('user', round.answer);
+    byId('profile-answer').value = '';
+    renderProfileResult(round.result);
+    state.profileResult = round.result;
+    demoReplay.round += 1;
+    if (demoReplay.round < demoReplay.scenario.rounds.length) { demoAskRound(); return; }
+    demoReplay.phase = 'profile';
+    demoNotice('六轮追问已回放，画像保留各轮原话依据。接下来演示产品匹配；预算仍为待确认。');
+    updateDemoControls();
+    scheduleDemo(4200);
+}
+
+function demoShowMatch() {
+    if (!demoReplay.active || state.profileResult?.status !== 'complete') { demoNotice('请先完成六轮画像，再查看产品匹配。'); return; }
+    clearDemoTimer();
+    const snapshot = demoReplay.scenario.match;
+    state.matchInput = snapshot.input;
+    const profile = snapshot.input.profile;
+    const values = { 'match-raw-request': profile.raw_request, 'match-audience': profile.audience, 'match-scenario': profile.scenario,
+        'match-industry': profile.industry, 'match-company-size': profile.company_size, 'match-product-type': profile.product_type,
+        'match-needs': profile.needs.join('，'), 'match-preferences': profile.preferences.join('，'), 'match-pain-points': profile.pain_points.join('，') };
+    byId('match-form').reset();
+    for (const [id, value] of Object.entries(values)) byId(id).value = value ?? '';
+    clearMatchResult();
+    renderProductMatchResult(snapshot.result, snapshot.markdown);
+    demoDownloads('match-download-', snapshot);
+    showWizardStep(2);
+    demoReplay.phase = 'match';
+    demoNotice('已读取预置产品匹配：按客户条件展示候选、依据与待确认项；没有实时查询资料。');
+    updateDemoControls();
+    scheduleDemo(5200);
+}
+
+function demoShowContent(platform) {
+    if (!demoReplay.active || state.profileResult?.status !== 'complete') { demoNotice('请先完成六轮画像，再查看图文。'); return; }
+    clearDemoTimer();
+    const snapshot = demoReplay.scenario.contents[platform];
+    if (!snapshot) return;
+    state.matchInput = demoReplay.scenario.match.input;
+    state.contentPlatform = platform;
+    byId('content-platform').value = platform;
+    clearContentResult();
+    renderContentDraftResult(snapshot.result, snapshot.markdown, { fromHistory: true });
+    demoDownloads('content-download-', snapshot);
+    setDemoDownload('content-download-images', { note: '原创场景示意图，非产品实拍。svg 字段可另存为同名 .svg 文件。', images: snapshot.result.demo_illustrations }, `${demoReplay.scenario.id}-${platform}-illustrations.json`);
+    byId('content-download-images').textContent = '下载原创插图与清单';
+    byId('content-summary').textContent = `预置${platform}图文 · ${snapshot.result.demo_illustrations.length} 张原创场景插图（非产品实拍） · 标题/正文/标签可复制。下方发布核验为原稿录制时快照，不能视为当前核验。`;
+    byId('content-verification-summary').prepend(element('p', `原稿审稿记录 · 录制于 ${formatDate(demoBundle.recorded_at)}。原审稿产品图未打包；当前展示项目原创场景插图。`));
+    byId('content-image-sources').replaceChildren(element('p', '当前插图由项目原创，随页面内嵌保存；未使用第三方产品照片。非产品外观、配置或兼容性证据。'));
+    contentStatus(`预置${platform}图文已读取；未调用生成服务。`);
+    showWizardStep(3);
+    demoReplay.phase = 'content';
+    demoNotice(`正在展示${platform}：三平台使用不同标题、结构和语气；每张图均可断网显示。`);
+    updateDemoControls();
+    scheduleDemo(6200);
+}
+
+function demoShowSales() {
+    if (!demoReplay.active || state.profileResult?.status !== 'complete') { demoNotice('请先完成六轮画像，再查看成交准备。'); return; }
+    clearDemoTimer();
+    const snapshot = demoReplay.scenario.sales;
+    for (const [key, id] of [['product', 'product'], ['platform', 'platform'], ['audience', 'audience'], ['scenario', 'scenario'], ['raw_request', 'raw-request']]) byId(id).value = snapshot.input[key];
+    byId('demo-pricing').checked = demoReplay.scenario.id === 'procurement';
+    renderResult(snapshot.result, snapshot.markdown);
+    byId('example-note').textContent = `预置客户：${demoReplay.scenario.label}。输入已锁定；内容沿用第 3 步已保存稿件，报价和成交动作读取预置结果。`;
+    byId('policy-summary').textContent = demoReplay.scenario.id === 'procurement'
+        ? '仅作五台演示：6000 → 5880 → 5780 → 5780 → 5730 元 / 台；合计 28650 元。非官方政策、非成交报价。'
+        : '个人客户：预算未定，不启用五台演示测算，正式报价保持待确认。';
+    demoDownloads('download-', snapshot);
+    demoReplay.phase = 'complete';
+    demoNotice('完整演示已结束：六轮画像 → 产品匹配 → 公众号 / 小红书 / 朋友圈图文 → 成交准备。可切换步骤复看或选择另一位客户。');
+    byId('result-summary').prepend(element('strong', '离线预置销售结果 · 录制时快照；企业样例为 5 台假设测算，个人样例无正式报价。\n'));
+    updateDemoControls();
+}
+
+function advanceDemo(explicit = true) {
+    if (!demoReplay.active || !state.access.canRun) return;
+    clearDemoTimer();
+    if (demoReplay.phase === 'question') demoFillAnswer();
+    else if (demoReplay.phase === 'answer') demoConfirmRound(explicit);
+    else if (demoReplay.phase === 'profile') demoShowMatch();
+    else if (demoReplay.phase === 'match') demoShowContent('公众号');
+    else if (demoReplay.phase === 'content') {
+        const platforms = ['公众号', '小红书', '朋友圈'];
+        const next = platforms.indexOf(state.contentPlatform) + 1;
+        if (next < platforms.length) demoShowContent(platforms[next]);
+        else demoShowSales();
+    }
+}
+
+function demoNavigateStep(step) {
+    demoReplay.paused = true;
+    clearDemoTimer();
+    if (step === 1) showWizardStep(1);
+    else if (state.profileResult?.status !== 'complete') demoNotice('请先用上方按键完成六轮追问，再查看后续预置结果。');
+    else if (step === 2) demoShowMatch();
+    else if (step === 3) demoShowContent(state.contentResult?.platform || demoReplay.scenario.defaultPlatform);
+    else if (step === 4) demoShowSales();
+    updateDemoControls();
+}
+
+function exitDemo(options = {}) {
+    if (!demoReplay.active) return;
+    clearDemoTimer();
+    demoReplay.active = false;
+    state.matchInput = null;
+    resetProfileInterview({ silent: true });
+    clearMatchResult();
+    clearResult();
+    state.contentHistory = [];
+    renderContentHistory();
+    byId('growth-form').reset();
+    byId('match-form').reset();
+    byId('profile-answer').readOnly = false;
+    byId('profile-answer').disabled = false;
+    byId('profile-answer-button').textContent = '提交并分析';
+    renderCapabilities(state.capabilities || {});
+    for (const id of ['match-clear', 'profile-reset', 'profile-restart-complete']) byId(id).disabled = false;
+    for (const id of ['demo-pause', 'demo-next', 'demo-exit']) byId(id).hidden = true;
+    byId('demo-title').closest('.demo-panel').classList.remove('is-playing');
+    for (const id of ['procurement', 'creator']) { byId(`demo-${id}`).classList.remove('is-selected'); byId(`demo-${id}`).setAttribute('aria-pressed', 'false'); }
+    for (const url of demoReplay.urls) URL.revokeObjectURL(url);
+    demoReplay.urls = [];
+    for (const id of ['download-json', 'download-markdown', 'match-download-json', 'match-download-markdown', 'content-download-json', 'content-download-markdown', 'content-download-images']) byId(id).removeAttribute('href');
+    setRunning(false);
+    showWizardStep(1, { scroll: false });
+    byId('engine-status').textContent = '已退出预置演示；正常功能按当前系统配置运行。';
+    demoNotice('已退出演示并清除页面中的演示结果。本机确认记录仍可继续，普通客户输入不会写入演示存储。');
+    byId('demo-resume').hidden = !readDemoConfirmation()?.rounds.length;
+    if (options.refresh !== false) refreshSourceStatus();
+}
+
+byId('demo-procurement').addEventListener('click', () => startDemo('procurement'));
+byId('demo-creator').addEventListener('click', () => startDemo('creator'));
+byId('demo-next').addEventListener('click', () => advanceDemo(true));
+byId('demo-pause').addEventListener('click', () => {
+    demoReplay.paused = !demoReplay.paused;
+    updateDemoControls();
+    if (demoReplay.paused) { clearDemoTimer(); demoNotice('已暂停，可讲解当前内容或手动继续；本次不会发起业务请求。'); }
+    else scheduleDemo(1200);
+});
+byId('demo-auto').addEventListener('change', () => { if (byId('demo-auto').checked) scheduleDemo(1600); else clearDemoTimer(); });
+byId('demo-exit').addEventListener('click', () => exitDemo());
+byId('demo-export').addEventListener('click', () => downloadJson({ ...demoBundle, local_confirmation: { saved: demoBundle.scenarios.map(scenario => readDemoConfirmation(scenario.id)).filter(Boolean), current_rounds: demoReplay.confirmed } }, 'huawei-offline-demo-presets.json'));
+byId('demo-resume').addEventListener('click', () => {
+    const saved = readDemoConfirmation(demoReplay.active ? demoReplay.scenario.id : null);
+    if (!saved?.rounds.length || !state.access.canRun) return;
+    startDemo(saved.scenario_id);
+    demoReplay.paused = true;
+    clearDemoTimer();
+    for (let index = 0; index < saved.rounds.length; index += 1) {
+        demoReplay.confirmed[index] = saved.rounds[index];
+        demoFillAnswer();
+        demoConfirmRound(false);
+    }
+    updateDemoControls();
+    byId('demo-save-status').textContent = `已恢复本机确认的前 ${saved.rounds.length} 轮，处于暂停状态。`;
+});
+byId('demo-resume').hidden = !readDemoConfirmation()?.rounds.length;
+
+for (const button of document.querySelectorAll('.wizard-step')) button.addEventListener('click', () => {
+    if (demoReplay.active) { demoNavigateStep(Number(button.dataset.stepTarget)); return; }
+    showWizardStep(Number(button.dataset.stepTarget));
+});
+byId('wizard-prev').addEventListener('click', () => { if (state.wizardStep > 1) { if (demoReplay.active) demoNavigateStep(state.wizardStep - 1); else showWizardStep(state.wizardStep - 1); } });
 byId('wizard-next').addEventListener('click', goToNextWizardStep);
 
 byId('profile-start-form').addEventListener('submit', startGuidedProfile);
@@ -1632,6 +1973,7 @@ byId('profile-to-match').addEventListener('click', fillMatchFromProfile);
 
 byId('growth-form').addEventListener('submit', startRun);
 byId('content-platform').addEventListener('change', () => {
+    if (demoReplay.active) { demoShowContent(byId('content-platform').value); return; }
     clearContentResult();
     document.querySelectorAll('.content-generate-candidate').forEach(button => { button.textContent = `准备${byId('content-platform').value}内容`; });
 });
@@ -1706,6 +2048,7 @@ async function initialize(sessionOverride = null) {
 
 window.addEventListener('huawei:authenticated', event => { initialize(event.detail); });
 window.addEventListener('huawei:session-ended', () => {
+    exitDemo({ refresh: false });
     state.csrf = null;
     state.running = false;
     state.access.canRun = false;
