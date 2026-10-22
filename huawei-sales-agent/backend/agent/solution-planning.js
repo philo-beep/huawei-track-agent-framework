@@ -77,7 +77,7 @@ function buildQuoteStatus(pricing) {
     const synthetic = provenance.synthetic === true;
     const actualAmount = value.actual_transaction_quote === true && Number.isSafeInteger(value.amount_cents) ? value.amount_cents : null;
     const missingInformation = [
-        '客户确认的完整销售SKU、配置与采购数量',
+        '客户确认的完整销售配置与采购数量',
         '有效地区和适用客户/渠道资格',
         '获授权的当前政策原文、计算顺序与有效期',
         '税费、舍入、优惠上限和审批边界',
@@ -94,7 +94,7 @@ function buildQuoteStatus(pricing) {
             basis: value.input_provenance?.policy_source || null,
             missing_information: [],
             synthetic_reference: null,
-            notice: '金额来自显式真实政策输入；仍需在具体客户交易中复核 SKU、资格和有效期。',
+            notice: '金额来自已提供的正式价格规则；仍需在具体客户交易中复核销售配置、适用条件和有效期。',
         };
     }
     if (synthetic && value.status === 'calculated_demo') {
@@ -240,8 +240,8 @@ function buildBaseSolution({ profile, facts = [], request = {}, status = 'draft'
             },
             {
                 id: 'evidence_fit', priority: 2, owner_role: '方案工程师', timing: '任务确认后 1 个工作日内',
-                action: '仅用带来源的产品事实、官网资料和适配记录核对方案；缺少兼容矩阵或完整 SKU 时明确留空。',
-                output: '证据与缺口清单', completion_criteria: '每项关键结论可回溯到事实 ID、原文位置或明确的缺失项。',
+                action: '仅使用有出处的产品资料、华为公开资料和适配记录核对方案；缺少兼容资料或完整销售配置时明确留空。',
+                output: '资料依据与待确认清单', completion_criteria: '每项关键结论都能找到资料出处、原文位置，或明确列出待确认信息。',
                 evidence_refs: [...refs, ...factBasis.map(item => ({ fact_id: item.id }))],
             },
             {
@@ -259,7 +259,7 @@ function buildBaseSolution({ profile, facts = [], request = {}, status = 'draft'
         ],
         deliverables: [
             { id: 'requirements_map', label: '客户需求与证据映射', status: solutionStatus === 'actionable' ? 'ready_for_confirmation' : 'pending' },
-            { id: 'evidence_gap_register', label: '产品事实、兼容性与 SKU 缺口清单', status: 'pending_confirmation' },
+            { id: 'evidence_gap_register', label: '产品资料、兼容性与销售配置待确认清单', status: 'pending_confirmation' },
             { id: 'validation_record', label: '按客户任务执行的验证记录', status: 'not_executed' },
             { id: 'quote_status', label: '正式报价状态（缺依据时必须为 null）', status: 'pending_confirmation' },
             { id: 'action_plan', label: '负责人、触发条件与时间节点', status: 'pending_assignment' },
@@ -283,7 +283,7 @@ function buildBaseSolution({ profile, facts = [], request = {}, status = 'draft'
 
 function classifyAction(action, index) {
     const text = String(action || '');
-    if (/报价|价格规则|价格依据/.test(text)) return { id: 'quote_review', owner_role: '报价审核负责人', timing: 'SKU、数量、地区和有效政策齐备后 2 个工作日内', order: 6 };
+    if (/报价|价格规则|价格依据/.test(text)) return { id: 'quote_review', owner_role: '报价审核负责人', timing: '销售配置、数量、地区和有效价格规则齐备后 2 个工作日内', order: 6 };
     if (/采购发起人|审批人|最终决策人|决策角色/.test(text)) return { id: 'decision_chain_confirmation', owner_role: '客户经理', timing: '客户进入方案评估或采购流程后 1 个工作日内', order: 5 };
     if (/预算尚未|预算口径|单台\/总额|预算金额/.test(text)) return { id: 'budget_confirmation', owner_role: '客户经理', timing: '客户愿意讨论采购条件后 1 个工作日内', order: 4 };
     if (/核对.*原文|适配记录|软件兼容|兼容性/.test(text)) return { id: 'evidence_verification', owner_role: '方案工程师', timing: '需求与软件版本确认后 1 个工作日内', order: 2 };

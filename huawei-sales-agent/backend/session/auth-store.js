@@ -33,14 +33,14 @@ function usernameKey(value) {
 function validateUsername(value) {
     const username = normalizeUsername(value);
     if (!USERNAME_PATTERN.test(username)) {
-        throw new AccessError(422, 'USERNAME_INVALID', '用户名需为 3–64 个字符，可使用文字、数字、下划线、点和短横线');
+        throw new AccessError(422, 'USERNAME_INVALID', '用户名需为 3 至 64 个字符，可使用文字、数字和常用符号（下划线、点、短横线）');
     }
     return username;
 }
 
 function validatePassword(value) {
     if (typeof value !== 'string' || value.length < 10 || value.length > 128) {
-        throw new AccessError(422, 'PASSWORD_INVALID', '密码长度需为 10–128 个字符');
+        throw new AccessError(422, 'PASSWORD_INVALID', '密码长度需为 10 至 128 个字符');
     }
     return value;
 }
@@ -214,14 +214,14 @@ class AuthStore {
         if (!user) throw new AccessError(404, 'USER_NOT_FOUND', '用户不存在');
         const nextRole = changes.role === undefined ? user.role : changes.role;
         const nextActive = changes.active === undefined ? user.active : changes.active;
-        if (!Object.hasOwn(ROLE_PERMISSIONS, nextRole)) throw new AccessError(422, 'ROLE_INVALID', '角色无效');
-        if (typeof nextActive !== 'boolean') throw new AccessError(422, 'ACTIVE_INVALID', '账号状态必须为布尔值');
+        if (!Object.hasOwn(ROLE_PERMISSIONS, nextRole)) throw new AccessError(422, 'ROLE_INVALID', '所选角色不可用，请重新选择');
+        if (typeof nextActive !== 'boolean') throw new AccessError(422, 'ACTIVE_INVALID', '账号状态未正确提交，请刷新页面后重试');
         if (actor.id === user.id && (!nextActive || nextRole !== 'admin')) {
-            throw new AccessError(409, 'SELF_LOCKOUT', '不能停用或降级当前管理员账号');
+            throw new AccessError(409, 'SELF_LOCKOUT', '不能停用当前管理员账号或降低其权限');
         }
         const removesActiveAdmin = user.active && user.role === 'admin' && (!nextActive || nextRole !== 'admin');
         if (removesActiveAdmin && !this.state.users.some(item => item.id !== user.id && item.active && item.role === 'admin')) {
-            throw new AccessError(409, 'LAST_ADMIN', '不能停用或降级最后一位管理员');
+            throw new AccessError(409, 'LAST_ADMIN', '不能停用最后一位管理员或降低其权限');
         }
         user.role = nextRole;
         user.active = nextActive;

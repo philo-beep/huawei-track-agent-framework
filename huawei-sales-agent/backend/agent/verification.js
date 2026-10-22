@@ -14,22 +14,22 @@ function constrainedNarrative(request) {
 
 // 模块6：模型自评不构成核验；未支持的宣传和事实不进入成稿。
 function verifyGenerated(value, facts) {
-    if (!value || typeof value !== 'object' || !['title', 'lead', 'cta'].every(name => typeof value[name] === 'string') || !Array.isArray(value.transitions) || !value.transitions.every(item => typeof item === 'string') || !Array.isArray(value.fact_ids) || !value.title.trim() || !value.cta.trim()) throw new PipelineError('MODEL_OUTPUT_INVALID', '营销JSON结构不符合生成约束');
+    if (!value || typeof value !== 'object' || !['title', 'lead', 'cta'].every(name => typeof value[name] === 'string') || !Array.isArray(value.transitions) || !value.transitions.every(item => typeof item === 'string') || !Array.isArray(value.fact_ids) || !value.title.trim() || !value.cta.trim()) throw new PipelineError('MODEL_OUTPUT_INVALID', '智能分析整理的内容格式暂时无法读取，请稍后重试');
     const prose = [value.title, value.lead, ...value.transitions, value.cta].join('\n');
-    if (FORBIDDEN.test(prose)) throw new PipelineError('COMPLIANCE_FAILED', '模型生成的叙述含无依据宣传、价格或效果表述，已拦截，未输出正文');
+    if (FORBIDDEN.test(prose)) throw new PipelineError('COMPLIANCE_FAILED', '智能分析整理的内容含有缺少依据的宣传、价格或效果表述，已拦截，未输出正文');
     const checkedProse = facts.reduce((text, fact) => text.split(fact.product).join('目标产品').split(fact.product.replace(/^HUAWEI\s*/i, '')).join('目标产品'), prose);
     const unsupported = checkedProse.match(CLAIM);
-    if (unsupported) throw new PipelineError('FACT_VERIFICATION_FAILED', `模型自由叙述出现未绑定原文的参数或能力标记“${unsupported[0]}”，已拦截`);
+    if (unsupported) throw new PipelineError('FACT_VERIFICATION_FAILED', `整理内容出现缺少出处的参数或能力表述，已拦截`);
     const { selected } = verifySelection(value, facts);
     return { selected, prose };
 }
 
 function verifySelection(value, facts) {
-    if (!value || typeof value !== 'object' || !Array.isArray(value.fact_ids)) throw new PipelineError('MODEL_OUTPUT_INVALID', '模型事实选择须返回fact_ids数组');
+    if (!value || typeof value !== 'object' || !Array.isArray(value.fact_ids)) throw new PipelineError('MODEL_OUTPUT_INVALID', '智能分析没有返回可用的资料选择，请稍后重试');
     const selected = [...new Set(value.fact_ids)];
-    if (!selected.length || selected.length !== value.fact_ids.length || selected.some(id => typeof id !== 'string' || !id.trim() || !facts.some(fact => fact.id === id))) throw new PipelineError('FACT_VERIFICATION_FAILED', '模型引用了空白、重复或不存在的事实ID');
+    if (!selected.length || selected.length !== value.fact_ids.length || selected.some(id => typeof id !== 'string' || !id.trim() || !facts.some(fact => fact.id === id))) throw new PipelineError('FACT_VERIFICATION_FAILED', '整理内容引用了缺失或不一致的资料依据，已拦截');
     for (const fact of facts.filter(item => selected.includes(item.id))) {
-        if (!fact.source_refs.length || !fact.source_refs.every(source => source.excerpt.includes(fact.claim))) throw new PipelineError('FACT_VERIFICATION_FAILED', '产品事实无法在所附原文中精确定位');
+        if (!fact.source_refs.length || !fact.source_refs.every(source => source.excerpt.includes(fact.claim))) throw new PipelineError('FACT_VERIFICATION_FAILED', '产品资料无法在来源原文中准确定位，已停止使用');
         if (fact.conditions.some(condition => !fact.source_refs.some(source => source.excerpt.includes(condition)))) throw new PipelineError('FACT_VERIFICATION_FAILED', '限制脚注缺少完整原文');
     }
     return { selected };
@@ -38,7 +38,7 @@ function verifySelection(value, facts) {
 function composeContent(value, facts, request = {}) {
     const verified = verifySelection(value, facts);
     const product = facts.find(fact => fact.id === verified.selected[0]).product;
-    if ((request.product !== undefined && request.product !== product) || facts.some(fact => verified.selected.includes(fact.id) && fact.product !== product)) throw new PipelineError('FACT_VERIFICATION_FAILED', '实际叙述的产品与选中事实型号不一致');
+    if ((request.product !== undefined && request.product !== product) || facts.some(fact => verified.selected.includes(fact.id) && fact.product !== product)) throw new PipelineError('FACT_VERIFICATION_FAILED', '实际内容与所选产品型号不一致，已拦截');
     const narrative = constrainedNarrative({ scenario: '日常办公', platform: '公众号', ...request, product });
     verifyGenerated({ ...narrative, fact_ids: verified.selected }, facts);
     let selectedFacts = facts.filter(fact => verified.selected.includes(fact.id));
@@ -47,11 +47,11 @@ function composeContent(value, facts, request = {}) {
     const compact = request.platform === '小红书' || request.platform === '朋友圈';
     const cards = selectedFacts.map(fact => {
         const excerpt = compact ? fact.claim.split(/\n\s*\n/).filter(Boolean).slice(0, 3).join('\n\n') : fact.claim;
-        const citation = fact.source_refs.map(source => `${source.title}｜${source.archive_aliases.join('、') || '华为官网证据快照'}｜${source.entry}`).join('；');
-        return `【${compact ? '原文节选核对卡' : '知识库原文'} ${fact.id}】\n${excerpt}\n来源：${citation}${compact && excerpt !== fact.claim ? '\n本卡仅节选完整字段，全部本节限制跟随下文，完整原文见第二部分；不是完整参数介绍。' : ''}`;
+        const citation = fact.source_refs.map(source => `${source.title}${source.archive_aliases.length ? '｜' + source.archive_aliases.join('、') : ''}`).join('；');
+        return `【${compact ? '产品资料节选' : '产品资料原文'}】\n${excerpt}\n来源：${citation}${compact && excerpt !== fact.claim ? '\n以上只节选与本次沟通最相关的字段，完整使用条件见文末。' : ''}`;
     });
     const opening = request.platform === '公众号' ? ['### 从实际任务开始', ...narrative.transitions, '### 对照资料做选型核对'] : request.platform === '小红书' ? ['### 先列任务，再看资料', ...narrative.transitions.map(item => `- ${item}`), '### 资料核对卡'] : [...narrative.transitions.slice(0, 1)];
-    const body = ['【叙述来源】模型只选择事实ID；标题、导语、过渡与行动引导为程序化核对式准备稿，已独立核验实际叙述；这不代表模型自由文案质量已通过。', ...opening, ...cards, '【本节适用条件与脚注】', ...new Set(selectedFacts.flatMap(fact => fact.conditions)), '【配图状态】当前仅有待核验候选，不构成正式完整图文。'].join('\n\n');
+    const body = ['【内容说明】以下内容只使用已核对的产品资料；标题、导语和下一步沟通为销售准备稿。', ...opening, ...cards, '【使用条件与说明】', ...new Set(selectedFacts.flatMap(fact => fact.conditions)), '【图片说明】当前没有完成发布授权的正式配图，发布前仍需人工确认。'].join('\n\n');
     const inserted = selectedFacts.map(fact => [fact.claim, ...fact.conditions].join('\n')).join('\n');
     if (FORBIDDEN.test(inserted)) throw new PipelineError('COMPLIANCE_FAILED', '知识库原文含价格、优惠或绝对化表达，未取得独立营销合规确认，已阻塞成稿');
     return { title: narrative.title, lead: narrative.lead, body, cta: narrative.cta, images: [], fact_ids: selectedFacts.map(fact => fact.id) };

@@ -5,15 +5,15 @@ const { loadOfficialReference, officialUrl } = require('./official');
 const PRODUCTS = Object.freeze(['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024']);
 const FRESHNESS_WINDOW_MS = 7 * 86400000;
 const DIAGNOSTICS = Object.freeze({
-    OFFICIAL_FETCH_UNVERIFIED: '部分官方页面未成功获取或未通过网址核验。',
-    OFFICIAL_MODEL_MISMATCH: '资料未与完整代际型号匹配。',
-    OFFICIAL_SNAPSHOT_EXPIRED: '规格资料已超过7天复核窗口或抓取时间无效，需要更新。',
-    OFFICIAL_EVIDENCE_INVALID: '资料文件或内容指纹未通过核验。',
-    OFFICIAL_SPEC_CONFLICT: '同型号规格资料冲突，需要维护者复核。',
-    OFFICIAL_SPEC_UNAVAILABLE: '没有通过核验的完整代际规格资料，公开演示需要更新来源。',
-    OFFICIAL_MANIFEST_UNAVAILABLE: '公开资料清单不可用，需要维护者检查。',
-    OFFICIAL_PRICE_UNKNOWN: '尚未核实完整SKU、配置和适用条件，公开价格未知。',
-    OFFICIAL_PRICE_CONFLICT: '同一SKU公开价格存在冲突，价格保持未知。',
+    OFFICIAL_FETCH_UNVERIFIED: '部分华为公开页面暂时无法打开或无法确认。',
+    OFFICIAL_MODEL_MISMATCH: '资料未能与所选产品型号匹配。',
+    OFFICIAL_SNAPSHOT_EXPIRED: '产品资料需要更新后重新检查。',
+    OFFICIAL_EVIDENCE_INVALID: '产品资料内容暂时无法核对。',
+    OFFICIAL_SPEC_CONFLICT: '同一型号的资料存在冲突，需要资料维护人员复核。',
+    OFFICIAL_SPEC_UNAVAILABLE: '没有可用的同型号产品资料，需要更新资料来源。',
+    OFFICIAL_MANIFEST_UNAVAILABLE: '公开资料暂时不可用，需要资料维护人员检查。',
+    OFFICIAL_PRICE_UNKNOWN: '尚未确认完整销售配置和适用条件，正式成交价待确认。',
+    OFFICIAL_PRICE_CONFLICT: '同一销售配置的公开价格存在冲突，正式成交价保持待确认。',
 });
 
 function getSourceStatus(options = {}) {
@@ -38,7 +38,7 @@ function getSourceStatus(options = {}) {
             valid_source_count: sources.length, sources,
             price_status: 'unknown', public_price_reference: null, actual_transaction_quote: false,
             formal_image_count: 0,
-            diagnostics: codes.map(code => Object.hasOwn(DIAGNOSTICS, code) ? { code, message: DIAGNOSTICS[code] } : { code: 'OFFICIAL_STATUS_UNAVAILABLE', message: '部分公开资料未通过核验，需要维护者检查。' }),
+            diagnostics: codes.map(code => Object.hasOwn(DIAGNOSTICS, code) ? { code, message: DIAGNOSTICS[code] } : { code: 'OFFICIAL_STATUS_UNAVAILABLE', message: '部分公开资料暂时无法确认，需要资料维护人员检查。' }),
         };
     });
     return {

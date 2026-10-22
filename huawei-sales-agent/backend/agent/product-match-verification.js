@@ -69,8 +69,8 @@ function deterministicReasons(candidate, criteria, profileEvidence) {
 
 function candidateLimitations(candidate) {
     const limitations = ['候选系列名或目录名不能替代完整销售SKU；颜色、配置、系统和屏幕版本需另行确认。'];
-    if (!(candidate.evidence || []).some(item => item.source_level === 'E1')) limitations.push('当前没有可用于匹配理由的完整产品事实原文，仅有目录或检索线索。');
-    if ((candidate.evidence || []).some(item => item.source_type === 'ima_metadata')) limitations.push('IMA 命中当前只保留标题、媒体 ID 或摘要，不能把摘要升级为产品事实。');
+    if (!(candidate.evidence || []).some(item => item.source_level === 'E1')) limitations.push('当前没有可用于推荐理由的完整产品资料原文，只有产品目录或资料线索。');
+    if ((candidate.evidence || []).some(item => item.source_type === 'ima_metadata')) limitations.push('产品资料库目前只返回标题、媒体编号或摘要，不能把摘要当作完整产品资料。');
     if ((candidate.evidence || []).some(item => item.source_type === 'local_price_snapshot')) limitations.push('公开价格记录保留为历史快照，不能当作当前成交报价。');
     return limitations;
 }
@@ -78,7 +78,7 @@ function candidateLimitations(candidate) {
 function candidateMissingInformation(candidate, criteria) {
     const missing = [];
     const budget = criteria.find(item => item.kind === 'budget');
-    if (budget) missing.push('当前可成交价格、精确 SKU、配置、数量和地区未核实，不能确认预算是否满足。');
+    if (budget) missing.push('当前成交价格、完整销售配置、数量和地区尚未确认，不能判断预算是否满足。');
     const compatibility = criteria.filter(item => typeof item.value === 'string' && /兼容|软件|插件|系统版本/.test(item.value));
     if (compatibility.length && !(candidate.evidence || []).some(item => /兼容|软件|插件|系统版本|驱动/.test(item.excerpt))) missing.push('客户关注软件或系统兼容性，但当前证据未覆盖具体软件版本与兼容清单。');
     if (!(candidate.evidence || []).some(item => item.source_level === 'E1')) missing.push('待补抓完整规格页、支持页或可定位正文。');

@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { plainText, humanStatus, coverageStatus, criterionLabel, cleanSourceTitle, readableValue } = require('./sales-copy');
 const { PipelineError, validateSchema } = require('./support');
 const { generateJson } = require('./model');
 const { imaKnowledge } = require('./ima');
@@ -203,7 +204,7 @@ function criterionEvidence(candidate, criterion) {
 function criteriaCoverage(candidate, criteria) {
     return criteria.map(criterion => {
         const profileEvidenceId = (candidate.evidence || []).find(item => item.source_type === 'customer_input' && item.locator === `input.profile.${criterion.kind}`)?.evidence_id;
-        const base = { criterion_id: criterion.criterion_id, kind: criterion.kind, status: 'pending', evidence_ids: profileEvidenceId ? [profileEvidenceId] : [], note: '尚无对应证据' };
+        const base = { criterion_id: criterion.criterion_id, kind: criterion.kind, status: 'pending', evidence_ids: profileEvidenceId ? [profileEvidenceId] : [], note: '尚无对应资料' };
         if (criterion.kind === 'product_type') {
             const matched = productTypeMatches(candidate, criterion.value);
             return { ...base, status: matched ? 'supported' : 'mismatch', note: matched ? '候选类别与明确产品类型一致' : '候选类别与明确产品类型不一致' };
@@ -223,13 +224,13 @@ function criteriaCoverage(candidate, criteria) {
             return { ...base, note: '缺少已核验的软件版本与系统兼容矩阵' };
         }
         const usable = (candidate.evidence || []).filter(item => ['E1', 'E2', 'E2F'].includes(item.source_level) && termTerms(criterion.value).some(term => item.excerpt.toLowerCase().includes(term)));
-        if (criterion.kind === 'excluded') return usable.length ? { ...base, status: 'mismatch', evidence_ids: [...base.evidence_ids, ...usable.map(item => item.evidence_id)].slice(0, 8), note: '候选证据出现客户明确排除项，需人工复核' } : { ...base, note: '未在候选证据中发现客户排除项；不等于已完全排除' };
+        if (criterion.kind === 'excluded') return usable.length ? { ...base, status: 'mismatch', evidence_ids: [...base.evidence_ids, ...usable.map(item => item.evidence_id)].slice(0, 8), note: '现有产品资料中出现客户明确排除的条件，需要人工复核' } : { ...base, note: '现有产品资料中没有发现客户排除条件；但仍不能视为已完全排除' };
         if (!usable.length) return base;
         return {
             ...base,
             status: usable.some(item => item.source_level === 'E1') ? 'supported' : 'partial',
             evidence_ids: [...base.evidence_ids, ...usable.map(item => item.evidence_id)].slice(0, 8),
-            note: usable.some(item => item.source_level === 'E1') ? '存在可定位完整事实' : '仅有目录、IMA 或非完整事实线索',
+            note: usable.some(item => item.source_level === 'E1') ? '存在可定位的完整产品资料' : '目前只有产品目录、资料摘要或不完整线索',
         };
     });
 }
@@ -286,7 +287,7 @@ async function requestModelReasons(criteria, candidates, runner) {
     });
     const generated = await runner(system, prompt, 900);
     const decisions = Array.isArray(generated?.value?.decisions) ? generated.value.decisions : null;
-    if (!decisions) throw new PipelineError('MODEL_OUTPUT_INVALID', '产品匹配模型未返回decisions数组');
+    if (!decisions) throw new PipelineError('MODEL_OUTPUT_INVALID', '智能分析结果暂时无法读取，请稍后重试');
     return { decisions, model: generated.model || null, provider: generated.provider || null };
 }
 
@@ -325,7 +326,7 @@ async function runProductMatch(rawInput, options = {}) {
     const requestedMode = input.mode;
     const criteria = buildCriteria(input.profile);
     const matchable = criteria.filter(item => ['need', 'preference', 'pain_point', 'scenario', 'product_type', 'budget'].includes(item.kind));
-    if (!matchable.some(item => item.kind !== 'budget')) return blankResult(input, requestId, requestedMode, [{ code: 'MATCH_CRITERIA_MISSING', message: '客户画像缺少可用于选品的产品类型、场景或需求；未猜测推荐', retryable: false }]);
+    if (!matchable.some(item => item.kind !== 'budget')) return blankResult(input, requestId, requestedMode, [{ code: 'MATCH_CRITERIA_MISSING', message: '客户信息中还缺少产品类型、使用场景或明确需求，系统没有猜测推荐', retryable: false }]);
 
     const diagnostics = [];
     const loaded = options.indexData ? { data: options.indexData, raw: JSON.stringify(options.indexData), registry: options.registryData || { products: [] }, facts: options.factsData || { facts: [] }, offers: options.offersData || { offers: [] }, compatibility: options.compatibilityData || { records: [] } } : readIndex();
@@ -342,10 +343,10 @@ async function runProductMatch(rawInput, options = {}) {
             ima.queries = imaQueries;
             if (ima?.status === 'connected' || ima?.status === 'no_knowledge_base') {
                 effectiveMode = requestedMode === 'ima' ? 'ima' : 'hybrid';
-                diagnostics.push({ code: ima.results?.length ? 'MATCH_IMA_SEARCH_COMPLETED' : 'MATCH_IMA_SEARCH_NO_MATCH', message: JSON.stringify({ knowledge_base: ima.knowledge_base || null, request_ids: ima.request_ids || [], result_count: ima.results?.length || 0, query_count: ima.queries?.length || 0, queries: ima.queries || [] }), retryable: false });
+                diagnostics.push({ code: ima.results?.length ? 'MATCH_IMA_SEARCH_COMPLETED' : 'MATCH_IMA_SEARCH_NO_MATCH', message: `产品资料库查询完成，本次返回 ${ima.results?.length || 0} 条线索`, retryable: false });
             }
         } catch (error) {
-            diagnostics.push({ code: error?.code || 'MATCH_IMA_FAILED', message: error?.message || 'IMA 检索失败，已按请求模式降级', retryable: Boolean(error?.retryable) });
+            diagnostics.push({ code: error?.code || 'MATCH_IMA_FAILED', message: '产品资料库暂时不可用，已按现有产品目录继续查找', retryable: Boolean(error?.retryable) });
             effectiveMode = requestedMode === 'hybrid' ? 'local' : 'none';
         }
     }
@@ -364,11 +365,11 @@ async function runProductMatch(rawInput, options = {}) {
             unsupportedClaimsDropped = applyModelReasons(prepared, response.decisions);
             model.status = 'called';
             model.name = response.model;
-            diagnostics.push({ code: 'MATCH_MODEL_REASONS_VERIFIED', message: `模型候选理由经证据ID和数值一致性核验；丢弃无依据理由 ${unsupportedClaimsDropped} 条`, retryable: false });
+            diagnostics.push({ code: 'MATCH_MODEL_REASONS_VERIFIED', message: '推荐理由已逐条核对产品资料，缺少依据的内容已剔除', retryable: false });
         } catch (error) {
             model.status = 'failed_fallback';
-            model.fallback_reason = error?.message || '云端模型调用或输出校验失败';
-            diagnostics.push({ code: error?.code || 'MATCH_MODEL_FAILED', message: '云端匹配理由未通过调用或结构校验，已回退规则理由；未伪造模型调用成功', retryable: Boolean(error?.retryable) });
+            model.fallback_reason = error?.message || '智能分析暂时未能给出可用建议';
+            diagnostics.push({ code: error?.code || 'MATCH_MODEL_FAILED', message: '智能分析暂未返回可用理由，已按已核对资料整理推荐说明', retryable: Boolean(error?.retryable) });
         }
     }
 
@@ -401,8 +402,8 @@ async function runProductMatch(rawInput, options = {}) {
     const recommendedCount = prepared.filter(item => item.status === 'recommended').length;
     const pendingCount = prepared.filter(item => item.status === 'pending_confirmation').length;
     const excludedCandidates = [];
-    if (!prepared.length) diagnostics.push({ code: 'MATCH_NO_CANDIDATE', message: '当前来源中没有满足召回条件的候选；未使用模型常识补造产品', retryable: false });
-    if (prepared.length && !recommendedCount) diagnostics.push({ code: 'MATCH_PENDING_REVIEW', message: '候选已返回，但证据、价格或兼容性尚未闭环，因此全部标记【待确认】', retryable: false });
+    if (!prepared.length) diagnostics.push({ code: 'MATCH_NO_CANDIDATE', message: '当前资料中没有找到符合条件的候选，没有用未核对常识补造产品', retryable: false });
+    if (prepared.length && !recommendedCount) diagnostics.push({ code: 'MATCH_PENDING_REVIEW', message: '已找到可能适合的型号，但价格、软件兼容或具体配置仍需确认，暂不标记为可直接推荐', retryable: false });
 
     const result = {
         schema_version: '1.1',
@@ -411,7 +412,7 @@ async function runProductMatch(rawInput, options = {}) {
         criteria,
         candidates: prepared,
         excluded_candidates: excludedCandidates,
-        questions: prepared.length ? [] : ['请补充产品类型、使用场景或明确需求；若已有 IMA 产品名称，请一并提供。'],
+        questions: prepared.length ? [] : ['请补充产品类型、使用场景或明确需求；若已有产品名称，请一并提供。'],
         provenance: {
             requested_mode: requestedMode,
             effective_mode: effectiveMode,
@@ -439,57 +440,64 @@ async function runProductMatch(rawInput, options = {}) {
 }
 
 function renderProductMatchMarkdown(result) {
-    const cell = value => String(value === null || value === undefined ? '待确认' : typeof value === 'object' ? JSON.stringify(value) : value).replace(/\|/g, '／').replace(/\r?\n/g, ' ');
+    const cell = value => String(readableValue(value)).replace(/\|/g, '／').replace(/\r?\n/g, ' ');
+    const levelLabel = { E1: '产品资料原文', E2: '产品目录', E3: '资料摘要', E4: '客户填写信息' };
     const lines = [
-        '# 客户画像产品匹配结果',
-        `状态：${cell(result.status)}；请求模式：${cell(result.provenance.requested_mode)}；实际模式：${cell(result.provenance.effective_mode)}。`,
-        '> 本结果是选品准备稿。推荐分数只用于排序，不是匹配概率、成交概率或销售效果证明。',
-        '',
-        '## 匹配条件',
-        '| 条件 | 内容 | 状态 |',
-        '| --- | --- | --- |',
-        ...result.criteria.map(item => `| ${cell(item.kind)} | ${cell(item.value)} | ${cell(item.status)} |`),
-        '',
-        '## 推荐候选',
+        '# 客户选品建议', '',
+        '> 本结果是销售准备用的选品建议，不是成交承诺。推荐顺序只表示当前资料下的优先查看顺序，不代表匹配概率或成交概率。', '',
+        '## 本次选品条件', '',
+        '| 客户关注点 | 内容 |',
+        '| --- | --- |',
+        ...(result.criteria || []).map(item => `| ${cell(criterionLabel(item.kind))} | ${cell(item.value)} |`),
+        '', '## 推荐候选', ''
     ];
-    for (const candidate of result.candidates) {
-        lines.push(`### ${candidate.status_label}｜${candidate.product_name}`, `系列：${candidate.product_family}；类别：${candidate.category}；排序分：${candidate.match_score}；来源：${candidate.source_mode}`, '', '**匹配理由**');
-        if (!candidate.matching_reasons.length) lines.push('- 当前没有通过证据核验的匹配理由，状态保持【待确认】。');
-        for (const reason of candidate.matching_reasons) lines.push(`- ${reason.text}（引文：${reason.cited_span || '未提供'}；证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`);
-        lines.push('', '**逐条件覆盖**', ...(candidate.criteria_coverage || []).map(item => `- ${item.kind}｜${item.status}｜${item.note}${item.evidence_ids.length ? `（${item.evidence_ids.join('、')}）` : ''}`));
-        lines.push('', '**限制**', ...candidate.limitations.map(item => `- ${item}`), '', '**缺失信息**');
-        if (!candidate.missing_information.length) lines.push('- 暂无已识别的阻塞缺失项；仍不等于完成真实报价或兼容性确认。');
-        else lines.push(...candidate.missing_information.map(item => `- ${item}`));
-        lines.push('', '**证据**');
-        for (const evidence of candidate.evidence) {
-            lines.push(`- ${evidence.evidence_id}｜${evidence.source_level}｜${evidence.title}｜${evidence.locator}${evidence.url ? `｜${evidence.url}` : ''}`, `  - ${evidence.excerpt.replace(/\s+/g, ' ').slice(0, 500)}`);
+    for (const [index, candidate] of (result.candidates || []).entries()) {
+        lines.push(`### ${index + 1}. ${plainText(candidate.status_label)}｜${plainText(candidate.product_name)}`, `分类：${plainText(candidate.category)}${candidate.operating_system ? `；系统：${plainText(candidate.operating_system)}` : ''}。`, '', '**匹配理由**');
+        if (!candidate.matching_reasons?.length) lines.push('- 当前没有通过资料核对的推荐理由，状态保持【待确认】。');
+        else lines.push(...candidate.matching_reasons.map(reason => `- ${plainText(reason.text)}`));
+        lines.push('', '**客户需求是否被资料支持**');
+        if (!(candidate.criteria_coverage || []).length) lines.push('- 暂时没有可对照的需求条件。');
+        else lines.push(...candidate.criteria_coverage.map(item => `- ${criterionLabel(item.kind)}：${coverageStatus(item.status)}；${plainText(item.note)}`));
+        lines.push('', '**限制**', ...((candidate.limitations || []).length ? candidate.limitations.map(item => `- ${plainText(item)}`) : ['- 暂无额外限制。']));
+        lines.push('', '**还需要向客户确认**', ...((candidate.missing_information || []).length ? candidate.missing_information.map(item => `- ${plainText(item)}`) : ['- 暂无已识别的缺失信息，但仍需人工确认配置与价格。']));
+        lines.push('', '**资料依据**');
+        const evidence = candidate.evidence || [];
+        if (!evidence.length) lines.push('- 暂无可展示的资料依据。');
+        for (const item of evidence.slice(0, 5)) {
+            lines.push(`- ${cleanSourceTitle(item.title)}（${levelLabel[item.source_level] || '资料'}）`, `  > ${plainText(String(item.excerpt || '').replace(/\s+/g, ' ').slice(0, 320))}`);
+            if (item.url) lines.push(`  来源：${item.url}`);
         }
+        if (evidence.length > 5) lines.push(`- 另有 ${evidence.length - 5} 条资料依据，可在系统内继续查看。`);
         lines.push('');
     }
-    if (!result.candidates.length) lines.push('未取得候选，未使用模型常识补造。');
-    lines.push('## 待确认与诊断', ...result.questions.map(item => `- ${item}`), ...result.diagnostics.map(item => `- ${item.code}：${item.message}`));
+    if (!(result.candidates || []).length) lines.push('这次没有找到可展示的候选型号，也没有用未核对的常识补造产品。');
+    lines.push('', '## 需要确认的问题');
+    const questions = (result.questions || []).map(item => plainText(item?.question || item)).filter(Boolean);
+    const diagnostics = (result.diagnostics || []).map(item => plainText(item?.message || item)).filter(Boolean);
+    const notes = [...new Set([...questions, ...diagnostics])];
+    lines.push(...(notes.length ? notes.map(item => `- ${item}`) : ['- 暂无额外问题；仍须人工确认具体配置、价格和软件兼容性。']));
     return `${lines.join('\n')}\n`;
 }
 
 function productMatchExamples() {
     return [
         {
-            id: 'match-office-mobility', label: '合成示例：企业移动办公选品', synthetic: true,
+            id: 'match-office-mobility', label: '演示示例：企业移动办公选品', synthetic: true,
             input: {
                 schema_version: '1.0', mode: 'hybrid', use_cloud_model: true,
                 profile: {
-                    raw_request: '合成样例：30人制造企业，采购负责人计划为仓库和办公室选办公笔记本，预算暂不确定。',
+                    raw_request: '示例客户：30人制造企业，采购负责人计划为仓库和办公室选办公笔记本，预算暂不确定。',
                     audience: '制造企业采购负责人', scenario: '仓库与办公室轮用，需要移动办公', industry: '制造业', company_size: 30,
                     product_type: '电脑', needs: ['移动办公', '办公'], preferences: ['长续航', '便携'], pain_points: ['软件兼容性待确认'], excluded_requirements: [], budget: null,
                 },
             },
         },
         {
-            id: 'match-printers', label: '合成示例：门店打印设备选品', synthetic: true,
+            id: 'match-printers', label: '演示示例：门店打印设备选品', synthetic: true,
             input: {
                 schema_version: '1.0', mode: 'local', use_cloud_model: false,
                 profile: {
-                    raw_request: '合成样例：门店需要打印订单和扫描资料，希望先比较打印机候选，耗材成本待确认。',
+                    raw_request: '示例客户：门店需要打印订单和扫描资料，希望先比较打印机候选，耗材成本待确认。',
                     audience: '门店负责人', scenario: '打印订单与扫描资料', industry: '零售', company_size: 8,
                     product_type: '打印机', needs: ['打印', '扫描'], preferences: [], pain_points: ['耗材成本待确认'], excluded_requirements: [], budget: null,
                 },

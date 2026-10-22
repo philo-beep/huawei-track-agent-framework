@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { PipelineError, validateSchema } = require('./support');
 const { generateJson } = require('./model');
+const { plainText, readableValue } = require('./sales-copy');
 
 const CONTRACT_DIR = path.join(__dirname, 'contracts');
 const INPUT_SCHEMA = JSON.parse(fs.readFileSync(path.join(CONTRACT_DIR, 'guided-profile-input.schema.json'), 'utf8'));
@@ -95,10 +96,10 @@ function validateGuidedInput(input) {
     validateSchema(input, INPUT_SCHEMA);
     const messages = input.messages.map((message, index) => ({ role: message.role, content: cleanText(message.content, MAX_MESSAGE_CHARS) }));
     if (!messages.length) return { schema_version: '1.0', messages: [] };
-    if (messages.at(-1).role !== 'user') throw new PipelineError('INVALID_INPUT', '最后一条消息必须是客户/销售填写内容，不能把尚未回答的问题当作用户输入');
-    if (messages.some(message => !message.content)) throw new PipelineError('INVALID_INPUT', '访谈消息不得为空');
-    if (messages.length > MAX_MESSAGES) throw new PipelineError('INVALID_INPUT', `单次画像最多保留${MAX_MESSAGES}条消息`);
-    if (Buffer.byteLength(messages.map(message => message.content).join('\n'), 'utf8') > 12000) throw new PipelineError('INVALID_INPUT', '画像对话合计不超过12000字节');
+    if (messages.at(-1).role !== 'user') throw new PipelineError('INVALID_INPUT', '请先填写客户信息再继续，不能把尚未回答的问题作为客户回答');
+    if (messages.some(message => !message.content)) throw new PipelineError('INVALID_INPUT', '客户信息不能为空，请补充后重试');
+    if (messages.length > MAX_MESSAGES) throw new PipelineError('INVALID_INPUT', `本次画像访谈记录较多，请重新开始后精简填写`);
+    if (Buffer.byteLength(messages.map(message => message.content).join('\n'), 'utf8') > 12000) throw new PipelineError('INVALID_INPUT', '填写内容较长，请精简后再继续');
     return { schema_version: '1.0', messages };
 }
 
@@ -129,7 +130,7 @@ function fieldFromModel(item, messages) {
             value: null,
             status: 'pending',
             evidence: [],
-            reason: '模型提取缺少可定位的客户原话，已降级为待确认',
+            reason: '智能分析没有找到可定位的客户原话，已改为待确认',
             confidence: 0,
         };
     }
@@ -254,25 +255,20 @@ function productMatchProfile(fields) {
 
 function renderGuidedProfileMarkdown(result) {
     const lines = [
-        '# 客户画像访谈结果',
-        '',
-        `- 状态：${result.status === 'complete' ? '已完成' : '继续追问'}`,
-        `- 轮次：${result.turn}/${result.max_turns}`,
-        `- 覆盖：${result.coverage.covered_count}/${result.coverage.total_count}；核心维度 ${result.coverage.core_covered_count}/${result.coverage.core_total_count}`,
-        `- 模型：${result.runtime.model || '未调用'}（${result.runtime.called ? '本轮已调用' : '本轮未调用'}）`,
-        '',
-        '## 画像摘要',
-        result.summary,
-        '',
-        '## 分维度信息',
+        '# 客户画像', '',
+        `- 状态：${result.status === 'complete' ? '已完成' : '继续了解中'}`,
+        `- 已进行：${result.turn}/${result.max_turns} 轮`,
+        `- 已了解信息：${result.coverage.covered_count}/${result.coverage.total_count} 项`, '',
+        '## 客户概况', '', plainText(result.summary), '',
+        '## 客户信息', ''
     ];
     for (const dimension of DIMENSIONS) {
         const field = result.fields[dimension.id];
-        lines.push(`- **${dimension.label}**：${field.status === 'pending' ? '待确认' : (typeof field.value === 'object' ? JSON.stringify(field.value) : field.value)}`);
+        lines.push(`- **${dimension.label}**：${field.status === 'pending' ? '待确认' : plainText(readableValue(field.value))}`);
         if (field.evidence?.length) lines.push(`  - 依据：${field.evidence.map(item => `“${item.quote}”`).join('；')}`);
     }
-    if (result.next_question) lines.push('', '## 下一问', result.next_question.text);
-    lines.push('', '> 画像只包含销售顾问录入的客户明确信息或清楚标注的推断；预算、采购权限和决策链不因模型推断而升级为事实。');
+    if (result.next_question) lines.push('', '## 下一问', plainText(result.next_question.text));
+    lines.push('', '> 画像只包含销售顾问录入的客户明确信息或清楚标注的推断；预算、采购权限和决策链不会因推断变成已确认信息。');
     return lines.join('\n');
 }
 
@@ -296,7 +292,7 @@ async function runGuidedProfile(input, options = {}) {
             next_question: fallbackQuestion('industry'),
             summary: '尚未获得足够信息形成客户画像。',
             product_match_profile: productMatchProfile(fieldsFromModel({}, [])),
-            runtime: { called: false, provider: null, model: model || null, notice: '首问由程序给出；销售顾问提交客户信息后将交给云端模型分析并决定下一问。' },
+            runtime: { called: false, provider: null, model: model || null, notice: '第一个问题由系统给出；销售顾问提交客户信息后，将由智能分析判断合适的下一问。' },
             diagnostics: [],
         };
         result.markdown = renderGuidedProfileMarkdown(result);
@@ -311,10 +307,10 @@ async function runGuidedProfile(input, options = {}) {
         generated = await runner(system, modelPrompt(messages, prelimFields, prelimCoverage), 1200);
     } catch (error) {
         if (error instanceof PipelineError) throw error;
-        throw new PipelineError('MODEL_UNAVAILABLE', '逐题画像云端分析失败，未继续追问或伪造结果', true);
+        throw new PipelineError('MODEL_UNAVAILABLE', '智能分析暂不可用，本次没有继续追问，也没有生成未经确认的客户信息', true);
     }
     const output = generated?.value;
-    if (!output || typeof output !== 'object' || !Array.isArray(output.dimensions)) throw new PipelineError('MODEL_OUTPUT_INVALID', '云端模型未返回画像dimensions数组');
+    if (!output || typeof output !== 'object' || !Array.isArray(output.dimensions)) throw new PipelineError('MODEL_OUTPUT_INVALID', '智能分析结果暂时无法读取，请稍后重试');
     const fields = fieldsFromModel(output, messages);
     const coverage = coverageOf(fields);
     const stopReason = stopDecision(coverage, turn);
@@ -325,7 +321,7 @@ async function runGuidedProfile(input, options = {}) {
         if (!nextQuestion) {
             const firstMissing = DIMENSIONS.find(item => coverage.missing_dimensions.includes(item.id));
             nextQuestion = fallbackQuestion(firstMissing?.id || 'needs');
-            diagnostics.push({ code: 'GUIDED_QUESTION_FALLBACK', message: '模型问题缺失或不符合单问约束，已按未覆盖维度生成受控问题', retryable: false });
+            diagnostics.push({ code: 'GUIDED_QUESTION_FALLBACK', message: '本次问题需要重新整理，系统已根据尚未了解的信息给出下一问', retryable: false });
         }
     }
     const result = {
@@ -343,7 +339,7 @@ async function runGuidedProfile(input, options = {}) {
             called: true,
             provider: generated?.provider || 'openai-compatible',
             model: generated?.model || model || null,
-            notice: '本轮回答已交给云端模型分析；程序独立执行轮数与覆盖终止规则。',
+            notice: '本轮回答已交给智能分析；系统会独立检查关键信息是否齐全，并控制访谈何时结束。',
         },
         diagnostics,
     };

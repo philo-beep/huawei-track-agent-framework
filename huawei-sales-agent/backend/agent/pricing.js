@@ -5,7 +5,7 @@ const path = require('node:path');
 const { validateSchema, PipelineError } = require('./support');
 
 const MAXIMUM = BigInt(Number.MAX_SAFE_INTEGER);
-const NOTICE = '此为基于行业惯例与赛题推断的合理假设，待官方确认；未取得行业实证或华为授权，合成计算样例不是华为真实政策或交易报价。';
+const NOTICE = '这是基于行业惯例和演示场景设置的合理假设，待正式确认；未取得行业确认或华为授权，演示价格计算不代表华为真实政策或成交报价。';
 
 function readSchema(name) {
     return JSON.parse(fs.readFileSync(path.join(__dirname, 'contracts', `pricing-${name}.schema.json`), 'utf8'));
@@ -24,13 +24,13 @@ function validateExtended(value, schema, root = schema, location = '$') {
         const matches = schema.anyOf.some(branch => {
             try { validateExtended(value, branch, root, location); return true; } catch { return false; }
         });
-        if (!matches) throw new PipelineError('INVALID_INPUT', `${location} 不符合任何允许结构`);
+        if (!matches) throw new PipelineError('INVALID_INPUT', `价格信息格式不正确，请检查后重试`);
     }
-    if (schema.format === 'date' && !validDate(value)) throw new PipelineError('POLICY_DATE_INVALID', `${location} 日期不存在或格式错误`);
-    if (typeof value === 'number' && !Number.isSafeInteger(value)) throw new PipelineError('UNSAFE_INTEGER', `${location} 必须是安全整数`);
+    if (schema.format === 'date' && !validDate(value)) throw new PipelineError('POLICY_DATE_INVALID', `价格日期不正确，请检查后重试`);
+    if (typeof value === 'number' && !Number.isSafeInteger(value)) throw new PipelineError('UNSAFE_INTEGER', `价格金额必须是完整数字，请检查后重试`);
     if (Array.isArray(value)) {
-        if (schema.maxItems !== undefined && value.length > schema.maxItems) throw new PipelineError('INVALID_INPUT', `${location} 项目过多`);
-        if (schema.uniqueItems && new Set(value.map(entry => JSON.stringify(entry))).size !== value.length) throw new PipelineError('INVALID_INPUT', `${location} 不允许重复项`);
+        if (schema.maxItems !== undefined && value.length > schema.maxItems) throw new PipelineError('INVALID_INPUT', `价格规则项目过多，请精简后重试`);
+        if (schema.uniqueItems && new Set(value.map(entry => JSON.stringify(entry))).size !== value.length) throw new PipelineError('INVALID_INPUT', `价格规则中存在重复项目，请检查后重试`);
         if (schema.items) value.forEach((entry, index) => validateExtended(entry, schema.items, root, `${location}/${index}`));
     }
     if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -49,8 +49,8 @@ function validateExtended(value, schema, root = schema, location = '$') {
 }
 
 function safeMoney(value) {
-    if (value < 0n) throw new PipelineError('NEGATIVE_AMOUNT', '规则会导致负金额，未自动归零');
-    if (value > MAXIMUM) throw new PipelineError('UNSAFE_INTEGER', '精确计算结果超出安全整数范围，未截断');
+    if (value < 0n) throw new PipelineError('NEGATIVE_AMOUNT', '价格规则计算出了负数，本次没有自动调整，请检查规则');
+    if (value > MAXIMUM) throw new PipelineError('UNSAFE_INTEGER', '计算结果超出可用金额范围，本次没有截断金额，请检查规则');
     return Number(value);
 }
 
@@ -75,23 +75,23 @@ function calculatePricing(input) {
         inputValid = true;
         if (input.mode === 'real') {
             result.input_provenance.policy_id = input.policy_id;
-            throw new PipelineError('REAL_POLICY_UNAVAILABLE', '没有独立获授权的真实四级政策注册表；真实报价始终阻塞，金额null');
+            throw new PipelineError('REAL_POLICY_UNAVAILABLE', '没有可用于正式成交报价的四级价格规则；正式成交报价保持待确认');
         }
         const policy = input.policy;
         result.input_provenance.policy_id = policy.id;
         result.input_provenance.policy_source = policy.source;
         result.input_provenance.synthetic = true;
         result.effective = { as_of: input.as_of, valid_from: policy.valid_from, valid_to: policy.valid_to, region: policy.region, matched: false };
-        if (policy.valid_from > policy.valid_to) throw new PipelineError('POLICY_DATE_INVALID', '政策起止日期顺序错误');
-        if (policy.product !== input.product || policy.sku !== input.sku) throw new PipelineError('SKU_MISMATCH', '产品或完整SKU与演示政策不匹配');
-        if (policy.currency !== input.currency) throw new PipelineError('CURRENCY_MISMATCH', '币种与政策不匹配');
-        if (input.as_of < policy.valid_from || input.as_of > policy.valid_to) throw new PipelineError('POLICY_EXPIRED', '请求日期不在政策闭区间有效期内');
-        if (policy.rules.some((rule, index) => rule.level !== index + 1)) throw new PipelineError('RULE_SEQUENCE_INVALID', '规则必须依次为1/2/3/4，不排序或补齐');
+        if (policy.valid_from > policy.valid_to) throw new PipelineError('POLICY_DATE_INVALID', '价格规则的开始和结束日期顺序不正确');
+        if (policy.product !== input.product || policy.sku !== input.sku) throw new PipelineError('SKU_MISMATCH', '产品或完整销售配置与演示价格规则不匹配');
+        if (policy.currency !== input.currency) throw new PipelineError('CURRENCY_MISMATCH', '币种与演示价格规则不一致');
+        if (input.as_of < policy.valid_from || input.as_of > policy.valid_to) throw new PipelineError('POLICY_EXPIRED', '查询日期不在演示价格规则的有效期内');
+        if (policy.rules.some((rule, index) => rule.level !== index + 1)) throw new PipelineError('RULE_SEQUENCE_INVALID', '四级价格规则需要按顺序完整提供，不能自行排序或补齐');
         const groups = new Set();
         const eligibility = new Set(input.confirmed_eligibility || []);
         for (const rule of policy.rules) {
             if (rule.exclusion_group) {
-                if (groups.has(rule.exclusion_group)) throw new PipelineError('RULE_CONFLICT', '多个等级使用相同互斥组，整单阻塞');
+                if (groups.has(rule.exclusion_group)) throw new PipelineError('RULE_CONFLICT', '多个价格规则使用了相同的互斥条件，暂不能计算报价');
                 groups.add(rule.exclusion_group);
             }
             if ((rule.required_eligibility || []).some(key => !eligibility.has(key))) throw new PipelineError('ELIGIBILITY_UNCONFIRMED', `第${rule.level}级演示资格未显式确认，未跳级`);
@@ -117,13 +117,13 @@ function calculatePricing(input) {
         result.amount_cents = totalAmount;
         result.budget_check = input.budget_total_cents === undefined ? 'unknown' : total <= BigInt(input.budget_total_cents) ? 'within_budget' : 'insufficient';
         result.status = 'calculated_demo';
-        result.diagnostics.push({ code: 'SYNTHETIC_DEMO_ONLY', message: NOTICE }, { code: 'REGION_AND_ELIGIBILITY_DEMO_ONLY', message: '地区来自演示policy，资格键由合成输入显式设置，不证明客户真实地区或实际优惠资格' });
+        result.diagnostics.push({ code: 'SYNTHETIC_DEMO_ONLY', message: NOTICE }, { code: 'REGION_AND_ELIGIBILITY_DEMO_ONLY', message: '地区来自演示价格规则，适用条件由演示输入设置，不证明客户真实地区或实际优惠资格' });
     } catch (error) {
         result.status = inputValid ? 'blocked' : 'invalid_input';
         result.unit_amount_cents = null;
         result.amount_cents = null;
         result.budget_check = 'not_evaluated';
-        result.diagnostics.push({ code: error instanceof PipelineError ? error.code : 'INVALID_INPUT', message: error instanceof PipelineError ? error.message : '报价输入或计算异常，未输出原始数据' });
+        result.diagnostics.push({ code: error instanceof PipelineError ? error.code : 'INVALID_INPUT', message: error instanceof PipelineError ? error.message : '价格信息暂时无法完成计算，本次没有输出原始客户数据' });
     }
     validateExtended(result, readSchema('output'));
     return result;

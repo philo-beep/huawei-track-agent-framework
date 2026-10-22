@@ -8,6 +8,7 @@ const { runProductMatch } = require('./product-match');
 const { localKnowledge, extractFacts } = require('./knowledge');
 const { runReleaseVerification } = require('./release-verification');
 const { assessBudget } = require('./budget-assessment');
+const { plainText, cleanProse, humanStatus, humanDate, cleanSourceTitle } = require('./sales-copy');
 
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const DEFAULT_REGISTRY_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'image_review_registry.json');
@@ -20,9 +21,9 @@ const SUPPORTED_MODELS = Object.freeze({
   'matebook-14-2024': { label: 'HUAWEI MateBook 14 2024', operating_system: 'Windows', family: 'MateBook 14', category: '消费笔记本' },
 });
 const PLATFORM_SPECS = Object.freeze({
-  '公众号': { id: 'wechat_article', format: '分层长文：场景 → 任务清单 → 原文核对 → 限制 → CTA', max_facts: 3, default_image_limit: 4, max_image_limit: 6, image_policy: '至多保留全部已核验插入位；未获授权时安全版本转纯文字', content_goal: '用可回溯资料完成完整选型核对', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
-  '小红书': { id: 'xiaohongshu_note', format: '短段落清单：单一任务 → 2 条原文核对卡 → 待确认事项', max_facts: 2, default_image_limit: 3, max_image_limit: 6, image_policy: '优先封面、场景与细节；最多 3 张进入默认审稿稿', content_goal: '围绕一个具体任务提供可收藏的核对清单', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
-  '朋友圈': { id: 'moments_short_post', format: '短帖：一行任务 → 1 条原文核对 → 待确认与 CTA', max_facts: 1, default_image_limit: 1, max_image_limit: 3, image_policy: '默认 1 张封面或场景图；不堆叠参数', content_goal: '用简短可信表述邀请补充任务条件', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
+  '公众号': { id: 'wechat_article', format: '分层长文：场景 → 任务清单 → 原文核对 → 使用限制 → 下一步沟通', max_facts: 3, default_image_limit: 4, max_image_limit: 6, image_policy: '至多保留全部已核验插入位；未获授权时安全版本转纯文字', content_goal: '用可回溯资料完成完整选型核对', source_policy: '已核对产品资料 + 精确型号图片审稿清单' },
+  '小红书': { id: 'xiaohongshu_note', format: '短段落清单：单一任务 → 2 条原文核对卡 → 待确认事项', max_facts: 2, default_image_limit: 3, max_image_limit: 6, image_policy: '优先封面、场景与细节；最多 3 张进入默认审稿稿', content_goal: '围绕一个具体任务提供可收藏的核对清单', source_policy: '已核对产品资料 + 精确型号图片审稿清单' },
+  '朋友圈': { id: 'moments_short_post', format: '短帖：一行任务 → 1 条原文核对 → 待确认事项与下一步沟通', max_facts: 1, default_image_limit: 1, max_image_limit: 3, image_policy: '默认 1 张封面或场景图；不堆叠参数', content_goal: '用简短可信表述邀请补充任务条件', source_policy: '已核对产品资料 + 精确型号图片审稿清单' },
 });
 
 function normalizeName(value) {
@@ -58,7 +59,7 @@ function readRegistry(registryPath = DEFAULT_REGISTRY_PATH) {
     if (!registry || !Array.isArray(registry.products) || !registry.knowledge_base?.kb_name) throw new Error('invalid');
     return registry;
   } catch {
-    throw new PipelineError('IMAGE_REVIEW_REGISTRY_UNAVAILABLE', 'IMA 图片核验清单不可用；未使用未核验候选图');
+    throw new PipelineError('IMAGE_REVIEW_REGISTRY_UNAVAILABLE', '图片审稿清单暂时不可用，本次没有使用未经确认的候选图');
   }
 }
 
@@ -103,11 +104,11 @@ function verifiedImages(registry, product, limit) {
   return selected.map(image => {
     const imageIdentityText = `${image.file_name || ''} ${image.caption || ''} ${image.ima_entry || ''} ${image.original_url || ''}`;
     const imageKey = modelKey(imageIdentityText);
-    if (expectedKey && imageKey && imageKey !== expectedKey) throw new PipelineError('IMAGE_MODEL_MISMATCH', `图片型号与目标型号不一致：${image.image_id}`);
+    if (expectedKey && imageKey && imageKey !== expectedKey) throw new PipelineError('IMAGE_MODEL_MISMATCH', `所选图片与目标型号不一致，请重新选择图片`);
     const assetPath = path.resolve(DATA_ROOT, image.local_path);
-    if (!assetPath.startsWith(DATA_ROOT + path.sep) || !fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile() || fs.lstatSync(assetPath).isSymbolicLink()) throw new PipelineError('IMAGE_ASSET_UNAVAILABLE', `图片文件不可用：${image.image_id}`);
-    if (!/^[a-f0-9]{64}$/.test(image.sha256 || '') || fileSha256(assetPath) !== image.sha256) throw new PipelineError('IMAGE_HASH_MISMATCH', `图片指纹不匹配：${image.image_id}`);
-    if (!image.original_url || !image.ima_entry || !image.caption) throw new PipelineError('IMAGE_SOURCE_INCOMPLETE', `图片来源信息不完整：${image.image_id}`);
+    if (!assetPath.startsWith(DATA_ROOT + path.sep) || !fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile() || fs.lstatSync(assetPath).isSymbolicLink()) throw new PipelineError('IMAGE_ASSET_UNAVAILABLE', `部分图片暂时无法读取，已停止使用，请重新选择图片`);
+    if (!/^[a-f0-9]{64}$/.test(image.sha256 || '') || fileSha256(assetPath) !== image.sha256) throw new PipelineError('IMAGE_HASH_MISMATCH', `图片资料核对未通过，已停止使用，请重新选择图片`);
+    if (!image.original_url || !image.ima_entry || !image.caption) throw new PipelineError('IMAGE_SOURCE_INCOMPLETE', `图片来源信息不完整，已停止使用，请重新选择图片`);
     return { ...image, assetPath };
   });
 }
@@ -156,7 +157,7 @@ function imageCallout(image, index, instruction) {
     `> 插入位置：${instruction}`,
     `> 图片：${image.file_name}`,
     `> 说明：${image.caption}`,
-    `> 来源：IMA 知识库“${image.ima_kb_name}”｜${image.ima_entry}`,
+    `> 来源：产品资料库“${image.ima_kb_name}”`,
     '> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。',
   ].join('\n');
 }
@@ -209,18 +210,18 @@ function composePublicAccount(context, product, images) {
   blocks.push(`- 明确需求：${needs}`);
   blocks.push(`- 当前偏好：${preferences}`);
   blocks.push(`- 待确认问题：${painPoints}`);
-  blocks.push('- 预算：客户未提供时保持未知；客户提供的预算也不能直接当成产品报价；与公开快照不一致时只标记待复核。');
+  blocks.push('- 预算：客户未提供时保持未知；客户提供的预算也不能直接当成产品报价；与华为公开价格参考不一致时只标记待复核。');
   if (scene) blocks.push(imageCallout(scene, images.indexOf(scene), '“先把实际任务说清楚”一节之后'));
   blocks.push(`## 候选机型：${product.product_name}`);
-  blocks.push('以下只放可逐字回溯到 IMA 产品事实原文的公开资料。它们用于核对，不等同于实际体验、软件兼容结论或完整销售 SKU。');
+  blocks.push('以下只使用产品资料库中可核对原文的公开资料。它们用于沟通前检查，不等同于实际体验、软件兼容结论或完整销售配置。');
   blocks.push(...factsAsCards(facts));
   if (detail) blocks.push(imageCallout(detail, images.indexOf(detail), '官网原文核对段之后'));
   blocks.push('## 这些事项还不能直接下结论');
   blocks.push('- 软件兼容性：必须按客户实际软件名称、版本、文件格式和外设逐项验证；资料存在不等于兼容已通过。');
-  blocks.push('- 完整 SKU 与配色：当前资料是系列或具体型号级线索，颜色、键盘版本和销售配置仍需确认。');
-  blocks.push('- 价格与库存：没有完整 SKU、地区、数量、有效期和有效报价依据时，不输出成交金额。');
+  blocks.push('- 完整销售配置与配色：当前资料是系列或具体型号级线索，颜色、键盘版本和销售配置仍需确认。');
+  blocks.push('- 价格与库存：没有完整销售配置、地区、数量、有效期和有效报价依据时，不输出成交金额。');
   blocks.push('- 图片授权：如稿中出现图片，仅完成型号与画面辅助核验，正式公开发布前仍需人工终审和授权确认。');
-  if (beforeCta) blocks.push(imageCallout(beforeCta, images.indexOf(beforeCta), '行动引导（CTA）之前'));
+  if (beforeCta) blocks.push(imageCallout(beforeCta, images.indexOf(beforeCta), '下一步沟通之前'));
   return {
     title,
     lead,
@@ -237,7 +238,7 @@ function composeXiaohongshu(context, product, images) {
   const blocks = ['### ① 先列任务', `- 要完成：${scenario}`, `- 已知需求：${needs}`, `- 当前偏好：${preferences}`, `- 还要确认：${painPoints}`];
   for (const image of images) blocks.push(imageCallout(image, images.indexOf(image), `小红书 ${POSITION_LABELS[image.position] || '配图'}位置`));
   blocks.push('### ② 资料核对卡', ...factsAsCards(facts, true));
-  blocks.push('### ③ 这些还不能直接下结论', '- 软件兼容性需要按名称、版本、文件格式和外设实际验证。', '- 颜色、键盘、内存和存储等完整 SKU 仍需确认。', '- 价格与库存没有当前有效依据时不写成成交价。', '- 图片如出现，仅为审稿建议，公开发布授权与人工终审待确认。');
+  blocks.push('### ③ 这些还不能直接下结论', '- 软件兼容性需要按名称、版本、文件格式和外设实际验证。', '- 颜色、键盘、内存和存储等完整销售配置仍需确认。', '- 价格与库存没有当前有效依据时不写成成交价。', '- 图片如出现，仅用于内部审稿，公开发布授权与人工终审待确认。');
   return {
     title,
     lead,
@@ -251,7 +252,7 @@ function composeMoments(context, product, images) {
   const { audience, scenario, shortScenario, needs, facts } = context;
   const title = `${product.product_name}｜${shortScenario}`;
   const lead = `${audience}的“${scenario}”，先核对任务和资料，不先许诺兼容与价格。`;
-  const blocks = [`任务重点：${needs}。`, `一条可回溯资料：`, factsAsCards(facts, true).join('\n\n'), '仍需确认：软件版本、文件格式、完整 SKU、库存与当前有效报价。'];
+  const blocks = [`任务重点：${needs}。`, `一条可回溯资料：`, factsAsCards(facts, true).join('\n\n'), '仍需确认：软件版本、文件格式、完整销售配置、库存与当前有效报价。'];
   for (const image of images) blocks.push(imageCallout(image, images.indexOf(image), '朋友圈短帖配图位置'));
   return {
     title,
@@ -274,55 +275,58 @@ function composeDraft(profile, product, facts, images, platform = '公众号') {
 }
 
 function renderArticleMarkdown(result) {
-  const imageRows = result.image_sources.map((image, index) => `| ${index + 1} | ${image.file_name} | ${image.caption} | ${image.original_url} | ${image.model_match_status}；${image.rights_status} |`);
-  const citationRows = result.citations.map(item => `- ${item.fact_id}｜${item.source_title}｜${item.source_entry}${item.source_url ? `｜${item.source_url}` : ''}${item.source_sha256 ? `｜${item.source_sha256}` : ''}`);
-  const verificationRows = result.verification.items.map(item => `| ${item.label} | ${item.status_label} | ${item.summary} |`);
+  const checkLabels = { product_model: '产品型号', parameters: '产品参数', price: '价格与报价', image_identity: '图片来源', overreach: '表达边界', source_completeness: '资料来源' };
+  const imageRows = result.image_sources.map((image, index) => {
+    const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
+    return `| ${index + 1} | ${plainText(image.caption)} | ${plainText(image.source_name)} | 型号一致；${rights} |`;
+  });
+  const citationLines = result.citations.map(item => `- ${cleanSourceTitle(item.source_title)}${item.source_url ? `｜${item.source_url}` : ''}`);
+  const verificationRows = result.verification.items.map(item => `| ${checkLabels[item.id] || plainText(item.label)} | ${plainText(item.status_label)} | ${plainText(item.summary)} |`);
   const riskLines = result.verification.risk_items.length
-    ? result.verification.risk_items.map(risk => `- [${risk.risk_level_label}] ${risk.title}｜${risk.issue}｜处理：${risk.recommendation}`)
-    : ['- 未发现需要阻塞或降级的风险项。'];
+    ? result.verification.risk_items.map(risk => `- ${plainText(risk.title)}｜${plainText(risk.issue)}｜怎么处理：${plainText(risk.recommendation)}`)
+    : ['- 未发现需要处理的问题。'];
   const imageSection = result.image_sources.length ? [
     '## 图片来源清单', '',
-    '> 型号匹配与原始来源已核对；公开发布授权和人工终审仍待确认。原稿图片只用于审稿，不等于可发布配图。', '',
-    `> IMA 知识库：${result.image_sources[0].ima_kb_name}｜知识库 ID：${result.image_sources[0].ima_kb_id}｜检索请求 ID：${result.image_sources[0].ima_search_request_ids.join('、')}`, '',
-    '| # | 文件 | 说明 | 原图来源 | 状态 |',
-    '| --- | --- | --- | --- | --- |',
+    '> 图片只用于内部审稿；公开发布授权和人工终审仍需确认。', '',
+    '| # | 画面说明 | 资料来源 | 状态 |',
+    '| --- | --- | --- | --- |',
     ...imageRows, '',
-  ] : ['## 图片来源清单', '', '- 本稿未使用任何图片。', ''];
+  ] : ['## 图片来源清单', '', '- 本稿未使用图片。', ''];
   const safe = result.verification.safe_content;
   const safeSection = safe.ready && safe.content ? [
     '## 可发布安全版本', '',
-    `> 强制核验结论：${result.verification.status_label}；六项核验通过${result.verification.summary.pass_count}项、降级${result.verification.summary.downgrade_count}项、不通过${result.verification.summary.fail_count}项。以下版本已移除降级项，但仍须由发布责任人完成最终确认。`, '',
-    safe.rendered_markdown.trim(), '',
+    `> 发布前检查结论：${plainText(result.verification.status_label)}；通过 ${result.verification.summary.pass_count} 项、需要调整 ${result.verification.summary.downgrade_count} 项、不通过 ${result.verification.summary.fail_count} 项。以下版本已移除不合适内容，但仍须由发布负责人最终确认。`, '',
+    cleanProse(safe.rendered_markdown), '',
   ] : [
     '## 可发布安全版本', '',
-    '> 当前没有可发布版本。请先处理“不通过”或阻塞风险后重新核验。', '',
+    '> 当前没有可直接使用的版本。请先处理需要调整或不通过的问题后重新检查。', '',
   ];
   return [
-    `# ${result.draft.title}`, '',
-    `> 平台：${result.platform}；内容结构：${result.platform_profile.format}；事实数上限：${result.platform_profile.max_facts}；图片上限：${result.platform_profile.image_limit}。`, '',
-    result.draft.lead, '',
-    result.draft.body_markdown, '',
+    `# ${plainText(result.draft.title)}`, '',
+    `> 平台：${result.platform}；内容结构：${plainText(result.platform_profile.format)}；建议资料依据不超过 ${result.platform_profile.max_facts} 项；建议图片不超过 ${result.platform_profile.image_limit} 张。`, '',
+    plainText(result.draft.lead), '',
+    cleanProse(result.draft.body_markdown), '',
     '## 下一步沟通', '',
-    result.draft.cta, '',
+    plainText(result.draft.cta), '',
     '## 预算核对', '',
-    `> 状态：${result.budget_assessment.status}。${result.budget_assessment.message}`, '',
+    `> 当前状态：${humanStatus(result.budget_assessment.status)}。${plainText(result.budget_assessment.message)}`, '',
     '---', '',
-    '## 强制核验结果', '',
-    `> 总体结论：${result.verification.status_label}；策略版本：${result.verification.policy_version}；原始稿公开发布就绪：${result.verification.publication_ready ? '是' : '否'}；安全版本可用：${result.verification.safe_content_ready ? '是' : '否'}。`, '',
-    '| 核验项 | 结果 | 说明 |',
+    '## 发布前检查结果', '',
+    `> 总体结论：${plainText(result.verification.status_label)}；原稿可直接发布：${result.verification.publication_ready ? '是' : '否'}；稳妥版本：${result.verification.safe_content_ready ? '可用' : '暂不可用'}。`, '',
+    '| 检查项 | 结果 | 说明 |',
     '| --- | --- | --- |',
     ...verificationRows, '',
-    '## 风险项清单', '',
+    '## 需要处理的问题', '',
     ...riskLines, '',
     ...imageSection,
-    '## 事实来源索引', '',
-    ...citationRows, '',
+    '## 资料来源', '',
+    ...citationLines, '',
     ...safeSection,
-    '## 审稿边界', '',
-    '- 产品事实仅来自上列可定位原文，未把检索摘要或模型常识补成产品参数。',
+    '## 使用边界', '',
+    '- 产品资料只来自上列可核对内容，没有把摘要或未经核对的信息补成产品参数。',
     '- 客户画像只用于匹配任务与沟通角度，不推断预算、身份或采购权限。',
     '- 未生成正式报价，未承诺软件兼容、咨询量或成交转化。',
-    `- 原始稿核验时间：${result.verification.checked_at}；生成时间：${result.generated_at}。`, '',
+    `- 生成时间：${humanDate(result.generated_at)}。`, '',
   ].join('\n');
 }
 
@@ -343,12 +347,12 @@ function safeProfile(profile, budgetAssessment = null) {
 
 async function runContentDraft(input, options = {}) {
   validateSchema(input, INPUT_SCHEMA);
-  if (!/^candidate-[a-f0-9]{12}$/.test(input.candidate_id)) throw new PipelineError('INVALID_INPUT', '候选ID格式无效');
+  if (!/^candidate-[a-f0-9]{12}$/.test(input.candidate_id)) throw new PipelineError('INVALID_INPUT', '所选产品需要重新确认，请返回选品结果后重试');
   const registry = readRegistry(options.registryPath || DEFAULT_REGISTRY_PATH);
   const matchRunner = options.matchRunner || runProductMatch;
   const matchResult = await matchRunner(input.match_input);
   const candidate = (matchResult.candidates || []).find(item => item.candidate_id === input.candidate_id);
-  if (!candidate) throw new PipelineError('MATCH_CANDIDATE_NOT_FOUND', '所选候选不在本次重新核验的产品匹配结果中');
+  if (!candidate) throw new PipelineError('MATCH_CANDIDATE_NOT_FOUND', '所选产品不在本次选品结果中，请返回重新选择');
   const reviewedProduct = resolveReviewedProduct(registry, candidate);
   const resolved = reviewedProduct || fallbackProductIdentity(candidate);
   const resolvedModelKey = resolved.model_key || modelKey(resolved.product_name) || candidateModelKey(candidate);
@@ -377,7 +381,7 @@ async function runContentDraft(input, options = {}) {
     asset_url: `/api/content-images/${image.sha256}`,
     original_url: image.original_url,
     page_url: image.page_url || null,
-    source_name: `IMA 知识库“${registry.knowledge_base.kb_name}”镜像条目｜华为公开产品素材`,
+    source_name: '华为PC产品资料库｜华为公开产品素材',
     ima_entry: image.ima_entry,
     ima_kb_name: registry.knowledge_base.kb_name,
     ima_kb_id: registry.knowledge_base.kb_id,
@@ -451,12 +455,12 @@ async function runContentDraft(input, options = {}) {
     diagnostics: [
       {
         code: verification.overall_status === 'blocked' ? 'RELEASE_BLOCKED' : verification.overall_status === 'downgraded' ? 'RELEASE_DOWNGRADED' : 'RELEASE_VERIFIED',
-        message: `强制核验结论：${verification.status_label}；通过${verification.summary.pass_count}项、降级${verification.summary.downgrade_count}项、不通过${verification.summary.fail_count}项。`,
+        message: `发布前检查完成：通过 ${verification.summary.pass_count} 项、需要调整 ${verification.summary.downgrade_count} 项、不通过 ${verification.summary.fail_count} 项。`,
       },
       ...verification.risk_items.map(risk => ({ code: risk.risk_level === 'blocking' ? 'VERIFICATION_BLOCKING_RISK' : 'VERIFICATION_DOWNGRADE', message: `${risk.title}：${risk.recommendation}` })),
-      { code: 'PLATFORM_APPLIED', message: `已按${input.platform}结构生成，事实上限${spec.max_facts}条，图片上限${limit}张；来源仍为本地E1事实与精确型号审稿清单。` },
+      { code: 'PLATFORM_APPLIED', message: `内容已按${input.platform}结构准备；产品资料只使用已核对内容，图片还需人工确认。` },
       { code: 'BUDGET_ASSESSMENT', message: budgetAssessment.message },
-      { code: 'HUMAN_REVIEW_REQUIRED', message: '自动核验不替代发布责任人的最终确认；公开发布仍不得越过来源、价格、图片授权和人工确认边界。' },
+      { code: 'HUMAN_REVIEW_REQUIRED', message: '系统检查不能替代发布责任人的最终确认；公开发布仍需核对来源、价格、图片授权和表达边界。' },
     ],
   };
   result.article_markdown = renderArticleMarkdown(result);
@@ -465,7 +469,7 @@ async function runContentDraft(input, options = {}) {
 }
 
 function readReviewedImage(sha256, registryPath = DEFAULT_REGISTRY_PATH) {
-  if (!/^[a-f0-9]{64}$/.test(String(sha256 || ''))) throw new PipelineError('IMAGE_NOT_FOUND', '图片不存在');
+  if (!/^[a-f0-9]{64}$/.test(String(sha256 || ''))) throw new PipelineError('IMAGE_NOT_FOUND', '该图片暂时不可用，请重新选择');
   const registry = readRegistry(registryPath);
   for (const product of registry.products) for (const image of product.images || []) {
     if (image.sha256 !== sha256) continue;
@@ -473,21 +477,21 @@ function readReviewedImage(sha256, registryPath = DEFAULT_REGISTRY_PATH) {
     if (!filePath.startsWith(DATA_ROOT + path.sep) || !fs.existsSync(filePath) || fs.lstatSync(filePath).isSymbolicLink()) break;
     return { filePath, mimeType: image.mime_type || 'application/octet-stream', image };
   }
-  throw new PipelineError('IMAGE_NOT_FOUND', '图片不在已核验 IMA 清单中');
+  throw new PipelineError('IMAGE_NOT_FOUND', '该图片不在可用图片范围内，请重新选择');
 }
 
 function renderContentDraftMarkdown(result) {
-  return result.article_markdown;
+  return renderArticleMarkdown(result);
 }
 
 function contentGenerationExamples() {
   return Object.entries(PLATFORM_SPECS).map(([platform, spec]) => ({
     id: `content-${spec.id}`,
-    label: `合成示例：${platform}内容审稿`,
+    label: `演示示例：${platform}内容审稿`,
     platform,
     synthetic: true,
     candidate_id: null,
-    note: '先运行产品匹配，再选择具体候选生成；不预置候选ID，避免跨请求串用。',
+    note: '先运行产品匹配，再选择具体候选生成；系统不会预置候选编号，避免不同任务之间串用。',
     expected: { platform, max_facts: spec.max_facts, image_limit: spec.default_image_limit },
   }));
 }

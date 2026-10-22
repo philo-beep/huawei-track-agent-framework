@@ -36,7 +36,7 @@ function mentions(input) {
 }
 
 function selectCloudFact(input, facts) {
-    if (!Array.isArray(facts) || !facts.length || facts.some(fact => !fact || fact.product !== input.product) || new Set(facts.map(fact => fact.id)).size !== facts.length) throw new PipelineError('FACT_VERIFICATION_FAILED', '云端候选事实为空、ID重复或代际不一致，未选择替代事实');
+    if (!Array.isArray(facts) || !facts.length || facts.some(fact => !fact || fact.product !== input.product) || new Set(facts.map(fact => fact.id)).size !== facts.length) throw new PipelineError('FACT_VERIFICATION_FAILED', '产品资料暂时无法确认，本次没有选择替代内容');
     const evidence = mentions(input);
     const positive = evidence.filter(item => !item.negative);
     const excluded = evidence.filter(item => item.negative);
@@ -51,17 +51,17 @@ function selectCloudFact(input, facts) {
     const first = requested.find(matchFact);
     const common = { evidence, excluded, uncovered, deferred: requested.filter(item => item !== first && matchFact(item)), price_requested: priceRequested };
     if (conflicts.length) return { ...common, status: 'needs_clarification', fact_ids: [], focus: null, notice: '规格关注点存在否定冲突或复杂否定，请明确本次要核对的一项规格；未选择替代事实。' };
-    if (!first && requested.length) return { ...common, status: 'unsupported', fact_ids: [], focus: requested[0], notice: `明确需求未覆盖：${uncovered.map(item => item.label).join('、')}；没有当前可用的对应核验字段，相关内容已阻塞，未使用其他规格替答。` };
+    if (!first && requested.length) return { ...common, status: 'unsupported', fact_ids: [], focus: requested[0], notice: `明确需求未覆盖：${uncovered.map(item => item.label).join('、')}；没有当前可用的对应核对信息，相关内容暂不能作为适配依据，也没有使用其他规格替答。` };
     if (!first && priceRequested) return { ...common, status: 'unsupported', fact_ids: [], focus: null, notice: '当前请求涉及价格或政策，缺少真实报价依据，金额为null；未使用其他规格替答。' };
     if (!first) {
         const excludedIds = new Set(excluded.map(matchFact).filter(Boolean).map(fact => fact.id));
         const generalFact = facts.find(fact => !excludedIds.has(fact.id));
-        if (!generalFact) return { ...common, status: 'needs_clarification', fact_ids: [], focus: null, notice: '现有规格资料均已被客户明确排除，请补充希望核对的规格；未选择已排除字段。' };
-        return { ...common, status: 'general_reference', fact_ids: [generalFact.id], focus: null, notice: '通用资料，非适配推荐：未识别到本轮可明确核对的正向规格偏好；已排除客户明确否定的字段，以下仅供原文参考，不代表符合客户场景。' };
+        if (!generalFact) return { ...common, status: 'needs_clarification', fact_ids: [], focus: null, notice: '现有规格资料均已被客户明确排除，请补充希望核对的规格；没有选择客户已排除的内容。' };
+        return { ...common, status: 'general_reference', fact_ids: [generalFact.id], focus: null, notice: '通用资料，非适配推荐：未识别到本轮可明确核对的正向规格偏好；已排除客户明确否定的内容，以下仅供原文参考，不代表符合客户场景。' };
     }
     const notes = ['仅核对客户最先明确的一项规格，原文系列选项不代表客户指定SKU或已满足需求。'];
-    if (first.key === 'screen') notes.push('屏幕字段仅覆盖分辨率，其他屏幕特性待核实。');
-    if (uncovered.length) notes.push(`未覆盖：${uncovered.map(item => item.label).join('、')}；相关内容没有当前可用的对应核验字段，不作适配承诺。`);
+    if (first.key === 'screen') notes.push('屏幕信息目前只覆盖分辨率，其他屏幕特性待核实。');
+    if (uncovered.length) notes.push(`未覆盖：${uncovered.map(item => item.label).join('、')}；相关内容没有当前可用的对应核对信息，不作适配承诺。`);
     if (common.deferred.length) notes.push('其余明确规格本轮未核对，请分次确认。');
     if (priceRequested) notes.push('真实价格和政策仍未知，金额为null。');
     return { ...common, status: uncovered.length ? 'partial' : 'matched', fact_ids: [matchFact(first).id], focus: first, notice: notes.join('') };

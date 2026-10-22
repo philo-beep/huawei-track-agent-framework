@@ -109,18 +109,18 @@ function createCloudServer(options = {}) {
         request.on('end', () => {
             if (length > limit) return reject(new AccessError(413, 'BODY_TOO_LARGE', tooLargeMessage));
             try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); }
-            catch { reject(new AccessError(400, 'INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+            catch { reject(new AccessError(400, 'INVALID_JSON', '提交内容暂时无法读取，请刷新页面后重试')); }
         });
-        request.on('error', () => reject(new AccessError(400, 'INVALID_JSON', '请求读取中断')));
+        request.on('error', () => reject(new AccessError(400, 'INVALID_JSON', '内容没有完整提交，请重新提交')));
     });
     const requireAuth = (response, auth, permission = null) => {
         if (!auth) {
             response.setHeader('WWW-Authenticate', 'Session');
-            fail(response, 401, 'AUTH_REQUIRED', '请先登录后再访问工作台');
+            fail(response, 401, 'AUTH_REQUIRED', '请先登录后再使用销售工作台');
             return false;
         }
         if (permission && !auth.user.permissions.includes(permission)) {
-            fail(response, 403, 'PERMISSION_DENIED', '当前账号没有执行此操作的权限');
+            fail(response, 403, 'PERMISSION_DENIED', '当前账号没有执行此操作的权限，请联系管理员');
             return false;
         }
         return true;
@@ -141,11 +141,11 @@ function createCloudServer(options = {}) {
         response.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self' https://modelscope.cn https://www.modelscope.cn");
         const port = server.address()?.port || 7860;
         const internalHealth = request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(request.url) && [`127.0.0.1:${port}`, `localhost:${port}`].includes(request.headers.host) && ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(request.socket.remoteAddress);
-        if (!platformProxyHost && request.headers.host !== publicOrigin.host && !internalHealth) return fail(response, 403, 'HOST_FORBIDDEN', '请求域名不在公开演示配置中');
-        if (request.headers.origin && !originAllowed(request.headers.origin)) return fail(response, 403, 'ORIGIN_FORBIDDEN', `请求来源不在允许范围内（${originHostLabel(request.headers.origin)}）`);
+        if (!platformProxyHost && request.headers.host !== publicOrigin.host && !internalHealth) return fail(response, 403, 'HOST_FORBIDDEN', '当前访问地址未获允许，请从正式工作台地址进入');
+        if (request.headers.origin && !originAllowed(request.headers.origin)) return fail(response, 403, 'ORIGIN_FORBIDDEN', '当前访问地址未获允许，请从正式工作台地址进入');
         let url;
-        try { url = new URL(request.url, publicOrigin); } catch { return fail(response, 400, 'INVALID_PATH', '路径无效'); }
-        if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '不接受外部代理地址');
+        try { url = new URL(request.url, publicOrigin); } catch { return fail(response, 400, 'INVALID_PATH', '页面地址不可用，请从正式工作台地址进入'); }
+        if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '当前访问地址不可用，请从正式工作台地址进入');
         purge();
         try {
             const cookies = parseCookies(request.headers.cookie);
@@ -153,19 +153,19 @@ function createCloudServer(options = {}) {
             const currentAuth = authStore.resolve(authToken);
             if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: CAPABILITIES.cloud_model_name, model_ready: CAPABILITIES.cloud_model_configured ? 'configured' : 'disabled', ima_enabled: CAPABILITIES.ima_configured, web_research_enabled: CAPABILITIES.web_research_configured, capabilities: CAPABILITIES, public_demo: true, authentication: true, source_manifest_available: fs.existsSync(MANIFEST), source_readiness: sourceReadiness(getSourceStatus()) });
             if (request.method === 'POST' && url.pathname === '/api/auth/register') {
-                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '注册请求必须来自当前站点');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                const body = await readJson(request, AUTH_BODY_LIMIT, '注册请求最多8192字节');
-                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '注册信息格式无效');
+                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '请从销售工作台页面完成注册');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '填写内容较长，请精简后再试');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '注册信息填写有误，请检查后重试');
                 if (!takeAttempt(request, 'register', body.username)) return fail(response, 429, 'RATE_LIMIT', '注册尝试过于频繁，请5分钟后重试');
                 const user = authStore.register(body.username, body.password);
                 return send(response, 201, { user, first_admin: user.role === 'admin' });
             }
             if (request.method === 'POST' && url.pathname === '/api/auth/login') {
-                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '登录请求必须来自当前站点');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                const body = await readJson(request, AUTH_BODY_LIMIT, '登录请求最多8192字节');
-                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '登录信息格式无效');
+                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '请从销售工作台页面完成登录');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '填写内容较长，请精简后再试');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '登录信息填写有误，请检查后重试');
                 if (!takeAttempt(request, 'login', body.username)) return fail(response, 429, 'RATE_LIMIT', '登录尝试过于频繁，请5分钟后重试');
                 const issued = authStore.login(body.username, body.password);
                 response.setHeader('Set-Cookie', [sessionCookie(issued.token, Math.floor(SESSION_TTL_MS / 1000)), `${DEMO_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`]);
@@ -177,7 +177,7 @@ function createCloudServer(options = {}) {
             }
             if (request.method === 'POST' && url.pathname === '/api/auth/logout') {
                 if (!requireAuth(response, currentAuth)) return;
-                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '退出请求校验失败，请刷新页面后重试');
+                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '安全校验已过期，请刷新页面后重试');
                 authStore.revoke(authToken);
                 response.setHeader('Set-Cookie', [clearSessionCookie(), `${DEMO_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`]);
                 return send(response, 200, { logged_out: true });
@@ -189,10 +189,10 @@ function createCloudServer(options = {}) {
             const adminUserRoute = url.pathname.match(/^\/api\/admin\/users\/(\d+)$/);
             if (request.method === 'PATCH' && adminUserRoute) {
                 if (!requireAuth(response, currentAuth, 'admin:users')) return;
-                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '权限修改请求校验失败，请刷新页面后重试');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                const body = await readJson(request, AUTH_BODY_LIMIT, '权限修改请求最多8192字节');
-                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['role', 'active'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '权限修改信息格式无效');
+                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '安全校验已过期，请刷新页面后重试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '填写内容较长，请精简后再试');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['role', 'active'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '权限设置未正确提交，请刷新后重试');
                 return send(response, 200, { user: authStore.updateUser(currentAuth.user, Number(adminUserRoute[1]), body) });
             }
             if (request.method === 'GET' && url.pathname === '/api/source-status') {
@@ -210,7 +210,7 @@ function createCloudServer(options = {}) {
                     response.writeHead(200, { 'Content-Type': asset.mimeType });
                     response.end(fs.readFileSync(asset.filePath));
                 } catch (error) {
-                    return fail(response, 404, error instanceof PipelineError ? error.code : 'IMAGE_NOT_FOUND', '图片不在已核验 IMA 清单中');
+                    return fail(response, 404, error instanceof PipelineError ? error.code : 'IMAGE_NOT_FOUND', '图片不在已确认的产品资料中');
                 }
                 return;
             }
@@ -230,23 +230,23 @@ function createCloudServer(options = {}) {
             if (request.method === 'POST' && url.pathname === '/api/runs') {
                 if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
-                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
-                if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
-                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '每会话20分钟最多3次，需间隔2秒；请稍后重试');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                if (Number(request.headers['content-length'] || 0) > BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '公开演示请求最多4096字节'); }
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '登录校验已过期，请刷新当前页面后重试');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有任务正在生成，请稍后再提交');
+                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '当前登录的使用次数较多，请稍后再试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                if (Number(request.headers['content-length'] || 0) > BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '填写内容较长，请精简后再试'); }
                 const body = await new Promise((resolve, reject) => {
                     let length = 0;
                     const chunks = [];
                     request.on('data', chunk => { length += chunk.length; if (length <= BODY_LIMIT) chunks.push(chunk); });
                     request.on('end', () => {
-                        if (length > BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '公开演示请求最多4096字节'));
-                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+                        if (length > BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '填写内容较长，请精简后再试'));
+                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '提交内容暂时无法读取，请刷新页面后重试')); }
                     });
-                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '请求读取中断')));
+                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '内容没有完整提交，请重新提交')));
                 });
                 const input = validateCloudInput(body);
-                if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有任务正在生成，请稍后再提交');
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
                 const job = { id, status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id, ownerId: currentAuth.user.id };
@@ -266,19 +266,19 @@ function createCloudServer(options = {}) {
             if (request.method === 'POST' && url.pathname === '/api/profile-steps') {
                 if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
-                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
-                if (active !== null) return fail(response, 409, 'BUSY', '已有演示任务，请等待当前步骤完成');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '画像访谈请求最多16384字节'); }
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '登录校验已过期，请刷新当前页面后重试');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有任务正在生成，请等当前步骤完成后再试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '填写内容较长，请精简后再试'); }
                 const body = await new Promise((resolve, reject) => {
                     let length = 0;
                     const chunks = [];
                     request.on('data', chunk => { length += chunk.length; if (length <= MATCH_BODY_LIMIT) chunks.push(chunk); });
                     request.on('end', () => {
-                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '画像访谈请求最多16384字节'));
-                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '填写内容较长，请精简后再试'));
+                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '提交内容暂时无法读取，请刷新页面后重试')); }
                     });
-                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '请求读取中断')));
+                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '内容没有完整提交，请重新提交')));
                 });
                 if (body?.restart === true) session.profileRuns = 0;
                 if (globalRuns >= 60 || session.profileRuns > MAX_GUIDED_TURNS || Date.now() - session.lastRun < 600) return fail(response, 429, 'RATE_LIMIT', '画像访谈轮次或请求频率已达上限，请稍后重试');
@@ -307,20 +307,20 @@ function createCloudServer(options = {}) {
             if (request.method === 'POST' && url.pathname === '/api/product-matches') {
                 if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
-                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
-                if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
-                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '每会话20分钟最多3次，需间隔2秒；请稍后重试');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '产品匹配请求最多16384字节'); }
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '登录校验已过期，请刷新当前页面后重试');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有任务正在生成，请稍后再提交');
+                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '当前登录的使用次数较多，请稍后再试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '填写内容较长，请精简后再试'); }
                 const body = await new Promise((resolve, reject) => {
                     let length = 0;
                     const chunks = [];
                     request.on('data', chunk => { length += chunk.length; if (length <= MATCH_BODY_LIMIT) chunks.push(chunk); });
                     request.on('end', () => {
-                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '产品匹配请求最多16384字节'));
-                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '填写内容较长，请精简后再试'));
+                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '提交内容暂时无法读取，请刷新页面后重试')); }
                     });
-                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '请求读取中断')));
+                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '内容没有完整提交，请重新提交')));
                 });
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
@@ -341,20 +341,20 @@ function createCloudServer(options = {}) {
             if (request.method === 'POST' && url.pathname === '/api/content-drafts') {
                 if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
-                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
-                if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
-                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '每会话20分钟最多3次，需间隔2秒；请稍后重试');
-                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
-                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '图文生成请求最多16384字节'); }
+                if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '登录校验已过期，请刷新当前页面后重试');
+                if (active !== null) return fail(response, 409, 'BUSY', '已有任务正在生成，请稍后再提交');
+                if (session.runs >= 3 || globalRuns >= 60 || Date.now() - session.lastRun < 2000) return fail(response, 429, 'RATE_LIMIT', '当前登录的使用次数较多，请稍后再试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '提交内容格式不正确，请刷新页面后重试');
+                if (Number(request.headers['content-length'] || 0) > MATCH_BODY_LIMIT) { request.resume(); return fail(response, 413, 'BODY_TOO_LARGE', '填写内容较长，请精简后再试'); }
                 const body = await new Promise((resolve, reject) => {
                     let length = 0;
                     const chunks = [];
                     request.on('data', chunk => { length += chunk.length; if (length <= MATCH_BODY_LIMIT) chunks.push(chunk); });
                     request.on('end', () => {
-                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '图文生成请求最多16384字节'));
-                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+                        if (length > MATCH_BODY_LIMIT) return reject(new PipelineError('BODY_TOO_LARGE', '填写内容较长，请精简后再试'));
+                        try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); } catch { reject(new PipelineError('INVALID_JSON', '提交内容暂时无法读取，请刷新页面后重试')); }
                     });
-                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '请求读取中断')));
+                    request.on('error', () => reject(new PipelineError('INVALID_JSON', '内容没有完整提交，请重新提交')));
                 });
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
@@ -381,11 +381,11 @@ function createCloudServer(options = {}) {
             if (request.method === 'GET' && match) {
                 const job = jobs.get(match[1]);
                 if (!requireAuth(response, currentAuth)) return;
-                if (!session || session.ownerId !== currentAuth.user.id || !job || job.session !== session.id) return fail(response, 404, 'RUN_NOT_FOUND', '当前会话无此任务，或任务已过期');
+                if (!session || session.ownerId !== currentAuth.user.id || !job || job.session !== session.id) return fail(response, 404, 'RUN_NOT_FOUND', '当前登录下找不到这次任务，或任务已过期，请重新发起');
                 if (!match[2]) { const { session: omittedSession, created: omittedCreated, ...publicJob } = job; return send(response, 200, publicJob); }
                 const format = url.searchParams.get('format');
-                if (!['json', 'markdown'].includes(format) || [...url.searchParams.keys()].some(name => name !== 'format')) return fail(response, 400, 'EXPORT_FORMAT_INVALID', '仅允许json或markdown导出');
-                if (job.status !== 'completed') return fail(response, 409, 'RUN_NOT_COMPLETED', '任务尚未完成');
+                if (!['json', 'markdown'].includes(format) || [...url.searchParams.keys()].some(name => name !== 'format')) return fail(response, 400, 'EXPORT_FORMAT_INVALID', '暂不支持该下载格式');
+                if (job.status !== 'completed') return fail(response, 409, 'RUN_NOT_COMPLETED', '结果仍在准备中，请稍后再下载');
                 response.setHeader('Content-Disposition', `attachment; filename="huawei-demo-${job.id}.${format === 'json' ? 'json' : 'md'}"`);
                 response.writeHead(200, { 'Content-Type': format === 'json' ? 'application/json; charset=utf-8' : 'text/markdown; charset=utf-8' });
                 response.end(format === 'json' ? JSON.stringify(job.result, null, 2) + '\n' : job.markdown);
@@ -394,12 +394,12 @@ function createCloudServer(options = {}) {
             if (request.method === 'GET' && Object.hasOwn(STATIC, url.pathname)) {
                 const [relative, type] = STATIC[url.pathname];
                 let contents;
-                try { contents = readStatic(relative); } catch { return fail(response, 404, 'NOT_FOUND', '资源不可用'); }
+                try { contents = readStatic(relative); } catch { return fail(response, 404, 'NOT_FOUND', '页面内容暂时无法加载，请刷新后重试'); }
                 response.writeHead(200, { 'Content-Type': type });
                 response.end(contents);
                 return;
             }
-            fail(response, 404, 'NOT_FOUND', '页面或接口不存在');
+            fail(response, 404, 'NOT_FOUND', '没有找到该页面或功能');
         } catch (error) {
             if (response.headersSent) return response.end();
             if (error instanceof AccessError) return fail(response, error.status, error.code, error.message);
