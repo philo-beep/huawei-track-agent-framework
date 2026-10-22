@@ -316,6 +316,15 @@ function updateWizardChrome() {
     byId('wizard-next').textContent = nextLabels[step];
     byId('wizard-next').disabled = state.running;
     byId('wizard-controls-note').textContent = `第 ${step} 步，共 4 步 · ${meta.title}`;
+    const companionTip = byId('rail-companion-tip');
+    if (companionTip) {
+        companionTip.textContent = {
+            1: '先记下客户已经明确说过的内容。',
+            2: '把需求和产品资料放在同一张桌面上。',
+            3: '先准备好能审核的内容，再考虑发布。',
+            4: '下一步越具体，成交推进越轻松。',
+        }[step] || '一步一步来，关键信息不会漏。';
+    }
 }
 
 function showWizardStep(step, options = {}) {
@@ -725,10 +734,10 @@ function profileStopText(reason) {
 function profileEmptyState() {
     const wrap = element('div');
     wrap.className = 'conversation-empty';
-    const mark = element('span', 'H');
+    const mark = element('span', '✦');
     mark.className = 'empty-mark';
     const copy = element('p');
-    copy.append(element('strong', '准备好后开始画像'), element('small', '可先输入已知背景，或直接进入第一问。'));
+    copy.append(element('strong', '小麦已准备好听你说'), element('small', '写下已知背景，或直接开始第一问。'));
     wrap.append(mark, copy);
     return wrap;
 }

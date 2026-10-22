@@ -11,6 +11,22 @@
   <script src="/static/js/app.js" defer></script>
 </head>
 <body class="auth-locked">
+  <svg class="mascot-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <symbol id="mascot-xiaomai" viewBox="0 0 160 160">
+      <ellipse cx="80" cy="147" rx="43" ry="7" fill="#263447" opacity=".1"/>
+      <path d="M43 126c2-22 15-35 37-35s35 13 37 35v11H43z" fill="#f3eadc"/>
+      <path d="M48 105c-12-10-18-24-16-40l4-31c1-7 8-10 13-5l19 20h25l19-20c5-5 12-2 13 5l4 31c2 16-4 30-16 40-10 9-21 13-32 13s-22-4-33-13z" fill="#c98954"/>
+      <path d="M48 72c-2-12 0-23 4-34l15 16c-10 3-16 10-19 18zm64 0c2-12 0-23-4-34L93 54c10 3 16 10 19 18z" fill="#845735"/>
+      <path d="M48 79c0-15 13-27 32-27s32 12 32 27c0 22-13 38-32 38S48 101 48 79z" fill="#fff5e7"/>
+      <circle cx="63" cy="77" r="3.8" fill="#263447"/><circle cx="97" cy="77" r="3.8" fill="#263447"/>
+      <path d="M73 89c0-4 3-6 7-6s7 2 7 6c0 3-3 5-7 5s-7-2-7-5z" fill="#503d38"/>
+      <path d="M80 94v5m-8-1c2 5 5 7 8 7s6-2 8-7" fill="none" stroke="#503d38" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M57 91c4-3 9-3 13 0m23 0c4-3 9-3 13 0" fill="none" stroke="#e7ad94" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+      <path d="M45 120c10 9 22 13 35 13s25-4 35-13l-8 17H53z" fill="#c7000b"/>
+      <path d="M80 126l4 5-4 5-4-5z" fill="#fff" opacity=".96"/>
+      <path d="M63 137v8m34-8v8" stroke="#c98954" stroke-width="8" stroke-linecap="round"/>
+    </symbol>
+  </svg>
   <noscript><div class="noscript">请开启浏览器脚本功能后使用华销智策。</div></noscript>
   <div id="prelogin" class="prelogin" data-stage="welcome">
     <div class="prelogin-grid" aria-hidden="true"></div>
@@ -19,7 +35,7 @@
     <header class="prelogin-header">
       <div class="brand-lockup brand-lockup-light">
         <span class="huawei-flower" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售助手</small></span>
+        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售工作助手</small></span>
       </div>
       <div class="prelogin-header-actions">
         <span class="secure-chip"><i></i>登录信息加密保护</span>
@@ -39,15 +55,20 @@
           <span><b>01</b>资料有出处</span><span><b>02</b>权限分级</span><span><b>03</b>关键动作人工确认</span>
         </div>
       </section>
-      <section class="agent-scene" aria-label="销售智能体流程示意">
-        <div class="scene-halo" aria-hidden="true"></div>
-        <div class="scene-axis" aria-hidden="true"><i></i><i></i><i></i></div>
-        <article class="scene-card scene-card-a"><span class="scene-index">客户线索</span><strong>客户真实语境</strong><p>原话、场景与待确认项</p><i class="scene-pulse"></i></article>
-        <article class="scene-card scene-card-b"><span class="scene-index">产品依据</span><strong>产品与资料来源</strong><p>型号、配置、使用限制与出处</p><i class="scene-pulse"></i></article>
-        <article class="scene-card scene-card-c"><span class="scene-index">下一步</span><strong>下一步推进建议</strong><p>负责人、触发条件与边界</p><i class="scene-pulse"></i></article>
-        <div class="scene-core"><span class="core-flower"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>华销智策</b><small>销售智能助手</small></div>
-        <div class="scene-float scene-float-a">待确认 <b>2</b></div>
-        <div class="scene-float scene-float-b">资料检查 <b>已完成</b></div>
+      <section class="companion-scene" aria-label="销售工作助手流程示意">
+        <div class="welcome-preview">
+          <div class="preview-header"><span><i aria-hidden="true"></i>华销智策 · 工作一览</span><small>流程示意</small></div>
+          <div class="preview-intro"><span>把准备交给助手，把时间留给客户</span><h2>每一步，心里有数。</h2></div>
+          <ol class="preview-flow">
+            <li><span>01</span><p><strong>了解客户</strong><small>从一句话开始，理清真实需求</small></p><b aria-hidden="true">↗</b></li>
+            <li><span>02</span><p><strong>按需选品</strong><small>候选、理由与资料依据一起看</small></p><b aria-hidden="true">↗</b></li>
+            <li><span>03</span><p><strong>准备内容</strong><small>公众号 · 小红书 · 朋友圈</small></p><b aria-hidden="true">↗</b></li>
+            <li><span>04</span><p><strong>报价与成交</strong><small>准备方案，明确下一步销售动作</small></p><b aria-hidden="true">↗</b></li>
+          </ol>
+          <div class="preview-footer"><span aria-hidden="true">✓</span> 资料有据可查，关键动作由你确认</div>
+        </div>
+        <div class="welcome-companion"><svg class="mascot-art mascot-welcome" viewBox="0 0 160 160" aria-hidden="true"><use href="#mascot-xiaomai"/></svg><p><strong>你好，我是小麦。</strong><span>你的销售工作搭档，<br>陪你把每一次沟通准备好。</span></p></div>
+        <span class="welcome-petal petal-one" aria-hidden="true"></span><span class="welcome-petal petal-two" aria-hidden="true"></span>
       </section>
     </main>
     <section id="auth-stage" class="auth-stage" hidden aria-labelledby="auth-title">
@@ -56,6 +77,7 @@
         <p class="welcome-kicker"><span></span>你的销售准备工作台</p>
         <h2>把复杂的销售准备，<br>变成清晰的<span>下一步</span>。</h2>
         <p>登录后进入受保护工作台。系统按角色开放分析能力，关键结论、价格与客户动作仍需人工复核。</p>
+        <div class="auth-companion"><svg class="mascot-art" viewBox="0 0 160 160" aria-hidden="true"><use href="#mascot-xiaomai"/></svg><p><strong>小麦在这里，等你开工。</strong><span>今天，也从一个清晰的下一步开始。</span></p></div>
         <div class="auth-flow">
           <div><b>01</b><span><strong>识别客户</strong><small>逐题补齐画像，保留原话依据</small></span></div>
           <div><b>02</b><span><strong>按需选品</strong><small>候选、需求对照与限制同步展示</small></span></div>
@@ -96,7 +118,7 @@
     <div class="header-inner">
       <a class="brand-lockup" href="/" aria-label="华销智策首页">
         <span class="huawei-flower" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售智能体</small></span>
+        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售工作助手</small></span>
       </a>
       <div class="header-status"><span class="status-dot"></span><span>人工确认边界已启用</span></div>
       <div class="account-tools">
@@ -109,6 +131,35 @@
   <div id="access-notice" class="access-notice" role="status" hidden></div>
 
   <main id="app-main">
+    <div class="workspace-layout">
+      <aside class="workflow-rail" aria-label="销售工作流程">
+        <div class="rail-brand">
+          <p class="rail-eyebrow">SALES ASSISTANT</p>
+          <div class="rail-title"><strong>本次客户推进</strong><span>四步向导</span></div>
+          <p>四步理清重点，随时可以调整或跳过。</p>
+        </div>
+        <nav id="wizard-nav" class="wizard-steps" aria-label="销售流程步骤">
+          <button type="button" class="wizard-step is-active" data-step-target="1" aria-current="step">
+            <span class="wizard-step-index">01</span><span class="wizard-step-copy"><strong>客户画像</strong><small>先听懂客户</small></span><span class="wizard-step-state" data-step-state>当前</span>
+          </button>
+          <button type="button" class="wizard-step" data-step-target="2">
+            <span class="wizard-step-index">02</span><span class="wizard-step-copy"><strong>产品匹配</strong><small>找到合适产品</small></span><span class="wizard-step-state" data-step-state>待进行</span>
+          </button>
+          <button type="button" class="wizard-step" data-step-target="3">
+            <span class="wizard-step-index">03</span><span class="wizard-step-copy"><strong>内容准备</strong><small>整理沟通材料</small></span><span class="wizard-step-state" data-step-state>待进行</span>
+          </button>
+          <button type="button" class="wizard-step" data-step-target="4">
+            <span class="wizard-step-index">04</span><span class="wizard-step-copy"><strong>报价与成交</strong><small>明确下一步动作</small></span><span class="wizard-step-state" data-step-state>待进行</span>
+          </button>
+        </nav>
+        <div class="rail-companion-card">
+          <span class="rail-mascot-wrap"><svg class="mascot-art mascot-rail" viewBox="0 0 160 160" aria-hidden="true"><use href="#mascot-xiaomai"/></svg></span>
+          <p><strong>小麦陪你一起</strong><span id="rail-companion-tip">先记下客户已经明确说过的内容。</span></p>
+          <span class="companion-spark" aria-hidden="true">✦</span>
+        </div>
+        <div class="rail-reassurance"><span aria-hidden="true">✓</span><p><strong>每一步都有依据</strong><small>未知信息会保留为待确认</small></p></div>
+      </aside>
+      <div class="workspace-main">
     <div class="wizard-shell" id="wizard-top">
       <div class="wizard-intro">
         <div class="wizard-intro-copy">
@@ -120,20 +171,6 @@
         </div>
         <p id="engine-status" class="wizard-engine-status" role="status">正在确认本次可用的分析功能……</p>
       </div>
-      <nav id="wizard-nav" class="wizard-steps" aria-label="销售流程步骤">
-        <button type="button" class="wizard-step is-active" data-step-target="1" aria-current="step">
-          <span class="wizard-step-index">01</span><span class="wizard-step-copy"><strong>客户画像</strong><small>逐题深入</small></span><span class="wizard-step-state" data-step-state>当前</span>
-        </button>
-        <button type="button" class="wizard-step" data-step-target="2">
-          <span class="wizard-step-index">02</span><span class="wizard-step-copy"><strong>产品匹配</strong><small>按需选品</small></span><span class="wizard-step-state" data-step-state>待进行</span>
-        </button>
-        <button type="button" class="wizard-step" data-step-target="3">
-          <span class="wizard-step-index">03</span><span class="wizard-step-copy"><strong>内容生成</strong><small>草稿与发布检查</small></span><span class="wizard-step-state" data-step-state>待进行</span>
-        </button>
-        <button type="button" class="wizard-step" data-step-target="4">
-          <span class="wizard-step-index">04</span><span class="wizard-step-copy"><strong>报价与成交</strong><small>方案与动作</small></span><span class="wizard-step-state" data-step-state>待进行</span>
-        </button>
-      </nav>
     </div>
 
     <section id="profile-studio" class="panel feature-panel wizard-panel" data-wizard-panel="1" aria-labelledby="profile-title">
@@ -143,9 +180,9 @@
       </div>
       <div class="profile-grid">
         <aside class="profile-guide">
-          <div class="guide-badge">客户画像访谈</div>
-          <h3>从一句话开始</h3>
-          <p>请以销售顾问视角录入客户已知背景。系统会将其作为第一条客户信息，随后逐题补齐客户角色、行业、场景、需求、痛点与采购阶段。</p>
+          <div class="profile-mascot-intro"><span class="profile-mascot-wrap"><svg class="mascot-art mascot-profile" viewBox="0 0 160 160" aria-hidden="true"><use href="#mascot-xiaomai"/></svg></span><span class="guide-badge">小麦的暖心提示</span></div>
+          <h3>先从你知道的开始</h3>
+          <p>你好，我是小麦。告诉我一点客户背景就好；接下来我们一起梳理角色、需求和采购进度。还不清楚的，先留待确认。</p>
           <div class="progress-block">
             <div class="progress-copy"><span>画像覆盖</span><strong id="profile-progress-label">0%</strong></div>
             <div class="progress-track" aria-hidden="true"><span id="profile-progress-bar"></span></div>
@@ -160,7 +197,7 @@
             <button id="profile-reset" class="text-button" type="button">重新开始</button>
           </div>
           <div id="profile-conversation" class="conversation-log" aria-live="polite">
-            <div class="conversation-empty"><span class="empty-mark">H</span><p><strong>准备好后开始画像</strong><small>可先输入已知背景，或直接进入第一问。</small></p></div>
+            <div class="conversation-empty"><span class="empty-mark">✦</span><p><strong>小麦已准备好听你说</strong><small>写下已知背景，或直接开始第一问。</small></p></div>
           </div>
           <form id="profile-start-form" class="start-box">
             <label for="profile-opening">已知客户背景 <span>可选 · 最多 800 字</span></label>
@@ -326,6 +363,8 @@
       <button id="wizard-prev" class="button button-quiet" type="button">上一步</button>
       <span id="wizard-controls-note">第 1 步，共 4 步</span>
       <button id="wizard-next" class="button button-primary" type="button">跳过画像，手动选品</button>
+    </div>
+      </div>
     </div>
   </main>
 
