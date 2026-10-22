@@ -9,6 +9,7 @@ const { localKnowledge, extractFacts } = require('./knowledge');
 const { runReleaseVerification } = require('./release-verification');
 const { assessBudget } = require('./budget-assessment');
 const { plainText, cleanProse, humanStatus, humanDate, cleanSourceTitle } = require('./sales-copy');
+const { composeCreativeDraft, renderPublishMarkdown } = require('./creative-copy');
 
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const DEFAULT_REGISTRY_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'image_review_registry.json');
@@ -155,6 +156,7 @@ function imageCallout(image, index, instruction) {
     `<!-- IMAGE:${image.marker} -->`,
     `> **配图 ${index + 1}｜${POSITION_LABELS[image.position] || '配图'}**`,
     `> 插入位置：${instruction}`,
+    `![${image.caption}](/api/content-images/${image.sha256})`,
     `> 图片：${image.file_name}`,
     `> 说明：${image.caption}`,
     `> 来源：产品资料库“${image.ima_kb_name}”`,
@@ -194,7 +196,7 @@ function factsAsCards(facts, compact = false) {
   });
 }
 
-function composePublicAccount(context, product, images) {
+function composeLegacyPublicAccount(context, product, images) {
   const { audience, scenario, shortScenario, needs, preferences, painPoints, organization, facts } = context;
   const title = `${shortScenario}的笔记本，先核对 ${facts.length} 项公开资料`;
   const lead = `这次需求来自${audience}：${scenario}。不先比谁的宣传语更响，而是把实际任务、软件与文件条件、可追溯资料放在同一张清单里。`;
@@ -231,7 +233,7 @@ function composePublicAccount(context, product, images) {
   };
 }
 
-function composeXiaohongshu(context, product, images) {
+function composeLegacyXiaohongshu(context, product, images) {
   const { audience, scenario, shortScenario, needs, preferences, painPoints, facts } = context;
   const title = `${shortScenario}｜先列任务，再核对 ${facts.length} 项资料`;
   const lead = `${audience}在准备“${scenario}”。这是一份合成需求下的选型核对清单，不冒充真实使用体验。`;
@@ -248,7 +250,7 @@ function composeXiaohongshu(context, product, images) {
   };
 }
 
-function composeMoments(context, product, images) {
+function composeLegacyMoments(context, product, images) {
   const { audience, scenario, shortScenario, needs, facts } = context;
   const title = `${product.product_name}｜${shortScenario}`;
   const lead = `${audience}的“${scenario}”，先核对任务和资料，不先许诺兼容与价格。`;
@@ -263,15 +265,54 @@ function composeMoments(context, product, images) {
   };
 }
 
-function composeDraft(profile, product, facts, images, platform = '公众号') {
+function composeLegacyDraft(profile, product, facts, images, platform = '公众号') {
   const spec = platformSpec(platform);
   const context = draftContext(profile, product, facts);
   const draft = platform === '小红书'
-    ? composeXiaohongshu(context, product, images)
+    ? composeLegacyXiaohongshu(context, product, images)
     : platform === '朋友圈'
-      ? composeMoments(context, product, images)
-      : composePublicAccount(context, product, images);
+      ? composeLegacyMoments(context, product, images)
+      : composeLegacyPublicAccount(context, product, images);
   return draft;
+}
+
+function imageInstruction(marker) {
+  if (marker === 'after_title') return '标题和导语之后';
+  if (marker === 'after_requirements') return '任务说明之后';
+  if (marker === 'after_facts') return '资料摘录之后';
+  return '行动引导之前';
+}
+
+function composeDraftBundle(profile, product, facts, images, platform = '公众号') {
+  const creative = composeCreativeDraft({ profile, product, facts, platform });
+  const blocks = creative.blocks.map(block => ({ ...block }));
+  const insertions = [];
+  const findIndex = id => blocks.findIndex(block => block.id === id);
+  for (let index = 0; index < images.length; index += 1) {
+    const image = images[index];
+    const callout = imageCallout(image, index, imageInstruction(image.marker));
+    if (image.marker === 'after_title') insertions.push({ index: 0, callout });
+    else if (image.marker === 'after_requirements') insertions.push({ index: findIndex('context') + 1, callout });
+    else if (image.marker === 'after_facts') insertions.push({ index: findIndex('facts') + 1, callout });
+    else insertions.push({ index: findIndex('boundary') + 1, callout });
+  }
+  insertions.sort((first, second) => second.index - first.index).forEach(item => {
+    if (item.index >= 0) blocks.splice(Math.min(item.index, blocks.length), 0, { id: 'image', markdown: item.callout });
+  });
+  const draft = {
+    title: creative.title,
+    lead: creative.lead,
+    body_markdown: blocks.map(block => block.markdown).join('\n\n'),
+    cta: creative.cta,
+    tags: creative.tags,
+  };
+  return {
+    draft,
+    blocks: creative.blocks,
+    fact_highlights: creative.fact_highlights,
+    expression_strategy: creative.expression_strategy,
+    platform,
+  };
 }
 
 function renderArticleMarkdown(result) {
@@ -305,7 +346,7 @@ function renderArticleMarkdown(result) {
     `# ${plainText(result.draft.title)}`, '',
     `> 平台：${result.platform}；内容结构：${plainText(result.platform_profile.format)}；建议资料依据不超过 ${result.platform_profile.max_facts} 项；建议图片不超过 ${result.platform_profile.image_limit} 张。`, '',
     plainText(result.draft.lead), '',
-    cleanProse(result.draft.body_markdown), '',
+    result.draft.body_markdown, '',
     '## 下一步沟通', '',
     plainText(result.draft.cta), '',
     '## 预算核对', '',
@@ -363,7 +404,8 @@ async function runContentDraft(input, options = {}) {
   const limit = Math.min(input.image_limit || spec.default_image_limit, spec.max_image_limit);
   const images = reviewedProduct ? verifiedImages(registry, reviewedProduct, limit).map(image => ({ ...image, ima_kb_name: registry.knowledge_base.kb_name })) : [];
   const budgetAssessment = assessBudget(input.match_input.profile, resolved.product_name, knowledge);
-  const draft = composeDraft(input.match_input.profile, resolved, selectedFacts, images, input.platform);
+  const composed = composeDraftBundle(input.match_input.profile, resolved, selectedFacts, images, input.platform);
+  const draft = composed.draft;
   const profileBasis = safeProfile(input.match_input.profile, budgetAssessment);
   const citations = selectedFacts.map(fact => ({
     fact_id: fact.id,
@@ -417,8 +459,43 @@ async function runContentDraft(input, options = {}) {
     citations,
     image_expected: limit,
   });
+  const publishMarkdown = renderPublishMarkdown({
+    platform: input.platform,
+    title: draft.title,
+    lead: draft.lead,
+    blocks: composed.blocks,
+    fact_highlights: composed.fact_highlights,
+    cta: draft.cta,
+    tags: draft.tags,
+  });
+  const publishCopy = {
+    status: verification.overall_status === 'blocked' ? 'blocked' : verification.publication_ready ? 'ready' : 'text_only_ready',
+    text_ready: verification.overall_status !== 'blocked' && verification.safe_content_ready,
+    title: draft.title,
+    markdown: publishMarkdown,
+    character_count: Array.from(publishMarkdown).length,
+    tags: draft.tags,
+    fact_excerpts: composed.fact_highlights.map(item => ({
+      heading: item.heading,
+      label: item.label,
+      value: item.value,
+      quote: item.quote,
+      source_title: item.source_title,
+    })),
+    image_order: imageSources.map((image, index) => ({
+      order: index + 1,
+      file_name: image.file_name,
+      caption: image.caption,
+      position: image.position,
+      asset_url: image.asset_url,
+      instruction: imageInstruction(image.marker),
+      rights_status: image.rights_status,
+      publication_ready: image.publication_ready,
+    })),
+    source_note: '资料来源为华为官网公开产品页；具体配置、软件适配、库存与报价以实际确认结果为准。',
+  };
   const result = {
-    schema_version: '1.2',
+    schema_version: '1.3',
     status: verification.overall_status === 'blocked' ? 'blocked' : 'ready_for_review',
     synthetic: /合成样例|合成测试|虚构客户/.test(String(input.match_input.profile.raw_request || '')),
     generated_at: new Date().toISOString(),
@@ -446,7 +523,9 @@ async function runContentDraft(input, options = {}) {
     },
     profile_basis: profileBasis,
     budget_assessment: budgetAssessment,
+    expression_strategy: composed.expression_strategy,
     draft,
+    publish_copy: publishCopy,
     image_sources: imageSources,
     insertion_plan: insertionPlan,
     citations,
@@ -481,7 +560,7 @@ function readReviewedImage(sha256, registryPath = DEFAULT_REGISTRY_PATH) {
 }
 
 function renderContentDraftMarkdown(result) {
-  return renderArticleMarkdown(result);
+  return result.publish_copy?.markdown || renderArticleMarkdown(result);
 }
 
 function contentGenerationExamples() {
@@ -499,6 +578,9 @@ function contentGenerationExamples() {
 module.exports = {
   runContentDraft,
   renderContentDraftMarkdown,
+  composeLegacyDraft,
+  composeDraftBundle,
+  imageInstruction,
   readReviewedImage,
   contentGenerationExamples,
   DEFAULT_REGISTRY_PATH,

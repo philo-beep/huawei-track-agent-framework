@@ -12,6 +12,9 @@
 - `guided_profile.test.js`：逐题画像首问、单问约束、原话证据校验、缺证降级、覆盖阈值、8 轮上限和 HTTP/CSRF/任务轮询。
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
 - `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项发布前检查、授权调整和错误型号拒绝测试。
+- `creative_copy.test.js`：人群 / 任务 / 平台表达策略差异、原文参数锁定、直发正文与内部审核材料分离、配图顺序和授权边界。
+- `blind_review.js`：生成 9 组 A/B 销售盲测包、代理预检报告、评分表和公众号 / 小红书 / 朋友圈文字可发样例。
+- `CREATIVE_COPY_STRATEGY.md`：受控创意文案的分层规则、人群 / 任务 / 平台矩阵和开源方法借鉴记录。
 - `sales_copy.test.js`：销售可见 Markdown 去技术化回归，阻止模型名、内部编号、JSON、门禁、排序分、英文字段和开发术语重新出现。
 - `extension_regression.test.js`：两款型号 × 三个平台的正常矩阵，以及信息缺失、预算冲突、图片错配和边界场景。
 - `extension_coverage_matrix.json`：功能 × 场景 × 型号 / 平台覆盖清单；测试会校验 6 个型号平台组合无缺口。
@@ -51,6 +54,7 @@ node --test tests/extension_regression.test.js
 node --test tests/release_verification.test.js
 node --test tests/solution_planning.test.js
 node --test tests/content_api.test.js
+node tests/blind_review.js
 # 本机回环受沙箱限制时，需在沙箱外运行 content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -B -m unittest discover -s tests -v

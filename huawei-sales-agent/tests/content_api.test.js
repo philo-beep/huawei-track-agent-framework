@@ -52,6 +52,8 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(script, /content-platform/);
         assert.match(script, /朋友圈/);
         assert.match(script, /renderVerificationResult/);
+        assert.match(script, /appendDraftBodyWithImages/);
+        assert.match(script, /createContentImagePreview/);
         const auth = await authenticate(origin);
         const examples = auth.examples;
         const cookie = auth.cookie;
@@ -89,6 +91,7 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(completedContent.markdown, /发布前检查结果/);
         assert.match(completedContent.markdown, /需要处理的问题/);
         assert.match(completedContent.markdown, /图片来源清单/);
+        assert.match(completedContent.markdown, /!\[[^\]]+\]\(\/api\/content-images\/[a-f0-9]{64}\)/);
         const exportResponse = await fetch(`${origin}/api/runs/${contentJob.id}/export?format=markdown`, { headers: { Cookie: cookie } });
         assert.equal(exportResponse.status, 200);
         assert.match(await exportResponse.text(), /建议|配图/);

@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "note": "仅使用与目标型号精确匹配的数据源图片；公开发布授权完成前不插入正文。",
+  "assets": [
+    {
+      "sample": "01-procurement-wechat.md",
+      "persona": "制造企业采购负责人",
+      "platform": "公众号",
+      "order": 1,
+      "instruction": "标题和导语之后",
+      "caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+      "asset_url": "/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png"
+    },
+    {
+      "sample": "01-procurement-wechat.md",
+      "persona": "制造企业采购负责人",
+      "platform": "公众号",
+      "order": 2,
+      "instruction": "任务说明之后",
+      "caption": "文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。",
+      "asset_url": "/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-accessories-m-pen-3.jpg",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg"
+    },
+    {
+      "sample": "01-procurement-wechat.md",
+      "persona": "制造企业采购负责人",
+      "platform": "公众号",
+      "order": 3,
+      "instruction": "资料摘录之后",
+      "caption": "机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。",
+      "asset_url": "/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b",
+      "source_url": "https://res2.vmallres.com/pimages/FssCdnProxy/vmall_product_uom/pmsSalesFile/428_428_35A94B08C66B2031CE4AF5C901CF37D7.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b.png"
+    },
+    {
+      "sample": "01-procurement-wechat.md",
+      "persona": "制造企业采购负责人",
+      "platform": "公众号",
+      "order": 4,
+      "instruction": "行动引导之前",
+      "caption": "HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。",
+      "asset_url": "/api/content-images/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-pink.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d.png"
+    },
+    {
+      "sample": "02-educator-xiaohongshu.md",
+      "persona": "民办培训机构教研老师",
+      "platform": "小红书",
+      "order": 1,
+      "instruction": "标题和导语之后",
+      "caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+      "asset_url": "/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png"
+    },
+    {
+      "sample": "02-educator-xiaohongshu.md",
+      "persona": "民办培训机构教研老师",
+      "platform": "小红书",
+      "order": 2,
+      "instruction": "任务说明之后",
+      "caption": "文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。",
+      "asset_url": "/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-accessories-m-pen-3.jpg",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b.jpg"
+    },
+    {
+      "sample": "02-educator-xiaohongshu.md",
+      "persona": "民办培训机构教研老师",
+      "platform": "小红书",
+      "order": 3,
+      "instruction": "资料摘录之后",
+      "caption": "机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。",
+      "asset_url": "/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b",
+      "source_url": "https://res2.vmallres.com/pimages/FssCdnProxy/vmall_product_uom/pmsSalesFile/428_428_35A94B08C66B2031CE4AF5C901CF37D7.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b.png"
+    },
+    {
+      "sample": "03-executive-moments.md",
+      "persona": "初创公司创始人",
+      "platform": "朋友圈",
+      "order": 1,
+      "instruction": "标题和导语之后",
+      "caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+      "asset_url": "/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+      "source_url": "https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/pdp/harmonyos-computer/matebook-14-harmonyos-version/img/design/huawei-matebook-14-color-green.png",
+      "rights_status": "official_public_reference_only_permission_pending",
+      "publication_ready": false,
+      "local_path": "huawei-sales-agent-data/datasets/raw/assets/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82.png"
+    }
+  ]
+}

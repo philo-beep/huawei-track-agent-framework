@@ -281,6 +281,13 @@ pre { max-height: 600px; overflow: auto; margin: 11px 0 0; padding: 12px; white-
 .content-image-card { margin: 0; padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
 .content-image-card img { display: block; width: 100%; height: 210px; object-fit: contain; background: var(--surface-2); border-radius: 5px; }
 .content-image-card figcaption { display: grid; gap: 4px; margin-top: 8px; font-size: .76rem; }
+.content-body-with-images { display: grid; gap: 14px; margin: 12px 0 18px; }
+.content-body-fragment { margin: 0; line-height: 1.72; white-space: pre-wrap; overflow-wrap: anywhere; }
+.draft-inline-image { width: min(100%, 620px); justify-self: center; }
+.draft-inline-image img { height: auto; max-height: 430px; }
+.image-load-error { border-color: #e2b6ba; background: #fff8f8; }
+.image-load-message { margin: 0 0 4px !important; font-size: .76rem; }
+.content-image-fallback-heading { display: block; margin-top: 4px; }
 .content-source-list { display: grid; gap: 8px; }
 .content-source-item { padding: 10px 12px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
 .content-source-item p { margin: 5px 0; overflow-wrap: anywhere; }

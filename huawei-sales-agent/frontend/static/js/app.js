@@ -1185,7 +1185,7 @@ function renderVerificationResult(verification) {
         const body = element('pre', cleanProse(safe.content.body_markdown)); body.className = 'content-body';
         article.append(body, element('strong', '下一步沟通'), element('p', plainText(safe.content.cta)));
         const imageCount = (safe.content.image_ids || []).length;
-        article.append(element('p', `本版本纳入图片：${imageCount ? imageCount + ' 张' : '无（图片暂未满足发布要求）'}`));
+        article.append(element('p', `本版本纳入图片：${imageCount ? imageCount + ' 张' : '无（待授权图片不放入稳妥发布版；可在下方原稿中预览）'}`));
         if (safe.disclosures.length) {
             const disclosure = element('div'); disclosure.className = 'verification-disclosures';
             disclosure.append(element('strong', '已做的稳妥处理'));
@@ -1201,31 +1201,67 @@ function renderVerificationResult(verification) {
     }
 }
 
+function createContentImagePreview(image, options = {}) {
+    const figure = element('figure'); figure.className = 'content-image-card draft-inline-image';
+    if (image.image_id) figure.dataset.imageId = image.image_id;
+    const picture = element('img'); picture.src = image.asset_url; picture.alt = plainText(image.caption);
+    picture.loading = options.lazy === false ? 'eager' : 'lazy'; picture.decoding = 'async';
+    const caption = element('figcaption');
+    const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
+    caption.append(element('strong', plainText(image.caption)), element('span', `型号核对：一致；图片状态：${rights}`));
+    const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) caption.append(original);
+    picture.addEventListener('error', () => {
+        figure.classList.add('image-load-error');
+        if (!figure.querySelector('.image-load-message')) {
+            const message = element('p', '图片未能加载。请确认已登录、刷新页面后重试。');
+            message.className = 'image-load-message error';
+            caption.prepend(message);
+        }
+    }, { once: true });
+    figure.append(picture, caption);
+    return figure;
+}
+
+function appendDraftBodyWithImages(container, bodyMarkdown, imageSources) {
+    const imagesByMarker = new Map((imageSources || []).map(image => [image.marker, image]));
+    const used = new Set();
+    for (const chunk of String(bodyMarkdown || '').split(/\n{2,}/)) {
+        const marker = chunk.match(/^\s*<!--\s*IMAGE:([a-z_]+)\s*-->/i);
+        if (marker) {
+            const image = imagesByMarker.get(marker[1]);
+            if (image && !used.has(image.image_id)) {
+                container.append(createContentImagePreview(image, { lazy: false }));
+                used.add(image.image_id);
+            }
+            continue;
+        }
+        const text = plainText(chunk).replace(/^来源定位：.*$/gmi, '').trim();
+        if (!text) continue;
+        const block = element('div', text); block.className = 'content-body-fragment'; container.append(block);
+    }
+    const remaining = (imageSources || []).filter(image => !used.has(image.image_id));
+    if (remaining.length) {
+        const heading = element('strong', '其余待审图片'); heading.className = 'content-image-fallback-heading';
+        const grid = element('div'); grid.className = 'content-image-grid';
+        for (const image of remaining) grid.append(createContentImagePreview(image));
+        container.append(heading, grid);
+    }
+}
 function renderContentDraftResult(result, markdown) {
     renderVerificationResult(result.verification);
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
-    byId('content-summary').textContent = `平台：${result.platform}；发布前检查：${plainText(result.verification.status_label)}；稳妥版本：${result.verification.safe_content_ready ? '可用' : '暂不可用'}；产品：${result.product.resolved_name}；可核对资料：${result.citations.length} 项。原稿和待审图片只用于内部审稿。`;
+    byId('content-summary').textContent = `平台：${result.platform}；发布前检查：${plainText(result.verification.status_label)}；稳妥版本：${result.verification.safe_content_ready ? '可用' : '暂不可用'}；产品：${result.product.resolved_name}；可核对资料：${result.citations.length} 项；待审图片：${result.image_sources.length} 张。原稿中的图片只用于内部审稿。`;
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', plainText(result.draft.title)), element('p', plainText(result.draft.lead)));
-    const body = element('pre', cleanProse(result.draft.body_markdown)); body.className = 'content-body';
+    const body = element('div'); body.className = 'content-body-with-images';
+    appendDraftBodyWithImages(body, result.draft.body_markdown, result.image_sources);
     article.append(body, element('strong', '下一步沟通'), element('p', plainText(result.draft.cta)));
     article.append(element('p', `内容标签：${result.draft.tags.map(tag => plainText(tag)).join('、')}`));
     byId('content-draft').append(article);
 
     if (!result.image_sources.length) byId('content-image-sources').append(element('p', '本次未使用图片；没有用其他型号或未确认图片替代。'));
-    const imageGrid = element('div'); imageGrid.className = 'content-image-grid';
-    for (const image of result.image_sources) {
-        const figure = element('figure'); figure.className = 'content-image-card';
-        const picture = element('img'); picture.src = image.asset_url; picture.alt = image.caption; picture.loading = 'lazy';
-        const caption = element('figcaption');
-        const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
-        caption.append(element('strong', plainText(image.caption)), element('span', `型号核对：一致；图片状态：${rights}`));
-        const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) caption.append(original);
-        figure.append(picture, caption); imageGrid.append(figure);
-    }
-    byId('content-image-sources').append(imageGrid);
     const sourceList = element('div'); sourceList.className = 'content-source-list';
     for (const image of result.image_sources) {
         const item = element('details'); item.className = 'content-source-item';
@@ -1250,6 +1286,7 @@ function renderContentDraftResult(result, markdown) {
     byId('content-download-json').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=json`;
     byId('content-download-markdown').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=markdown`;
     byId('content-draft-results').hidden = false;
+    byId('content-draft-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
     updateWizardChrome();
     contentStatus(`发布前检查完成：${plainText(result.verification.status_label)}。${result.verification.safe_content_ready ? '已生成更稳妥的版本，仍请发布负责人做最终确认。' : '当前版本暂不可用，请先处理问题。'}`);
 }

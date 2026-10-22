@@ -24,7 +24,8 @@ test('sales-facing markdown avoids developer-only wording', async () => {
     assert.match(documents[0], /## 报价状态/);
     assert.match(documents[0], /正式成交报价：待确认/);
     assert.match(documents[1], /## 推荐候选/);
-    assert.match(documents[2], /## 发布前检查结果/);
+    assert.match(documents[2], /## 下一步沟通/);
+    assert.match(content.article_markdown, /## 发布前检查结果/);
 });
 test('sales-facing errors avoid developer-only wording', () => {
     const checks = [

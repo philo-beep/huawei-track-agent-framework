@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "method": "deterministic-blind-order",
+  "note": "key 只能由组织盲测的人保存，不发给评分销售。",
+  "cases": [
+    {
+      "sample": 1,
+      "id": "procurement-wechat",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 2,
+      "id": "procurement-xiaohongshu",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 3,
+      "id": "procurement-moments",
+      "a": "current",
+      "b": "legacy"
+    },
+    {
+      "sample": 4,
+      "id": "educator-wechat",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 5,
+      "id": "educator-xiaohongshu",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 6,
+      "id": "educator-moments",
+      "a": "current",
+      "b": "legacy"
+    },
+    {
+      "sample": 7,
+      "id": "executive-wechat",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 8,
+      "id": "executive-xiaohongshu",
+      "a": "legacy",
+      "b": "current"
+    },
+    {
+      "sample": 9,
+      "id": "executive-moments",
+      "a": "legacy",
+      "b": "current"
+    }
+  ],
+  "proxy_scores": [
+    {
+      "id": "procurement-wechat",
+      "legacy": {
+        "naturalness": 1,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.63,
+        "editability": 5,
+        "willingness": 4.63
+      }
+    },
+    {
+      "id": "procurement-xiaohongshu",
+      "legacy": {
+        "naturalness": 1.8499999999999996,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    },
+    {
+      "id": "procurement-moments",
+      "legacy": {
+        "naturalness": 3.6999999999999997,
+        "editability": 4,
+        "willingness": 3.6999999999999997
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    },
+    {
+      "id": "educator-wechat",
+      "legacy": {
+        "naturalness": 1,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.63,
+        "editability": 5,
+        "willingness": 4.63
+      }
+    },
+    {
+      "id": "educator-xiaohongshu",
+      "legacy": {
+        "naturalness": 1.8499999999999996,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    },
+    {
+      "id": "educator-moments",
+      "legacy": {
+        "naturalness": 3.85,
+        "editability": 4,
+        "willingness": 3.85
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    },
+    {
+      "id": "executive-wechat",
+      "legacy": {
+        "naturalness": 1,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.63,
+        "editability": 5,
+        "willingness": 4.63
+      }
+    },
+    {
+      "id": "executive-xiaohongshu",
+      "legacy": {
+        "naturalness": 1.8499999999999996,
+        "editability": 1,
+        "willingness": 1
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    },
+    {
+      "id": "executive-moments",
+      "legacy": {
+        "naturalness": 3.6999999999999997,
+        "editability": 4,
+        "willingness": 3.6999999999999997
+      },
+      "current": {
+        "naturalness": 4.75,
+        "editability": 5,
+        "willingness": 4.75
+      }
+    }
+  ]
+}

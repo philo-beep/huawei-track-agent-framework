@@ -155,7 +155,12 @@ function readableValue(value) {
 
 function cleanProse(value) {
     return String(value || '').split(/\n{2,}/)
-        .filter(chunk => !/^\s*<!--\s*IMAGE:/i.test(chunk) && !/^\s*>\s*\*\*配图/i.test(chunk))
+        .filter(chunk => !/<!--\s*IMAGE:/i.test(chunk))
+        .map(chunk => chunk.split(/\r?\n/)
+            .filter(line => !/^\s*!\[[^\]]*\]\([^)]*\)\s*$/.test(line))
+            .filter(line => !/^\s*>\s*\*\*配图/i.test(line))
+            .filter(line => !/^\s*>\s*(?:插入位置|图片|说明|来源|状态)：/i.test(line))
+            .join('\n'))
         .map(chunk => plainText(chunk).replace(/^来源定位：.*$/gmi, '').trim())
         .filter(Boolean).join('\n\n').replace(/\n{3,}/g, '\n\n');
 }
