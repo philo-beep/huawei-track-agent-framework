@@ -27,6 +27,8 @@
 | `support.js` | A | 路径、校验、脱敏和公共设施 |
 | `model.js` | A | DeepSeek OpenAI-compatible 调用、JSON 输出、上下文控制和模式声明 |
 | `profile.js` | A | 客户画像、明确输入、推断和待确认项 |
+| `guided-profile.js` | A | 逐题画像、单问约束、原话证据校验、覆盖阈值和最多 8 轮终止 |
+| `prompts/guided-profile.md` | A | 逐题画像字段、证据与单问输出提示词 |
 | `knowledge.js` | A | 本地知识检索调用和结果适配 |
 | `official.js` | A | 官网事实、型号、价格和图片证据消费 |
 | `source-health.js` | A | 来源健康和时效检查 |

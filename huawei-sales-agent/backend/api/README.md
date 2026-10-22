@@ -9,6 +9,7 @@ B 后端接口工程师。
 - `chat.py`：同源 API 请求转发、请求头过滤和错误边界。
 - `upload.py`：维护文件上传接口边界；当前策略是明确拒绝上传，避免客户资料落盘。
 - 负责数据入库接口、缓存、请求限流、异常捕获、会话记忆和聊天历史持久化的接口边界。
+- 公开 `POST /api/profile-steps` 逐题客户画像任务；每轮只接受脱敏对话，由 Agent 调用云端模型分析并返回下一问或完成画像，复用 `/api/runs/{id}` 查询与导出。
 - 公开 `POST /api/product-matches` 产品匹配任务；复用会话、CSRF、限流和 `/api/runs/{id}` 查询/导出边界。
 - 公开 `POST /api/content-drafts` 多平台内容任务，`platform` 仅接受公众号、小红书、朋友圈；服务端按 `match_input + candidate_id` 重新核验，不信任前端现成正文。
 - `GET /api/content-images/<sha256>` 只提供图片审稿清单中登记的附件；未知指纹返回 404。
@@ -31,7 +32,7 @@ B 后端接口工程师。
 
 ## 验收
 
-- 同源请求成功，跨源请求被拒绝；/api/product-matches 与 /api/content-drafts 的输入、并发、限流、查询和导出可复现。
+- 同源请求成功，跨源请求被拒绝；/api/profile-steps、/api/product-matches 与 /api/content-drafts 的输入、并发、限流、查询和导出可复现；画像接口固定最多 8 次追问并拒绝 CSRF/跨源请求。
 - 图文图片路由只能返回 image_review_registry.json 的已登记 SHA-256，不能借路径参数读取任意文件。
 - 请求体大小、请求方法和错误结构符合契约。
 - `/api/upload` 明确返回未实现，不落盘。

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:guided-profile-input:1.0",
+  "title": "逐题客户画像输入 GuidedProfileInput v1.0",
+  "description": "前端仅提交脱敏对话；模型判定和终止规则由 Agent 层执行。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "messages"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "restart": {"type": "boolean"},
+    "messages": {
+      "type": "array",
+      "maxItems": 17,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "content"],
+        "properties": {
+          "role": {"enum": ["user", "assistant"]},
+          "content": {"type": "string", "minLength": 1, "maxLength": 800}
+        }
+      }
+    }
+  }
+}

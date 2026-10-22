@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huawei-growth:guided-profile-output:1.0",
+  "title": "逐题客户画像输出 GuidedProfileOutput v1.0",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "status", "turn", "max_turns", "coverage", "fields", "next_question", "summary", "product_match_profile", "runtime", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["question", "complete"]},
+    "turn": {"type": "integer", "minimum": 0, "maximum": 8},
+    "max_turns": {"const": 8},
+    "stop_reason": {"type": ["string", "null"], "enum": [null, "coverage_threshold", "gap_threshold", "max_turns"]},
+    "coverage": {
+      "type": "object",
+      "required": ["covered_count", "total_count", "core_covered_count", "core_total_count", "threshold", "gap_threshold", "covered_dimensions", "missing_dimensions"],
+      "properties": {
+        "covered_count": {"type": "integer", "minimum": 0, "maximum": 10},
+        "total_count": {"const": 10},
+        "core_covered_count": {"type": "integer", "minimum": 0, "maximum": 6},
+        "core_total_count": {"const": 6},
+        "threshold": {"const": 6},
+        "gap_threshold": {"const": 2},
+        "covered_dimensions": {"type": "array", "items": {"type": "string"}},
+        "missing_dimensions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "fields": {"type": "object"},
+    "next_question": {
+      "type": ["object", "null"],
+      "properties": {
+        "dimension": {"type": "string"},
+        "text": {"type": "string", "maxLength": 180},
+        "options": {"type": "array", "maxItems": 4, "items": {"type": "string"}},
+        "source": {"enum": ["cloud_model", "program_fallback"]}
+      }
+    },
+    "summary": {"type": "string"},
+    "product_match_profile": {"type": "object"},
+    "runtime": {"type": "object"},
+    "diagnostics": {"type": "array"}
+  }
+}

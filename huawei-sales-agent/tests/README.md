@@ -9,6 +9,7 @@
 ## 职责
 
 - `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
+- `guided_profile.test.js`：逐题画像首问、单问约束、原话证据校验、缺证降级、覆盖阈值、8 轮上限和 HTTP/CSRF/任务轮询。
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
 - `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项门禁、授权降级和错误型号拒绝测试。
 - `extension_regression.test.js`：两款型号 × 三个平台的正常矩阵，以及信息缺失、预算冲突、图片错配和边界场景。
@@ -41,6 +42,7 @@
 从 `huawei-sales-agent/` 运行：
 
 ```powershell
+node --test tests/guided_profile.test.js
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
 node --test tests/extension_regression.test.js

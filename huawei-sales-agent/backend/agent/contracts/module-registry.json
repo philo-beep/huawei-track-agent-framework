@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "contract_version": "3.3",
-  "updated": "2026-10-21",
+  "updated": "2026-10-22",
   "status": "active",
   "authority": "huawei-sales-agent/backend/agent/contracts/",
   "specification": "文件归属与责任矩阵.md",
@@ -35,7 +35,9 @@
         "huawei-sales-agent/backend/agent/product-catalog.js",
         "huawei-sales-agent/backend/agent/product-match.js",
         "huawei-sales-agent/backend/agent/product-match-verification.js",
-        "huawei-sales-agent/backend/agent/prompts/product-match.md"
+        "huawei-sales-agent/backend/agent/prompts/product-match.md",
+        "huawei-sales-agent/backend/agent/guided-profile.js",
+        "huawei-sales-agent/backend/agent/prompts/guided-profile.md"
       ],
       "responsibilities": [
         "主/子 Agent 调度",
@@ -114,7 +116,9 @@
     "product_match_input": "huawei-sales-agent/backend/agent/contracts/product-match-input.schema.json",
     "product_match_output": "huawei-sales-agent/backend/agent/contracts/product-match-output.schema.json",
     "content_generation_input": "huawei-sales-agent/backend/agent/contracts/content-generation-input.schema.json",
-    "content_generation_output": "huawei-sales-agent/backend/agent/contracts/content-generation-output.schema.json"
+    "content_generation_output": "huawei-sales-agent/backend/agent/contracts/content-generation-output.schema.json",
+    "guided_profile_input": "huawei-sales-agent/backend/agent/contracts/guided-profile-input.schema.json",
+    "guided_profile_output": "huawei-sales-agent/backend/agent/contracts/guided-profile-output.schema.json"
   },
   "examples": {
     "pipeline_input": "huawei-sales-agent-data/datasets/test_sample/pipeline_input.json",
@@ -135,7 +139,8 @@
     "verified": "已通过 A 的联调、E 的辅助验收和相应测试。",
     "pending_external": "缺少真实政策、许可、客户验证或赛事认可，不能由内部推定关闭。",
     "product_match": "产品匹配 v1.1 已实现规范产品注册表、多查询 IMA 召回、逐条件覆盖、逐字证据引文和证据失败回退；当前报价和兼容矩阵仍不完整。",
-    "content_generation": "多平台内容生成 v1.2 固定覆盖 MateBook 14 鸿蒙版与 2024（酷睿 Ultra），支持公众号、小红书、朋友圈；包含平台结构、预算快照待确认、精确型号图片与六项发布门禁。"
+    "content_generation": "多平台内容生成 v1.2 固定覆盖 MateBook 14 鸿蒙版与 2024（酷睿 Ultra），支持公众号、小红书、朋友圈；包含平台结构、预算快照待确认、精确型号图片与六项发布门禁。",
+    "guided_profile": "逐题客户画像 v1.0 已接入 DeepSeek 结构化分析、逐字原话证据、单问约束、覆盖阈值与最多8轮终止；HTTP 接口和页面交互已通过自动化与真实模型冒烟。"
   },
   "change_policy": {
     "owner": "B 维护契约，A 审核 Agent 生产方影响，C 复核前端消费，D 复核数据字段",

@@ -6,7 +6,7 @@ A Agent 核心工程师维护 `system.md` 和 `sub_agent.md`，并负责提示�
 
 ## 当前状态
 
-云端模型已按请求接入，模型为 `deepseek-v4.1-flash`。产品匹配会实际读取 `product-match.md`，要求模型返回逐字 `cited_span` 并经过程序核验。四步营销策略与事实选择提示词仍内嵌在 `../model.js`；`system.md` 和 `sub_agent.md` 是维护参考。
+云端模型已按请求接入，模型为 `deepseek-v4.1-flash`。产品匹配会实际读取 `product-match.md`，要求模型返回逐字 `cited_span` 并经过程序核验。逐题画像会实际读取 `guided-profile.md`，要求模型返回可定位原话、单一下一问和结构化维度，程序独立执行覆盖与轮次终止。四步营销策略与事实选择提示词仍内嵌在 `../model.js`；`system.md` 和 `sub_agent.md` 是维护参考。
 
 ## 开始工作前
 
