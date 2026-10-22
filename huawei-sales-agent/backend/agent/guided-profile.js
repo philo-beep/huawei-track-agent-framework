@@ -16,53 +16,53 @@ const MAX_MESSAGE_CHARS = 800;
 
 const DIMENSIONS = [
     {
-        id: 'identity', label: '身份角色', core: true, priority: 1,
-        question: '与你沟通的客户是什么身份或岗位？',
+        id: 'identity', label: '客户角色', core: true, priority: 1,
+        question: '这位客户是什么角色，或负责哪项业务？',
         options: ['采购/IT负责人', '业务部门负责人', '个人用户'],
     },
     {
-        id: 'industry', label: '行业', core: true, priority: 2,
+        id: 'industry', label: '客户行业', core: true, priority: 2,
         question: '这位客户属于哪个行业？',
         options: ['制造业', '教育/学校', '专业服务'],
     },
     {
-        id: 'usage_scenario', label: '使用场景', core: true, priority: 3,
-        question: '设备主要在什么场景下使用？',
+        id: 'usage_scenario', label: '客户使用场景', core: true, priority: 3,
+        question: '客户计划在哪些场景使用这款产品？',
         options: ['固定办公', '移动/混合办公', '教学或培训'],
     },
     {
-        id: 'needs', label: '需求目标', core: true, priority: 4,
-        question: '这次采购最想解决的一个核心需求是什么？',
+        id: 'needs', label: '客户需求', core: true, priority: 4,
+        question: '客户这次最想解决的核心需求是什么？',
         options: ['提升移动办公效率', '替换老旧设备', '满足软件兼容'],
     },
     {
-        id: 'pain_points', label: '当前痛点', core: true, priority: 5,
-        question: '当前设备或工作流程最影响客户的问题是什么？',
+        id: 'pain_points', label: '客户痛点', core: true, priority: 5,
+        question: '客户当前最影响工作的问题是什么？',
         options: ['设备卡顿', '续航不足', '携带不便'],
     },
     {
-        id: 'purchase_stage', label: '采购阶段', core: true, priority: 6,
+        id: 'purchase_stage', label: '客户采购阶段', core: true, priority: 6,
         question: '客户目前处于哪个采购阶段？',
         options: ['刚了解', '正在比较', '已进入采购/审批'],
     },
     {
-        id: 'budget', label: '预算', core: false, priority: 7,
-        question: '客户目前是否已有预算范围？如已明确，请补充金额和口径。',
+        id: 'budget', label: '客户预算', core: false, priority: 7,
+        question: '客户目前是否有明确预算？如已明确，请说明金额和单台/总额口径。',
         options: ['预算未定', '单台预算', '总额预算'],
     },
     {
-        id: 'conversation_habit', label: '对话习惯', core: false, priority: 8,
-        question: '客户更习惯哪种沟通方式？',
+        id: 'conversation_habit', label: '客户沟通偏好', core: false, priority: 8,
+        question: '客户更偏好哪种沟通方式？',
         options: ['文字沟通', '电话沟通', '线下当面沟通'],
     },
     {
-        id: 'platform_knowledge', label: '了解平台', core: false, priority: 9,
-        question: '客户对华为产品或相关平台已经了解到什么程度？',
+        id: 'platform_knowledge', label: '客户方案认知', core: false, priority: 9,
+        question: '客户对华为产品及相关方案已经了解到什么程度？',
         options: ['刚开始了解', '已看过具体型号', '已在门店/官网比较'],
     },
     {
-        id: 'preferences', label: '偏好', core: false, priority: 10,
-        question: '客户对设备最看重哪一项偏好？',
+        id: 'preferences', label: '客户偏好', core: false, priority: 10,
+        question: '客户最看重哪项产品或服务偏好？',
         options: ['轻薄便携', '长续航', '屏幕与性能'],
     },
 ];
@@ -190,6 +190,8 @@ function validQuestion(question, coverage) {
     const text = cleanText(question.text, 180);
     if (text.length < 6 || text.length > 160) return false;
     if ((text.match(/[?？]/g) || []).length > 1) return false;
+    const selfAddressed = /(?:^|[，。；\s])(?:您|你)(?:的|在|是|主要|负责|所在|公司|行业|岗位|业务|需求|痛点|预算|采购|使用)/.test(text);
+    if (selfAddressed) return false;
     return true;
 }
 
@@ -212,7 +214,8 @@ function modelPrompt(messages, fields, coverage) {
         current_fields: fields,
         conversation: messages,
         requirements: {
-            evidence: '每个非pending字段必须提供在某个user消息中逐字出现的evidence',
+            salesperson_voice: '使用者是华为销售顾问。所有提问都面向销售顾问，询问其掌握的客户情况；问题主语必须是“客户/这位客户”，不得把销售顾问本人当作客户来询问其岗位、行业、痛点和采购阶段。',
+            evidence: '每个非pending字段必须提供在某个user消息中逐字出现的evidence；该字段是销售顾问录入的客户原话或转述',
             unknown_budget: '若客户明确说预算未定，可记作explicit，value设为“预算未定”',
             one_question_only: 'next_question.text最多一个问号，且只能询问当前missing_dimensions中的一个',
             stop: '覆盖充分时next_question必须为null',
@@ -269,7 +272,7 @@ function renderGuidedProfileMarkdown(result) {
         if (field.evidence?.length) lines.push(`  - 依据：${field.evidence.map(item => `“${item.quote}”`).join('；')}`);
     }
     if (result.next_question) lines.push('', '## 下一问', result.next_question.text);
-    lines.push('', '> 画像只包含客户明确输入或清楚标注的推断；预算、采购权限和决策链不因模型推断而升级为事实。');
+    lines.push('', '> 画像只包含销售顾问录入的客户明确信息或清楚标注的推断；预算、采购权限和决策链不因模型推断而升级为事实。');
     return lines.join('\n');
 }
 
@@ -293,7 +296,7 @@ async function runGuidedProfile(input, options = {}) {
             next_question: fallbackQuestion('industry'),
             summary: '尚未获得足够信息形成客户画像。',
             product_match_profile: productMatchProfile(fieldsFromModel({}, [])),
-            runtime: { called: false, provider: null, model: model || null, notice: '首问由程序给出；客户回答后将交给云端模型分析并决定下一问。' },
+            runtime: { called: false, provider: null, model: model || null, notice: '首问由程序给出；销售顾问提交客户信息后将交给云端模型分析并决定下一问。' },
             diagnostics: [],
         };
         result.markdown = renderGuidedProfileMarkdown(result);

@@ -3,7 +3,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const net = require('node:net');
-const { runGuidedProfile, MAX_GUIDED_TURNS } = require('../backend/agent/guided-profile');
+const path = require('node:path');
+const { runGuidedProfile, MAX_GUIDED_TURNS, DIMENSIONS } = require('../backend/agent/guided-profile');
 const { createCloudServer } = require('../backend/agent/cloud-server');
 const { authenticate, temporaryAuthFile, fs } = require('./auth_helpers');
 
@@ -47,7 +48,8 @@ test('guided profile starts with one question and does not claim a model call', 
     assert.equal(result.max_turns, MAX_GUIDED_TURNS);
     assert.equal(result.runtime.called, false);
     assert.equal(result.next_question.source, 'program_fallback');
-    assert.match(result.next_question.text, /行业/);
+    assert.match(result.next_question.text, /客户/);
+    for (const dimension of DIMENSIONS) assert.match(dimension.question, /客户/);
 });
 
 test('cloud analysis uses exact evidence and stops at the core coverage threshold', async () => {
@@ -87,6 +89,7 @@ test('model hallucinated evidence is downgraded and an invalid multi-question fa
     assert.equal(result.fields.industry.status, 'pending');
     assert.equal(result.fields.identity.value, '采购负责人');
     assert.notEqual(result.next_question.dimension, 'identity');
+    assert.match(result.next_question.text, /客户/);
     assert.ok(result.diagnostics.some(item => item.code === 'GUIDED_QUESTION_FALLBACK'));
 });
 
@@ -99,6 +102,22 @@ test('hard maximum turn limit terminates incomplete interviews', async () => {
     assert.equal(result.stop_reason, 'max_turns');
     assert.equal(result.turn, MAX_GUIDED_TURNS);
     assert.equal(result.next_question, null);
+});
+
+test('self-addressed salesperson question is rejected and replaced by customer-centric wording', async () => {
+    const messages = [{ role: 'user', content: '客户在制造业。' }];
+    const result = await runGuidedProfile({ schema_version: '1.0', messages }, {
+        runner: modelOutput([dimension('industry', '制造业', '制造业')], { dimension: 'identity', text: '您在公司的岗位是什么？', options: [] }),
+    });
+    assert.equal(result.next_question.dimension, 'identity');
+    assert.match(result.next_question.text, /客户/);
+    assert.doesNotMatch(result.next_question.text, /^您在/);
+});
+
+test('guided prompt explicitly treats the user as a sales advisor', async () => {
+    const prompt = fs.readFileSync(path.join(__dirname, '..', 'backend', 'agent', 'prompts', 'guided-profile.md'), 'utf8');
+    assert.match(prompt, /服务对象是华为销售顾问/);
+    assert.match(prompt, /禁止把销售顾问本人当作客户/);
 });
 
 test('guided-profile HTTP route validates CSRF, creates a job and returns next question', async () => {

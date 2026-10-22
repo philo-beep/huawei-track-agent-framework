@@ -138,14 +138,14 @@
 
     <section id="profile-studio" class="panel feature-panel wizard-panel" data-wizard-panel="1" aria-labelledby="profile-title">
       <div class="section-heading">
-        <div><p class="eyebrow">01 / CUSTOMER INTELLIGENCE</p><h2 id="profile-title">逐步问出客户真实决策依据</h2><p>每次只问一个问题。回答交给已配置的云端模型分析，再决定下一问；程序独立守住覆盖阈值、信息缺口和最大轮数。</p></div>
+        <div><p class="eyebrow">01 / CUSTOMER INTELLIGENCE</p><h2 id="profile-title">逐步问出客户真实决策依据</h2><p>销售顾问每次只记录一个问题。提交后交给已配置的云端模型分析下一问；程序独立守住覆盖阈值、信息缺口和最大轮数。</p></div>
         <div class="section-kpis"><span><b id="profile-turn-value">0</b> / <em id="profile-max-value">8</em><small>追问轮次</small></span><span><b id="profile-covered-value">0</b> / <em>10</em><small>维度覆盖</small></span><span><b id="profile-core-value">0</b> / <em>6</em><small>核心维度</small></span></div>
       </div>
       <div class="profile-grid">
         <aside class="profile-guide">
           <div class="guide-badge">GUIDED PROFILE</div>
           <h3>从一句话开始</h3>
-          <p>可先写下已知背景。系统会将其作为第一条客户信息，随后逐题补齐身份、行业、场景、需求、痛点与采购阶段。</p>
+          <p>请以销售顾问视角录入客户已知背景。系统会将其作为第一条客户信息，随后逐题补齐客户角色、行业、场景、需求、痛点与采购阶段。</p>
           <div class="progress-block">
             <div class="progress-copy"><span>画像覆盖</span><strong id="profile-progress-label">0%</strong></div>
             <div class="progress-track" aria-hidden="true"><span id="profile-progress-bar"></span></div>
@@ -163,7 +163,7 @@
             <div class="conversation-empty"><span class="empty-mark">H</span><p><strong>准备好后开始画像</strong><small>可先输入已知背景，或直接进入第一问。</small></p></div>
           </div>
           <form id="profile-start-form" class="start-box">
-            <label for="profile-opening">已知背景 <span>可选 · 最多 800 字</span></label>
+            <label for="profile-opening">已知客户背景 <span>可选 · 最多 800 字</span></label>
             <textarea id="profile-opening" rows="3" maxlength="800" placeholder="例如：合成客户，30 人制造企业采购负责人，正在比较笔记本，预算暂未确定。"></textarea>
             <div class="box-actions"><button id="profile-start" class="button button-primary" type="submit">开始逐步画像</button><span>云端模型将据此判断更合适的首问。</span></div>
           </form>
@@ -174,8 +174,8 @@
               <div id="profile-option-list" class="option-list"></div>
             </div>
             <form id="profile-answer-form" class="answer-box">
-              <label for="profile-answer">客户回答 <span>只记录客户明确表达</span></label>
-              <textarea id="profile-answer" rows="3" maxlength="800" placeholder="输入脱敏回答，或选择上方快捷选项……" required></textarea>
+              <label for="profile-answer">客户回答 / 销售观察 <span>优先录入客户原话，转述请注明</span></label>
+              <textarea id="profile-answer" rows="3" maxlength="800" placeholder="录入客户原话或销售转述，并注明信息来源……" required></textarea>
               <div class="box-actions"><button id="profile-answer-button" class="button button-primary" type="submit">提交并分析</button><span>本轮回答将交给云端模型。</span></div>
             </form>
           </div>
@@ -185,7 +185,7 @@
             <div id="profile-fields" class="profile-field-grid"></div>
             <div class="box-actions"><button id="profile-to-match" class="button button-primary" type="button">带入产品匹配</button><button id="profile-restart-complete" class="button button-quiet" type="button">再建一位客户</button></div>
           </div>
-          <p id="profile-status" class="status-line" role="status" aria-live="polite">尚未开始。未填写背景时首问由程序给出；填写背景或提交回答后将调用云端模型分析。</p>
+          <p id="profile-status" class="status-line" role="status" aria-live="polite">尚未开始。未填写背景时首问由程序给出；销售顾问填写背景或提交客户信息后将调用云端模型分析。</p>
         </div>
       </div>
     </section>

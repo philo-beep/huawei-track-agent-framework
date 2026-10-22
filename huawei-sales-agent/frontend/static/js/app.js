@@ -4,9 +4,9 @@ const byId = identifier => document.getElementById(identifier);
 const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
-const profileDimensionLabels = { identity: '身份角色', industry: '行业', usage_scenario: '使用场景', needs: '需求目标', pain_points: '当前痛点', purchase_stage: '采购阶段', budget: '预算', conversation_habit: '对话习惯', platform_knowledge: '了解平台', preferences: '偏好' };
+const profileDimensionLabels = { identity: '客户角色', industry: '客户行业', usage_scenario: '客户使用场景', needs: '客户需求', pain_points: '客户痛点', purchase_stage: '采购阶段', budget: '客户预算', conversation_habit: '客户沟通偏好', platform_knowledge: '客户方案认知', preferences: '客户偏好' };
 const wizardMeta = {
-    1: { title: '客户画像', count: 'STEP 01 / 04', description: '每次只问一个问题，逐步形成有原话依据的客户画像。', short: '画像' },
+    1: { title: '客户画像', count: 'STEP 01 / 04', description: '销售顾问每次只记录一个问题，逐步形成有原话依据的客户画像。', short: '画像' },
     2: { title: '产品匹配', count: 'STEP 02 / 04', description: '从客户条件出发，用产品证据、限制和逐条件覆盖筛选候选。', short: '选品' },
     3: { title: '内容生成', count: 'STEP 03 / 04', description: '将候选转化为公众号、小红书或朋友圈的可审核内容准备稿。', short: '内容' },
     4: { title: '报价与成交', count: 'STEP 04 / 04', description: '生成四级假设价格、演示方案与带人工确认边界的成交动作。', short: '成交' },
@@ -482,7 +482,7 @@ function appendProfileMessage(role, content) {
     log.querySelector('.conversation-empty')?.remove();
     const message = element('div');
     message.className = `chat-message ${role === 'user' ? 'user' : 'agent'}`;
-    message.append(element('small', role === 'user' ? '客户 / 销售' : '画像助手'), element('span', content));
+    message.append(element('small', role === 'user' ? '销售顾问记录' : '画像助手'), element('span', content));
     log.append(message);
     log.scrollTop = log.scrollHeight;
 }
@@ -507,7 +507,7 @@ function resetProfileInterview(options = {}) {
     renderProfileProgress(null);
     updateWizardChrome();
     profileStatus(state.capabilities?.cloud_model_configured
-        ? '尚未开始。首问由程序给出；客户回答后调用云端模型分析。'
+        ? '尚未开始。首问由程序给出；销售顾问提交客户信息后调用云端模型分析。'
         : '当前未配置云端模型，逐步画像不可用。', !state.capabilities?.cloud_model_configured);
     if (!options.silent) byId('profile-studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -547,7 +547,7 @@ function renderProfileResult(result) {
     renderProfileProgress(result);
     byId('profile-model-status').textContent = result.runtime?.called
         ? `${result.runtime.model || '云端模型'} · 本轮已分析`
-        : '等待首轮客户回答';
+        : '等待销售顾问录入首轮信息';
     if (result.status !== 'complete') {
         state.profileQuestion = result.next_question || null;
         setProfileQuestion(state.profileQuestion);
