@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="华销智策">
+  <g fill="#c7000b" transform="translate(16 16)">
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(45)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(90)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(135)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(180)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(225)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(270)"/>
+    <path d="M-2 -12 C1 -15 3 -9 2 -4 L-2 -4 Z" transform="rotate(315)"/>
+  </g>
+</svg>

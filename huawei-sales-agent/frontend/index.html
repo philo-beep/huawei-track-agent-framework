@@ -3,12 +3,95 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#0b1220">
   <title>华销智策 · 华为销售智能体</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/css/styles.css">
+  <script src="/static/js/auth.js" defer></script>
   <script src="/static/js/app.js" defer></script>
 </head>
-<body>
+<body class="auth-locked">
+  <noscript><div class="noscript">请启用 JavaScript 后使用华销智策。</div></noscript>
+  <div id="prelogin" class="prelogin" data-stage="welcome">
+    <div class="prelogin-grid" aria-hidden="true"></div>
+    <div class="prelogin-glow prelogin-glow-a" aria-hidden="true"></div>
+    <div class="prelogin-glow prelogin-glow-b" aria-hidden="true"></div>
+    <header class="prelogin-header">
+      <div class="brand-lockup brand-lockup-light">
+        <span class="huawei-flower" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · SALES COPILOT</small></span>
+      </div>
+      <div class="prelogin-header-actions">
+        <span class="secure-chip"><i></i>企业级会话保护</span>
+        <button id="motion-toggle" class="motion-toggle" type="button" aria-pressed="false"><span aria-hidden="true">Ⅱ</span>暂停动效</button>
+      </div>
+    </header>
+    <main id="welcome-stage" class="welcome-stage" aria-labelledby="welcome-title">
+      <section class="welcome-copy">
+        <p class="welcome-kicker"><span></span>为每一次客户沟通，准备好下一步</p>
+        <h1 id="welcome-title">让销售判断<br><span class="headline-line">有<span>证据</span>，也有<span class="headline-muted">温度</span>。</span></h1>
+        <p class="welcome-lead">从客户画像、产品匹配到内容准备与成交动作，把零散信息收束成一条可复核的销售推进路径。</p>
+        <div class="welcome-actions">
+          <button id="welcome-enter" class="welcome-enter" type="button">进入销售工作台 <span aria-hidden="true">→</span></button>
+          <span class="welcome-caption">人工确认边界始终开启</span>
+        </div>
+        <div class="welcome-principles" aria-label="产品原则">
+          <span><b>01</b>证据可追溯</span><span><b>02</b>权限分级</span><span><b>03</b>关键动作人工确认</span>
+        </div>
+      </section>
+      <section class="agent-scene" aria-label="销售智能体流程示意">
+        <div class="scene-halo" aria-hidden="true"></div>
+        <div class="scene-axis" aria-hidden="true"><i></i><i></i><i></i></div>
+        <article class="scene-card scene-card-a"><span class="scene-index">SIGNAL</span><strong>客户真实语境</strong><p>原话、场景与待确认项</p><i class="scene-pulse"></i></article>
+        <article class="scene-card scene-card-b"><span class="scene-index">EVIDENCE</span><strong>产品与来源证据</strong><p>型号、参数、限制与指纹</p><i class="scene-pulse"></i></article>
+        <article class="scene-card scene-card-c"><span class="scene-index">NEXT MOVE</span><strong>下一步推进建议</strong><p>负责人、触发条件与边界</p><i class="scene-pulse"></i></article>
+        <div class="scene-core"><span class="core-flower"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>华销智策</b><small>ARTIFICIAL INTELLIGENCE / SALES</small></div>
+        <div class="scene-float scene-float-a">待确认 <b>2</b></div>
+        <div class="scene-float scene-float-b">来源校验 <b>OK</b></div>
+      </section>
+    </main>
+    <section id="auth-stage" class="auth-stage" hidden aria-labelledby="auth-title">
+      <div class="auth-story">
+        <button id="auth-back" class="auth-back" type="button"><span aria-hidden="true">←</span> 返回介绍</button>
+        <p class="welcome-kicker"><span></span>YOUR SALES INTELLIGENCE DESK</p>
+        <h2>把复杂的销售准备，<br>变成清晰的<span>下一步</span>。</h2>
+        <p>登录后进入受保护工作台。系统按角色开放分析能力，关键结论、价格与客户动作仍需人工复核。</p>
+        <div class="auth-flow">
+          <div><b>01</b><span><strong>识别客户</strong><small>逐题补齐画像，保留原话依据</small></span></div>
+          <div><b>02</b><span><strong>匹配证据</strong><small>候选、条件覆盖与限制同步展示</small></span></div>
+          <div><b>03</b><span><strong>推进成交</strong><small>准备内容与方案，关键动作人工确认</small></span></div>
+        </div>
+      </div>
+      <section class="auth-card">
+        <div class="auth-card-brand">
+          <span class="auth-mark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span><strong>华销智策</strong><small>让好销售，有据可依</small></span>
+        </div>
+        <div class="auth-tabs" role="tablist" aria-label="登录或注册">
+          <button id="auth-mode-login" class="is-active" type="button" role="tab" aria-selected="true" data-auth-mode="login">登录</button>
+          <button id="auth-mode-register" type="button" role="tab" aria-selected="false" data-auth-mode="register">注册</button>
+        </div>
+        <p id="auth-eyebrow" class="auth-eyebrow">WELCOME BACK</p>
+        <h1 id="auth-title">欢迎回来</h1>
+        <p id="auth-intro" class="auth-intro">登录后继续你的销售推进工作。</p>
+        <form id="auth-form" novalidate>
+          <label for="auth-username">用户名</label>
+          <input id="auth-username" name="username" autocomplete="username" minlength="3" maxlength="64" required placeholder="请输入用户名">
+          <small id="auth-username-hint" class="auth-hint" hidden>3–64 个字符，可使用文字、数字、下划线、点和短横线。</small>
+          <label for="auth-password">密码</label>
+          <div class="password-field"><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required placeholder="至少 10 个字符"><button id="password-toggle" type="button" aria-label="显示密码">显示</button></div>
+          <small id="auth-password-hint" class="auth-hint" hidden>注册密码长度为 10–128 个字符；请勿使用真实客户信息作为密码。</small>
+          <p id="auth-error" class="auth-message auth-error" role="alert" hidden></p>
+          <p id="auth-success" class="auth-message auth-success" role="status" hidden></p>
+          <button id="auth-submit" class="auth-submit" type="submit"><span id="auth-submit-label">安全登录</span><i aria-hidden="true">→</i></button>
+        </form>
+        <p id="auth-first-admin" class="first-admin-note" hidden>首个注册账号将成为管理员；已有管理员时，新账号默认为成员。</p>
+        <div class="auth-security"><span class="lock-icon" aria-hidden="true"></span><span>HttpOnly 会话 · 权限实时校验 · 未授权接口拦截</span></div>
+      </section>
+    </section>
+    <footer class="prelogin-footer"><span>HUAWEI SALES COPILOT</span><span>精准理解 · 克制表达 · 人工推进</span><span>© 2026 华销智策</span></footer>
+  </div>
+  <div id="app-shell" class="app-shell" hidden>
   <header class="site-header">
     <div class="header-inner">
       <a class="brand-lockup" href="/" aria-label="华销智策首页">
@@ -16,10 +99,16 @@
         <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售智能体</small></span>
       </a>
       <div class="header-status"><span class="status-dot"></span><span>人工确认边界已启用</span></div>
+      <div class="account-tools">
+        <div class="account-identity"><span id="current-user-avatar" class="account-avatar" aria-hidden="true">H</span><span><strong id="current-user-name">已登录用户</strong><small id="current-role">成员</small></span></div>
+        <button id="admin-open" class="header-action" type="button" hidden>用户与权限</button>
+        <button id="logout-button" class="header-action header-action-quiet" type="button">退出</button>
+      </div>
     </div>
   </header>
+  <div id="access-notice" class="access-notice" role="status" hidden></div>
 
-  <main>
+  <main id="app-main">
     <div class="wizard-shell" id="wizard-top">
       <div class="wizard-intro">
         <div class="wizard-intro-copy">
@@ -222,5 +311,15 @@
   </main>
 
   <footer class="site-footer"><div><strong>华销智策</strong><span>精准理解 · 克制表达 · 人工推进</span></div><p>请勿输入真实客户隐私或密钥。输入通过临时会话处理；服务重启或会话过期后结果可能失效，请及时导出。本文所述的云端能力以部署环境实际配置为准。</p></footer>
+  </div>
+  <div id="admin-panel" class="admin-panel" hidden>
+    <button class="admin-backdrop" id="admin-close-backdrop" type="button" aria-label="关闭用户与权限面板"></button>
+    <aside class="admin-drawer" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+      <header><div><p class="eyebrow">ACCESS CONTROL</p><h2 id="admin-title">用户与权限</h2><p>角色变更实时生效；停用账号会立即撤销其会话。</p></div><button id="admin-close" class="admin-close" type="button" aria-label="关闭">×</button></header>
+      <div class="admin-legend"><span><b>管理员</b>分析 + 权限管理</span><span><b>成员</b>分析能力</span><span><b>只读</b>可登录查看界面，不可运行</span></div>
+      <p id="admin-status" class="admin-status" role="status"></p>
+      <div id="admin-users" class="admin-users"></div>
+    </aside>
+  </div>
 </body>
 </html>

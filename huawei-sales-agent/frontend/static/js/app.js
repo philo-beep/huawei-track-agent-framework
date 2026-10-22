@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
+const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const profileDimensionLabels = { identity: '身份角色', industry: '行业', usage_scenario: '使用场景', needs: '需求目标', pain_points: '当前痛点', purchase_stage: '采购阶段', budget: '预算', conversation_habit: '对话习惯', platform_knowledge: '了解平台', preferences: '偏好' };
@@ -52,6 +52,13 @@ function engineStatus(engine) {
     return `${mode}\n模型：${engine.model || '未启用'}；状态：${engine.model_status || '未确认'}\nIMA：${engine.ima_enabled ? '可用' : '未启用'}；联网检索：${engine.web_research_enabled ? '可用' : '未启用'}\n${engine.notice || '最终内容需要人工审核。'}`;
 }
 
+function applyAccessControl(session) {
+    state.access.user = session?.user || null;
+    state.access.canRun = Boolean(session?.user?.permissions?.includes('analysis:run'));
+    document.body.classList.toggle('role-viewer', !state.access.canRun);
+    setRunning(state.running);
+}
+
 function renderCapabilities(capabilities) {
     state.capabilities = capabilities || null;
     const mapping = [
@@ -84,17 +91,18 @@ function renderCapabilities(capabilities) {
 
 function setRunning(running) {
     state.running = running;
+    const blocked = running || !state.access.canRun;
     byId('input-fields').disabled = running;
     byId('match-fields').disabled = running;
-    byId('run-button').disabled = running || !state.csrf || state.sourceLoading || !selectedSourceReady();
-    byId('match-button').disabled = running || !state.csrf;
+    byId('run-button').disabled = blocked || !state.csrf || state.sourceLoading || !selectedSourceReady();
+    byId('match-button').disabled = blocked || !state.csrf;
     byId('refresh-source-status').disabled = running || state.sourceLoading;
     byId('new-customer').disabled = running;
     byId('profile-opening').disabled = running;
     byId('profile-answer').disabled = running;
-    byId('profile-start').disabled = running || !state.capabilities?.cloud_model_configured;
-    byId('profile-answer-button').disabled = running;
-    byId('profile-reset').disabled = running;
+    byId('profile-start').disabled = blocked || !state.capabilities?.cloud_model_configured;
+    byId('profile-answer-button').disabled = blocked;
+    byId('profile-reset').disabled = blocked;
     byId('profile-to-match').disabled = running;
     byId('profile-restart-complete').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
@@ -307,7 +315,7 @@ async function api(url, options = {}) {
 
 async function startRun(event) {
     if (event) event.preventDefault();
-    if (state.running || !state.csrf) return;
+    if (state.running || !state.csrf || !state.access.canRun) return;
     showWizardStep(4, { scroll: false });
     let request;
     try { request = collectInput(); } catch (error) { status(error.message, true); return; }
@@ -607,7 +615,7 @@ async function sendProfileMessages(messages, restart = false) {
 
 async function startGuidedProfile(event) {
     if (event) event.preventDefault();
-    if (state.running) return;
+    if (state.running || !state.access.canRun) return;
     const opening = byId('profile-opening').value.trim();
     if (opening.length > 800) { profileStatus('已知背景最多 800 字。', true); return; }
     state.profileMessages = opening ? [{ role: 'user', content: opening }] : [];
@@ -773,7 +781,7 @@ function collectMatchInput() {
 
 async function startProductMatch(event) {
     if (event) event.preventDefault();
-    if (state.running || !state.csrf) return;
+    if (state.running || !state.csrf || !state.access.canRun) return;
     let request;
     try { request = collectMatchInput(); } catch (error) { matchStatus(error.message, true); return; }
     state.matchInput = request;
@@ -1131,7 +1139,11 @@ document.addEventListener('keydown', event => {
     if (event.ctrlKey && !event.altKey && !event.metaKey && event.key === 'Enter') { event.preventDefault(); startRun(); }
 });
 
-async function initialize() {
+async function initialize(sessionOverride = null) {
+    const session = sessionOverride || await window.HuaweiAuth?.ready;
+    if (!session) return;
+    if (state.access.user?.id === session.user.id && state.csrf) return;
+    applyAccessControl(session);
     try {
         const response = await api('/api/examples');
         if (!response.csrf_token || !Array.isArray(response.examples)) throw new Error('初始化响应不完整');
@@ -1152,4 +1164,11 @@ async function initialize() {
     } catch (error) { status(`服务初始化失败：${error.message}。请稍后刷新页面。`, true); }
 }
 
+window.addEventListener('huawei:authenticated', event => { initialize(event.detail); });
+window.addEventListener('huawei:session-ended', () => {
+    state.csrf = null;
+    state.running = false;
+    state.access.canRun = false;
+    state.access.user = null;
+});
 initialize();

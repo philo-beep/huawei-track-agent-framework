@@ -153,3 +153,12 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -m unittest discover -s tests -v
 - 产品匹配的 `backend/agent/prompts/product-match.md` 已进入受控云端理由选择链路，模型必须返回逐字 `cited_span`，由程序验证其存在于所引产品证据。四步营销策略和事实选择提示词仍内嵌在 `backend/agent/model.js`。
 - 客户端原始图片候选仍全部保持 `model_verified=false`；单独的图片审稿清单只允许精确型号图片进入草稿，且 `publication_ready=false`。
 - 公开演示只接受合成或脱敏文本，拒绝文件上传，避免客户隐私落盘。
+## 访问控制与首次使用
+
+启动后打开首页，先进入品牌化预登录页；点击“进入销售工作台”后登录或注册。系统不提供默认账号密码，首个注册账号自动成为管理员，后续账号默认为成员。
+
+- 管理员：运行分析、进入“用户与权限”调整角色或停用账号。
+- 成员：运行分析。
+- 只读：可登录查看界面，运行按钮禁用，服务端拒绝分析请求。
+
+账号和会话保存在项目根目录 `.runtime/auth.json`（已忽略、不提交）；密码仅保存加盐派生值，会话使用 HttpOnly Cookie 和会话级 CSRF。如需指定持久化位置，可设置 `HUAWEI_AUTH_FILE`。服务重启不会丢失账号与有效会话；临时运行结果仍按原规则存于内存并过期。
