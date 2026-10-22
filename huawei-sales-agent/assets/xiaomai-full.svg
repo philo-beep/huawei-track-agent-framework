@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="760" viewBox="0 0 360 380" role="img" aria-labelledby="title"><title id="title">小麦 · 销售陪伴助手，侧面全身招手造型</title>
+      <defs>
+        <linearGradient id="puppy-coat" x1="0" y1="0" x2=".9" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#edbd77"/><stop offset="1" stop-color="#cc874e"/></linearGradient>
+        <linearGradient id="puppy-cream" x1="0" y1="0" x2=".7" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#fffdf5"/><stop offset="1" stop-color="#f5e4c9"/></linearGradient>
+        <linearGradient id="puppy-scarf" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#ee4350"/><stop offset="1" stop-color="#be0010"/></linearGradient>
+      </defs>
+      <ellipse cx="181" cy="351" rx="103" ry="11" fill="#775636" opacity=".1"/>
+      <g class="puppy-body">
+        <g class="puppy-tail">
+          <path d="M126 262C88 267 56 247 56 219c0-23 26-36 44-21 14 13 6 33-6 29 5 18 27 17 43 8" fill="url(#puppy-coat)" stroke="#bd7e48" stroke-width="2.3" stroke-linejoin="round"/>
+          <path d="M58 207c7-13 24-18 37-12 7 3 11 8 12 14-16-8-26 2-24 14-11 1-21-5-25-16z" fill="url(#puppy-cream)"/>
+        </g>
+        <path d="M184 258c17-6 30 10 30 32l-2 41c13 0 22 4 22 11 0 8-17 10-37 7-12-2-17-8-16-20l-5-48z" fill="#c28a55"/>
+        <path d="M147 179c-24 20-43 64-35 107 3 22 21 45 49 45 37 1 73-14 76-43 3-30-9-46-12-82-1-20-21-40-41-41z" fill="url(#puppy-coat)" stroke="#c48c56" stroke-width="2.2"/>
+        <path d="M195 184c-24 13-30 39-22 65 6 21 6 43-5 58 19 5 45-8 53-25 13-27-4-40-4-72z" fill="url(#puppy-cream)"/>
+        <path d="M142 268c-19 7-28 26-24 45 3 15 21 21 37 22-3 5-3 11 4 14 10 4 34 3 38-4 4-9-4-15-18-15 7-22-7-50-22-57" fill="#dfaa6b" stroke="#bf8650" stroke-width="2" stroke-linecap="round"/>
+        <path d="M160 331c-7 4-8 11-3 15 8 6 30 6 37 0 5-5-1-11-11-13z" fill="url(#puppy-cream)"/>
+        <path d="M208 252c-5 21-7 42-2 67-2 9 1 20 11 22 17 5 36 2 39-5 3-8-9-13-22-13 0-18 3-32 8-50" fill="url(#puppy-coat)" stroke="#c48c56" stroke-width="2" stroke-linecap="round"/>
+        <path d="M205 319c-1 10 0 18 9 21 13 4 37 3 41-4 3-7-9-13-21-13l-2-6z" fill="url(#puppy-cream)"/>
+        <path d="M216 335v6m12-6v7m-58 0v6m11-6v7" stroke="#ceb591" stroke-width="2" stroke-linecap="round"/>
+        <g class="puppy-paw">
+          <path d="M215 203c10-10 21-6 32 2l20 12 17-21c9-10 23-11 28-2 7 12-1 23-10 33-11 13-16 21-30 19-15-2-34-11-48-20" fill="url(#puppy-coat)" stroke="#c48c56" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M284 197c7-9 19-14 25-7 8 8 3 20-5 28-11 1-22-10-20-21z" fill="url(#puppy-cream)"/>
+          <path d="M299 193l6 8m-11-3 5 7" stroke="#d8bea0" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <path d="M150 166c-18 10-25 31-39 36l25 3-4 24c24-9 35-27 40-42" fill="url(#puppy-scarf)"/>
+        <path d="M145 173c18 16 46 22 71 8l11 14c-26 22-67 15-88-5z" fill="url(#puppy-scarf)"/>
+        <path d="M157 189c12 6 25 9 39 7" stroke="#ff8990" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>
+        <circle cx="204" cy="202" r="8" fill="#fff8ed" stroke="#e6ccaa"/>
+        <path d="M204 197v10m-5-5h10" stroke="#d49b59" stroke-width="2" stroke-linecap="round"/>
+        <g class="puppy-head">
+          <path d="M154 87c-20-12-27-35-20-59 2-7 8-9 14-4 17 12 29 29 34 45" fill="#d99b5e" stroke="#bb7e49" stroke-width="2.3"/>
+          <path d="M147 64c-8-10-10-20-8-29 12 6 23 21 27 31" fill="#e9b0a1"/>
+          <path d="M224 66c8-17 22-32 35-34 8-1 10 7 8 17l-7 37" fill="#ce8b51" stroke="#b77c49" stroke-width="2"/>
+          <path d="M245 65l15-21-5 34" fill="#e9b0a1"/>
+          <path d="M139 91c12-27 39-41 69-37 32 3 56 21 62 49 4 14 7 20 17 25 10 5 18 11 17 20-2 22-34 40-67 43-36 4-80-7-94-34-11-21-14-43-4-66z" fill="url(#puppy-coat)" stroke="#bd844e" stroke-width="2.3"/>
+          <path d="M140 122c7 6 14 7 21 3 18-11 20-8 33 3 12 11 26 9 38 0 13-10 28-13 40-8 5 6 10 7 16 11 10 5 16 11 14 19-6 20-36 38-65 40-34 3-70-5-88-25-9-10-13-25-9-43z" fill="url(#puppy-cream)"/>
+          <path d="M168 82c5-5 13-6 18-2m37 5c4-3 10-2 13 1" fill="none" stroke="#ffedcd" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="188" cy="106" rx="10" ry="13" fill="#42352e"/>
+          <ellipse cx="192" cy="101" rx="3.5" ry="4" fill="#fff"/><circle cx="185" cy="112" r="1.8" fill="#e6be88"/>
+          <path d="M236 105c4-4 9-3 12 1" fill="none" stroke="#4f3b30" stroke-width="3.8" stroke-linecap="round"/>
+          <ellipse cx="177" cy="132" rx="11" ry="6" fill="#ecaa94" opacity=".65"/>
+          <path d="M279 128c7-3 19-1 22 5 2 5-4 10-10 11-6-1-13-8-12-12z" fill="#4a3832"/>
+          <ellipse cx="289" cy="131" rx="4" ry="1.7" fill="#8b7263"/>
+          <path d="M238 148c11 6 23 7 36-1-3 18-10 26-20 25-9-1-14-11-16-24z" fill="#775047"/>
+          <path d="M248 161c5-5 11-4 15 0-2 8-6 12-10 10-3-1-5-5-5-10z" fill="#ee9b9e"/>
+          <path d="M234 145c12 10 26 11 43 0" fill="none" stroke="#775047" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M146 102c-4 3-8 8-9 13m69-57 8-7m-6 8 13-2" fill="none" stroke="#f8d59a" stroke-width="3" stroke-linecap="round"/>
+        </g>
+      </g>
+      <g class="puppy-hello" fill="none" stroke="#dba75e" stroke-width="3" stroke-linecap="round"><path d="M316 170l8-6m-12-8 4-8m11 32 9-1"/></g>
+      <path d="M100 112l4 9 10 2-9 5-1 10-5-9-10-2 9-5z" fill="#e7c990"/>
+      <path d="M297 61l3 7 8 1-6 5v8l-5-6-8-1 6-5z" fill="#ebbdc0"/>
+    </svg>
