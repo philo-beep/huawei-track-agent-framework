@@ -102,9 +102,9 @@ test('four-step output exposes solution, budget, quote and enriched actions', as
     assert.equal(result.action_plan.status, 'ready_for_owner_assignment');
     assert.ok(result.next_actions.length >= 3);
     const markdown = cloudMarkdown(result);
-    assert.match(markdown, /## 基础方案（基于画像与来源证据）/);
+    assert.match(markdown, /## 基础方案（基于客户画像与资料来源）/);
     assert.match(markdown, /## 报价状态/);
-    assert.match(markdown, /正式价格：null/);
+    assert.match(markdown, /正式成交报价：待确认/);
     assert.match(markdown, /## 预算判断/);
 });
 

@@ -159,7 +159,7 @@ test('markdown includes reason limitation evidence and status', async () => {
     const markdown = renderProductMatchMarkdown(result);
     assert.match(markdown, /匹配理由/);
     assert.match(markdown, /限制/);
-    assert.match(markdown, /证据/);
+    assert.match(markdown, /资料依据/);
     assert.match(markdown, /推荐候选|【待确认】/);
 });
 

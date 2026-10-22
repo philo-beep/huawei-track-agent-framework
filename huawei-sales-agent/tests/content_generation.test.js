@@ -42,11 +42,11 @@ test('generates a reviewable public-account draft with exact-model IMA images', 
     assert.deepEqual(output.verification.safe_content.content.image_ids, []);
     assert.doesNotMatch(output.verification.safe_content.content.body_markdown, /<!-- IMAGE:/);
     assert.doesNotMatch(output.verification.safe_content.rendered_markdown, /<!-- IMAGE:/);
-    assert.match(output.article_markdown, /强制核验结果/);
-    assert.match(output.article_markdown, /风险项清单/);
+    assert.match(output.article_markdown, /发布前检查结果/);
+    assert.match(output.article_markdown, /需要处理的问题/);
     assert.match(output.article_markdown, /可发布安全版本/);
     assert.match(output.article_markdown, /图片来源清单/);
-    assert.match(output.article_markdown, /事实来源索引/);
+    assert.match(output.article_markdown, /资料来源/);
 });
 
 test('does not substitute generic or another-model images and blocks missing exact evidence', async () => {

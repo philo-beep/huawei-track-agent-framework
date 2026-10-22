@@ -148,7 +148,7 @@ test('guided-profile HTTP route validates CSRF, creates a job and returns next q
         const job = await waitJob(origin, created.id, cookie);
         assert.equal(job.status, 'completed');
         assert.equal(job.result.status, 'question');
-        assert.match(job.markdown, /客户画像访谈结果/);
+        assert.match(job.markdown, /客户画像/);
     } finally {
         await new Promise(resolve => server.close(resolve));
         fs.rmSync(authFile, { force: true });

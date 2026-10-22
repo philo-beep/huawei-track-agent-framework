@@ -11,7 +11,8 @@
 - `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
 - `guided_profile.test.js`：逐题画像首问、单问约束、原话证据校验、缺证降级、覆盖阈值、8 轮上限和 HTTP/CSRF/任务轮询。
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
-- `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项门禁、授权降级和错误型号拒绝测试。
+- `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项发布前检查、授权调整和错误型号拒绝测试。
+- `sales_copy.test.js`：销售可见 Markdown 去技术化回归，阻止模型名、内部编号、JSON、门禁、排序分、英文字段和开发术语重新出现。
 - `extension_regression.test.js`：两款型号 × 三个平台的正常矩阵，以及信息缺失、预算冲突、图片错配和边界场景。
 - `extension_coverage_matrix.json`：功能 × 场景 × 型号 / 平台覆盖清单；测试会校验 6 个型号平台组合无缺口。
 - `release_verification.test.js`：型号、参数、价格、图片身份、超范围承诺和来源完整性六项门禁；覆盖全部通过、阻塞和降级到安全版本。
@@ -45,6 +46,7 @@
 node --test tests/guided_profile.test.js
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
+node --test tests/sales_copy.test.js
 node --test tests/extension_regression.test.js
 node --test tests/release_verification.test.js
 node --test tests/solution_planning.test.js
