@@ -48,4 +48,10 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ## 交接
 
 交付时说明任务编号、改动文件、接口版本、测试命令和结果、已知限制、未验证事项及需要 A、B、C、D 或 E 复核的内容。A 负责最终联调，E 协助验收。
+## 访问控制
 
+- `backend/session/auth-store.js` 维护本地账号、角色、密码派生值、可撤销会话及会话级 CSRF 令牌。
+- `backend/agent/cloud-server.js` 是同源业务入口，对示例、来源、图片、画像、匹配、内容和任务读取统一执行会话校验；分析写操作再校验 `analysis:run`。
+- `/api/auth/register`、`/api/auth/login`、`/api/auth/me`、`/api/auth/logout` 构成认证边界；`/api/admin/users` 使用 `admin:users` 权限。
+- 首个注册账号为管理员，没有内置默认凭据。账号数据默认写入 `.runtime/auth.json`，该文件已被 `.gitignore` 排除。
+- 运行结果仍在内存中保存并受 20 分钟 TTL 与每会话次数限制；不得把登录 Cookie、CSRF 令牌、密码或摘要写入日志。

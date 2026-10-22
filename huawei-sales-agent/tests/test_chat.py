@@ -6,6 +6,7 @@ import http.cookiejar
 import json
 import os
 import sys
+import tempfile
 import threading
 import unittest
 import urllib.error
@@ -100,6 +101,9 @@ class GatewayTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         from backend.main import create_server
 
+        cls.auth_tmp = tempfile.TemporaryDirectory()
+        cls.previous_auth_file = os.environ.get("HUAWEI_AUTH_FILE")
+        os.environ["HUAWEI_AUTH_FILE"] = str(Path(cls.auth_tmp.name) / "auth.json")
         cls.server, cls.engine = create_server("127.0.0.1", 0)
         cls.port = cls.server.server_address[1]
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
@@ -107,6 +111,20 @@ class GatewayTests(unittest.TestCase):
         cls.jar = http.cookiejar.CookieJar()
         cls.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cls.jar))
         cls.origin = f"http://localhost:{cls.port}"
+        cls.post_json("/api/auth/register", {"username": "smoke_admin", "password": "SmokeAdmin2026!"})
+        login = cls.post_json("/api/auth/login", {"username": "smoke_admin", "password": "SmokeAdmin2026!"})
+        cls.auth_csrf = login["csrf_token"]
+
+    @classmethod
+    def post_json(cls, path: str, value: dict) -> dict:
+        request = urllib.request.Request(
+            f"{cls.origin}{path}",
+            data=json.dumps(value, ensure_ascii=False).encode("utf-8"),
+            method="POST",
+            headers={"Content-Type": "application/json; charset=utf-8", "Origin": cls.origin},
+        )
+        with cls.opener.open(request, timeout=10) as response:
+            return json.loads(response.read())
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -114,6 +132,11 @@ class GatewayTests(unittest.TestCase):
         cls.server.server_close()
         cls.engine.stop()
         cls.thread.join(timeout=3)
+        if cls.previous_auth_file is None:
+            os.environ.pop("HUAWEI_AUTH_FILE", None)
+        else:
+            os.environ["HUAWEI_AUTH_FILE"] = cls.previous_auth_file
+        cls.auth_tmp.cleanup()
 
     def get_json(self, path: str) -> dict:
         with self.opener.open(f"{self.origin}{path}", timeout=10) as response:
@@ -122,7 +145,11 @@ class GatewayTests(unittest.TestCase):
     def test_health_pages_and_exports(self) -> None:
         health = self.get_json("/api/health")
         self.assertEqual(health["status"], "ok")
-        for path in ("/", "/static/css/styles.css", "/static/js/app.js", "/api/source-status", "/api/examples"):
+        private_request = urllib.request.Request(f"{self.origin}/api/examples", headers={"Origin": self.origin})
+        with self.assertRaises(urllib.error.HTTPError) as unauthenticated:
+            urllib.request.urlopen(private_request, timeout=10)
+        self.assertEqual(unauthenticated.exception.code, 401)
+        for path in ("/", "/static/css/styles.css", "/static/js/app.js", "/static/js/auth.js", "/favicon.svg", "/api/source-status", "/api/examples"):
             with self.subTest(path=path):
                 with self.opener.open(f"{self.origin}{path}", timeout=10) as response:
                     self.assertEqual(response.status, 200)
@@ -137,6 +164,20 @@ class GatewayTests(unittest.TestCase):
             self.assertTrue(response.read())
         examples = self.get_json("/api/examples")
         self.assertTrue(examples["csrf_token"])
+        registration = self.post_json("/api/auth/register", {"username": "smoke_member", "password": "SmokeMember2026!"})
+        role_request = urllib.request.Request(
+            f"{self.origin}/api/admin/users/{registration['user']['id']}",
+            data=b'{"role":"viewer"}',
+            method="PATCH",
+            headers={
+                "Content-Type": "application/json; charset=utf-8",
+                "Origin": self.origin,
+                "X-CSRF-Token": self.auth_csrf,
+            },
+        )
+        with self.opener.open(role_request, timeout=10) as response:
+            self.assertEqual(response.status, 200)
+            self.assertEqual(json.loads(response.read())["user"]["role"], "viewer")
         payload = json.dumps(
             {
                 "marketing_input": examples["examples"][0]["marketing_input"],

@@ -119,6 +119,9 @@ class GatewayHandler(BaseHTTPRequestHandler):
     def do_PUT(self) -> None:
         self._proxy()
 
+    def do_PATCH(self) -> None:
+        self._proxy()
+
     def do_DELETE(self) -> None:
         self._proxy()
 
@@ -139,6 +142,8 @@ class GatewayHandler(BaseHTTPRequestHandler):
         headers = {name: value for name, value in self.headers.items() if name.lower() not in HOP_BY_HOP}
         headers["Host"] = f"127.0.0.1:{self.node_port}"
         headers["X-Forwarded-Proto"] = "http"
+        # Node 内部端口仅监听回环地址；由 Python 覆盖真实对端，避免伪造请求头绕过登录限流。
+        headers["X-Forwarded-For"] = str(self.client_address[0])
         try:
             status, reply_headers, payload = forward_request(
                 "127.0.0.1", self.node_port, self.command, self.path, headers, body

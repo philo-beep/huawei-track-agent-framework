@@ -70,3 +70,10 @@ $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```powershell
 node tests/verify_integrations.js --full
 ```
+## 访问控制回归
+
+```powershell
+node tests/access_control.test.js
+```
+
+该测试使用临时账号文件启动独立 Node 实例，验证未登录 401、首个账号管理员、成员越权 403、CSRF、角色实时生效、退出撤销与服务重启后的有效会话恢复；测试结束自动删除临时账号文件。

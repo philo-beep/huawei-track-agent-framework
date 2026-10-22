@@ -39,4 +39,15 @@ B 后端接口工程师。
 - HTTP 冒烟测试通过。
 
 交付需附接口变化、受影响消费方、测试结果和 B 的契约确认记录；涉及 Agent 时由 A 复核，涉及前端时由 C 复核。
+## 认证与权限接口
 
+| Method | Path | 权限 | 说明 |
+| --- | --- | --- | --- |
+| POST | `/api/auth/register` | 公开、限流 | 创建账号；首个账号为管理员，其余为成员 |
+| POST | `/api/auth/login` | 公开、限流 | 设置 HttpOnly 会话 Cookie，返回用户与 CSRF 令牌 |
+| GET | `/api/auth/me` | 已登录 | 返回当前用户、权限、CSRF 与过期时间 |
+| POST | `/api/auth/logout` | 已登录 + CSRF | 撤销当前会话并清除 Cookie |
+| GET | `/api/admin/users` | `admin:users` | 查看账号与角色 |
+| PATCH | `/api/admin/users/<id>` | `admin:users` + CSRF | 修改角色或启停账号 |
+
+业务接口 `/api/examples`、`/api/source-status`、`/api/content-images/<sha256>`、`/api/runs/<id>` 等必须先通过会话校验。`/api/runs`、`/api/profile-steps`、`/api/product-matches`、`/api/content-drafts` 还要求 `analysis:run`；`viewer` 角色只能登录查看，不能运行分析。未登录返回 401，权限不足返回 403。

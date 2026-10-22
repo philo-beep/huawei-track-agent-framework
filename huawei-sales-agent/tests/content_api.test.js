@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const net = require('node:net');
 const { createCloudServer } = require('../backend/agent/cloud-server');
 const { productMatchExamples } = require('../backend/agent/product-match');
+const { authenticate, temporaryAuthFile, fs } = require('./auth_helpers');
 
 async function freePort() {
     return new Promise((resolve, reject) => {
@@ -30,7 +31,8 @@ async function waitJob(origin, id, cookie) {
 test('content-draft API regenerates match evidence and serves reviewed IMA images', async () => {
     const port = await freePort();
     const origin = `http://127.0.0.1:${port}`;
-    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false });
+    const authFile = temporaryAuthFile();
+    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false, authDataFile: authFile });
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
     try {
         const pageResponse = await fetch(`${origin}/`);
@@ -50,9 +52,9 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(script, /content-platform/);
         assert.match(script, /朋友圈/);
         assert.match(script, /renderVerificationResult/);
-        const examplesResponse = await fetch(`${origin}/api/examples`);
-        const examples = await examplesResponse.json();
-        const cookie = examplesResponse.headers.get('set-cookie').split(';')[0];
+        const auth = await authenticate(origin);
+        const examples = auth.examples;
+        const cookie = auth.cookie;
         const headers = { 'Content-Type': 'application/json; charset=utf-8', Origin: origin, Cookie: cookie, 'X-CSRF-Token': examples.csrf_token };
         const input = productMatchExamples()[0].input;
         input.mode = 'local';
@@ -91,27 +93,29 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(exportResponse.status, 200);
         assert.match(await exportResponse.text(), /建议|配图/);
         const imageUrl = completedContent.result.image_sources[0].asset_url;
-        const imageResponse = await fetch(`${origin}${imageUrl}`);
+        const imageResponse = await fetch(`${origin}${imageUrl}`, { headers: { Cookie: cookie } });
         assert.equal(imageResponse.status, 200);
         assert.equal(imageResponse.headers.get('content-type'), 'image/png');
         const bytes = Buffer.from(await imageResponse.arrayBuffer());
         assert.ok(bytes.length > 10000);
     } finally {
         await new Promise(resolve => server.close(resolve));
+        fs.rmSync(authFile, { force: true });
     }
 });
 
 test('content-draft API accepts all three supported platforms through real HTTP', async (t) => {
     const port = await freePort();
     const origin = `http://127.0.0.1:${port}`;
-    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false });
+    const authFile = temporaryAuthFile();
+    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false, authDataFile: authFile });
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
     try {
         for (const platform of ['公众号', '小红书', '朋友圈']) {
             await t.test(platform, async () => {
-                const examplesResponse = await fetch(`${origin}/api/examples`);
-                const examples = await examplesResponse.json();
-                const cookie = examplesResponse.headers.get('set-cookie').split(';')[0];
+                const auth = await authenticate(origin);
+                const examples = auth.examples;
+                const cookie = auth.cookie;
                 const headers = { 'Content-Type': 'application/json; charset=utf-8', Origin: origin, Cookie: cookie, 'X-CSRF-Token': examples.csrf_token };
                 const input = productMatchExamples()[0].input;
                 input.mode = 'local';
@@ -141,5 +145,6 @@ test('content-draft API accepts all three supported platforms through real HTTP'
         }
     } finally {
         await new Promise(resolve => server.close(resolve));
+        fs.rmSync(authFile, { force: true });
     }
 });

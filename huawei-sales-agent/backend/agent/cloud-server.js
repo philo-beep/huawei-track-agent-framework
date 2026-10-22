@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { ROOT, PipelineError } = require('./support');
+const { AuthStore, AccessError, SESSION_TTL_MS } = require('../session/auth-store');
 const { ENGINE, CAPABILITIES, examples, validateCloudInput, runCloud, cloudMarkdown } = require('./cloud-runner');
 const { getSourceStatus, sourceReadiness } = require('./source-health');
 const { MANIFEST } = require('./official');
@@ -15,10 +16,15 @@ const { runGuidedProfile, renderGuidedProfileMarkdown, MAX_GUIDED_TURNS } = requ
 const TTL = 20 * 60 * 1000;
 const BODY_LIMIT = 4096;
 const MATCH_BODY_LIMIT = 16384;
+const AUTH_BODY_LIMIT = 8192;
+const AUTH_COOKIE = 'huawei_session';
+const DEMO_COOKIE = 'huawei_demo';
 const STATIC = {
     '/': ['frontend/index.html', 'text/html; charset=utf-8'],
     '/index.html': ['frontend/index.html', 'text/html; charset=utf-8'],
     '/static/js/app.js': ['frontend/static/js/app.js', 'text/javascript; charset=utf-8'],
+    '/static/js/auth.js': ['frontend/static/js/auth.js', 'text/javascript; charset=utf-8'],
+    '/favicon.svg': ['frontend/static/favicon.svg', 'image/svg+xml'],
     '/static/css/styles.css': ['frontend/static/css/styles.css', 'text/css; charset=utf-8'],
 };
 
@@ -63,6 +69,63 @@ function createCloudServer(options = {}) {
     let active = null;
     let windowStarted = Date.now();
     let globalRuns = 0;
+    const authStore = options.authStore || new AuthStore({ file: options.authDataFile || process.env.HUAWEI_AUTH_FILE || path.join(ROOT, '.runtime', 'auth.json') });
+    const authAttempts = new Map();
+    const parseCookies = raw => Object.fromEntries(String(raw || '').split(';').map(item => item.trim()).filter(Boolean).map(item => {
+        const index = item.indexOf('=');
+        return index > 0 ? [item.slice(0, index), item.slice(index + 1)] : [item, ''];
+    }));
+    const safeEqual = (left, right) => typeof left === 'string' && typeof right === 'string' && left.length === right.length && crypto.timingSafeEqual(Buffer.from(left), Buffer.from(right));
+    const sessionCookie = (token, maxAge) => `${AUTH_COOKIE}=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${maxAge}${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`;
+    const clearSessionCookie = () => `${AUTH_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`;
+    const clientAddress = request => {
+        if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(request.socket.remoteAddress)) return request.socket.remoteAddress || 'unknown';
+        const forwarded = String(request.headers['x-forwarded-for'] || '').split(',')[0].trim();
+        return forwarded || request.socket.remoteAddress || 'unknown';
+    };
+    const takeAttempt = (request, action, username) => {
+        const now = Date.now();
+        const address = clientAddress(request);
+        const key = `${action}:${address}:${String(username || '').trim().toLocaleLowerCase('zh-CN')}`;
+        const ipKey = `${action}:${address}`;
+        const recent = (authAttempts.get(key) || []).filter(value => now - value < 5 * 60 * 1000);
+        const ipRecent = (authAttempts.get(ipKey) || []).filter(value => now - value < 5 * 60 * 1000);
+        if (recent.length >= 10 || ipRecent.length >= 30) return false;
+        recent.push(now);
+        ipRecent.push(now);
+        authAttempts.set(key, recent);
+        authAttempts.set(ipKey, ipRecent);
+        return true;
+    };
+    const mutationOriginValid = request => request.headers['sec-fetch-site'] !== 'cross-site' && (!request.headers.origin || samePublicOriginHost(request.headers.origin));
+    const readJson = (request, limit, tooLargeMessage) => new Promise((resolve, reject) => {
+        if (Number(request.headers['content-length'] || 0) > limit) {
+            request.resume();
+            return reject(new AccessError(413, 'BODY_TOO_LARGE', tooLargeMessage));
+        }
+        let length = 0;
+        const chunks = [];
+        request.on('data', chunk => { length += chunk.length; if (length <= limit) chunks.push(chunk); });
+        request.on('end', () => {
+            if (length > limit) return reject(new AccessError(413, 'BODY_TOO_LARGE', tooLargeMessage));
+            try { resolve(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)))); }
+            catch { reject(new AccessError(400, 'INVALID_JSON', '必须提交有效UTF-8 JSON')); }
+        });
+        request.on('error', () => reject(new AccessError(400, 'INVALID_JSON', '请求读取中断')));
+    });
+    const requireAuth = (response, auth, permission = null) => {
+        if (!auth) {
+            response.setHeader('WWW-Authenticate', 'Session');
+            fail(response, 401, 'AUTH_REQUIRED', '请先登录后再访问工作台');
+            return false;
+        }
+        if (permission && !auth.user.permissions.includes(permission)) {
+            fail(response, 403, 'PERMISSION_DENIED', '当前账号没有执行此操作的权限');
+            return false;
+        }
+        return true;
+    };
+    const csrfValid = (request, auth) => Boolean(auth) && samePublicOriginHost(request.headers.origin) && request.headers['sec-fetch-site'] !== 'cross-site' && safeEqual(request.headers['x-csrf-token'], auth.csrf);
     const send = (response, status, value) => { response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); response.end(JSON.stringify(value)); };
     const fail = (response, status, code, message) => send(response, status, { error: { code, message } });
     const purge = () => {
@@ -85,13 +148,61 @@ function createCloudServer(options = {}) {
         if (url.origin !== publicOrigin.origin || url.username || url.password) return fail(response, 400, 'INVALID_PATH', '不接受外部代理地址');
         purge();
         try {
-            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: CAPABILITIES.cloud_model_name, model_ready: CAPABILITIES.cloud_model_configured ? 'configured' : 'disabled', ima_enabled: CAPABILITIES.ima_configured, web_research_enabled: CAPABILITIES.web_research_configured, capabilities: CAPABILITIES, public_demo: true, source_manifest_available: fs.existsSync(MANIFEST), source_readiness: sourceReadiness(getSourceStatus()) });
+            const cookies = parseCookies(request.headers.cookie);
+            const authToken = cookies[AUTH_COOKIE] || '';
+            const currentAuth = authStore.resolve(authToken);
+            if (request.method === 'GET' && ['/healthz', '/health', '/api/health'].includes(url.pathname)) return send(response, 200, { status: 'ok', busy: active !== null, engine: ENGINE, model: CAPABILITIES.cloud_model_name, model_ready: CAPABILITIES.cloud_model_configured ? 'configured' : 'disabled', ima_enabled: CAPABILITIES.ima_configured, web_research_enabled: CAPABILITIES.web_research_configured, capabilities: CAPABILITIES, public_demo: true, authentication: true, source_manifest_available: fs.existsSync(MANIFEST), source_readiness: sourceReadiness(getSourceStatus()) });
+            if (request.method === 'POST' && url.pathname === '/api/auth/register') {
+                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '注册请求必须来自当前站点');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '注册请求最多8192字节');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '注册信息格式无效');
+                if (!takeAttempt(request, 'register', body.username)) return fail(response, 429, 'RATE_LIMIT', '注册尝试过于频繁，请5分钟后重试');
+                const user = authStore.register(body.username, body.password);
+                return send(response, 201, { user, first_admin: user.role === 'admin' });
+            }
+            if (request.method === 'POST' && url.pathname === '/api/auth/login') {
+                if (!mutationOriginValid(request)) return fail(response, 403, 'ORIGIN_REQUIRED', '登录请求必须来自当前站点');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '登录请求最多8192字节');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['username', 'password'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '登录信息格式无效');
+                if (!takeAttempt(request, 'login', body.username)) return fail(response, 429, 'RATE_LIMIT', '登录尝试过于频繁，请5分钟后重试');
+                const issued = authStore.login(body.username, body.password);
+                response.setHeader('Set-Cookie', [sessionCookie(issued.token, Math.floor(SESSION_TTL_MS / 1000)), `${DEMO_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`]);
+                return send(response, 200, { user: issued.user, csrf_token: issued.csrf, expires_at: issued.expiresAt, session_ttl_seconds: Math.floor(SESSION_TTL_MS / 1000) });
+            }
+            if (request.method === 'GET' && url.pathname === '/api/auth/me') {
+                if (!requireAuth(response, currentAuth)) return;
+                return send(response, 200, { user: currentAuth.user, csrf_token: currentAuth.csrf, expires_at: currentAuth.expiresAt });
+            }
+            if (request.method === 'POST' && url.pathname === '/api/auth/logout') {
+                if (!requireAuth(response, currentAuth)) return;
+                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '退出请求校验失败，请刷新页面后重试');
+                authStore.revoke(authToken);
+                response.setHeader('Set-Cookie', [clearSessionCookie(), `${DEMO_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`]);
+                return send(response, 200, { logged_out: true });
+            }
+            if (request.method === 'GET' && url.pathname === '/api/admin/users') {
+                if (!requireAuth(response, currentAuth, 'admin:users')) return;
+                return send(response, 200, { items: authStore.listUsers() });
+            }
+            const adminUserRoute = url.pathname.match(/^\/api\/admin\/users\/(\d+)$/);
+            if (request.method === 'PATCH' && adminUserRoute) {
+                if (!requireAuth(response, currentAuth, 'admin:users')) return;
+                if (!csrfValid(request, currentAuth)) return fail(response, 403, 'CSRF_REJECTED', '权限修改请求校验失败，请刷新页面后重试');
+                if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers['content-type'] || '')) return fail(response, 415, 'JSON_REQUIRED', '只接受application/json');
+                const body = await readJson(request, AUTH_BODY_LIMIT, '权限修改请求最多8192字节');
+                if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['role', 'active'].includes(key))) return fail(response, 422, 'INPUT_INVALID', '权限修改信息格式无效');
+                return send(response, 200, { user: authStore.updateUser(currentAuth.user, Number(adminUserRoute[1]), body) });
+            }
             if (request.method === 'GET' && url.pathname === '/api/source-status') {
+                if (!requireAuth(response, currentAuth)) return;
                 if (url.search) return fail(response, 400, 'SOURCE_QUERY_FORBIDDEN', '来源状态不接受参数或更新指令');
                 return send(response, 200, getSourceStatus());
             }
             const image = url.pathname.match(/^\/api\/content-images\/([a-f0-9]{64})$/i);
             if (request.method === 'GET' && image) {
+                if (!requireAuth(response, currentAuth)) return;
                 if (url.search) return fail(response, 400, 'IMAGE_QUERY_FORBIDDEN', '图片来源不接受参数');
                 try {
                     const asset = readReviewedImage(image[1]);
@@ -106,16 +217,18 @@ function createCloudServer(options = {}) {
             const sessionId = (request.headers.cookie || '').split(';').map(item => item.trim()).find(item => item.startsWith('huawei_demo='))?.slice('huawei_demo='.length);
             let session = sessions.get(sessionId);
             if (request.method === 'GET' && url.pathname === '/api/examples') {
-                if (!session) {
+                if (!requireAuth(response, currentAuth)) return;
+                if (!session || session.ownerId !== currentAuth.user.id) {
                     if (sessions.size >= 100) return fail(response, 429, 'SESSION_LIMIT', '演示会话已满，请稍后重试');
                     const identifier = crypto.randomBytes(32).toString('hex');
-                    session = { id: identifier, created: Date.now(), csrf: crypto.randomBytes(32).toString('hex'), runs: 0, profileRuns: 0, lastRun: 0 };
+                    session = { id: identifier, ownerId: currentAuth.user.id, created: Date.now(), csrf: crypto.randomBytes(32).toString('hex'), runs: 0, profileRuns: 0, lastRun: 0 };
                     sessions.set(identifier, session);
                     response.setHeader('Set-Cookie', `huawei_demo=${identifier}; HttpOnly; SameSite=Lax; Path=/; Max-Age=1200${publicOrigin.protocol === 'https:' ? '; Secure' : ''}`);
                 }
                 return send(response, 200, { csrf_token: session.csrf, examples: examples(), match_examples: productMatchExamples(), engine: ENGINE, capabilities: { ...CAPABILITIES, product_matching: true, content_generation: true, guided_profile: true, guided_profile_max_turns: MAX_GUIDED_TURNS }, session_ttl_seconds: 1200 });
             }
             if (request.method === 'POST' && url.pathname === '/api/runs') {
+                if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
                 if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
@@ -136,7 +249,7 @@ function createCloudServer(options = {}) {
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
-                const job = { id, status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id };
+                const job = { id, status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id, ownerId: currentAuth.user.id };
                 jobs.set(id, job);
                 active = id;
                 session.runs += 1;
@@ -151,6 +264,7 @@ function createCloudServer(options = {}) {
                 return;
             }
             if (request.method === 'POST' && url.pathname === '/api/profile-steps') {
+                if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
                 if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示任务，请等待当前步骤完成');
@@ -171,7 +285,7 @@ function createCloudServer(options = {}) {
                 const profileInput = { schema_version: '1.0', messages: Array.isArray(body?.messages) ? body.messages : null };
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
-                const job = { id, kind: 'guided-profile', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id };
+                const job = { id, kind: 'guided-profile', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id, ownerId: currentAuth.user.id };
                 jobs.set(id, job);
                 active = id;
                 session.profileRuns += 1;
@@ -191,6 +305,7 @@ function createCloudServer(options = {}) {
                 return;
             }
             if (request.method === 'POST' && url.pathname === '/api/product-matches') {
+                if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
                 if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
@@ -209,7 +324,7 @@ function createCloudServer(options = {}) {
                 });
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
-                const job = { id, kind: 'product-match', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id };
+                const job = { id, kind: 'product-match', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id, ownerId: currentAuth.user.id };
                 jobs.set(id, job);
                 active = id;
                 session.runs += 1;
@@ -224,6 +339,7 @@ function createCloudServer(options = {}) {
                 return;
             }
             if (request.method === 'POST' && url.pathname === '/api/content-drafts') {
+                if (!requireAuth(response, currentAuth, 'analysis:run')) return;
                 const csrf = request.headers['x-csrf-token'];
                 if (!session || !samePublicOriginHost(request.headers.origin) || request.headers['sec-fetch-site'] === 'cross-site' || typeof csrf !== 'string' || !/^[a-f0-9]{64}$/.test(csrf) || !crypto.timingSafeEqual(Buffer.from(csrf), Buffer.from(session.csrf))) return fail(response, 403, 'CSRF_REJECTED', '会话或令牌无效，请刷新当前页面');
                 if (active !== null) return fail(response, 409, 'BUSY', '已有演示运行，请稍后提交');
@@ -242,7 +358,7 @@ function createCloudServer(options = {}) {
                 });
                 while (jobs.size >= 20) jobs.delete(jobs.keys().next().value);
                 const id = crypto.randomUUID();
-                const job = { id, kind: 'content-draft', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id };
+                const job = { id, kind: 'content-draft', status: 'running', result: null, markdown: null, error: null, created: Date.now(), session: session.id, ownerId: currentAuth.user.id };
                 jobs.set(id, job);
                 active = id;
                 session.runs += 1;
@@ -264,7 +380,8 @@ function createCloudServer(options = {}) {
             const match = url.pathname.match(/^\/api\/runs\/([a-f0-9-]{36})(\/export)?$/i);
             if (request.method === 'GET' && match) {
                 const job = jobs.get(match[1]);
-                if (!session || !job || job.session !== session.id) return fail(response, 404, 'RUN_NOT_FOUND', '当前会话无此任务，或任务已过期');
+                if (!requireAuth(response, currentAuth)) return;
+                if (!session || session.ownerId !== currentAuth.user.id || !job || job.session !== session.id) return fail(response, 404, 'RUN_NOT_FOUND', '当前会话无此任务，或任务已过期');
                 if (!match[2]) { const { session: omittedSession, created: omittedCreated, ...publicJob } = job; return send(response, 200, publicJob); }
                 const format = url.searchParams.get('format');
                 if (!['json', 'markdown'].includes(format) || [...url.searchParams.keys()].some(name => name !== 'format')) return fail(response, 400, 'EXPORT_FORMAT_INVALID', '仅允许json或markdown导出');
@@ -285,6 +402,7 @@ function createCloudServer(options = {}) {
             fail(response, 404, 'NOT_FOUND', '页面或接口不存在');
         } catch (error) {
             if (response.headersSent) return response.end();
+            if (error instanceof AccessError) return fail(response, error.status, error.code, error.message);
             const known = error instanceof PipelineError;
             fail(response, error.code === 'BODY_TOO_LARGE' ? 413 : known ? 400 : 500, known ? error.code : 'REQUEST_FAILED', known ? error.message : '请求未完成，请稍后重试');
         }

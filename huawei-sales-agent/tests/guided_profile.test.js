@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const net = require('node:net');
 const { runGuidedProfile, MAX_GUIDED_TURNS } = require('../backend/agent/guided-profile');
 const { createCloudServer } = require('../backend/agent/cloud-server');
+const { authenticate, temporaryAuthFile, fs } = require('./auth_helpers');
 
 function modelOutput(dimensions, nextQuestion = null) {
     return async () => ({
@@ -104,7 +105,8 @@ test('guided-profile HTTP route validates CSRF, creates a job and returns next q
     const sample = await runGuidedProfile({ schema_version: '1.0', messages: [] });
     const port = await freePort();
     const origin = `http://127.0.0.1:${port}`;
-    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false, profileRunner: async input => {
+    const authFile = temporaryAuthFile();
+    const server = createCloudServer({ publicOrigin: origin, platformProxyHost: false, authDataFile: authFile, profileRunner: async input => {
         assert.deepEqual(input.messages, []);
         return sample;
     } });
@@ -115,10 +117,10 @@ test('guided-profile HTTP route validates CSRF, creates a job and returns next q
         assert.match(page, /id="wizard-nav"/);
         assert.match(page, /data-wizard-panel="1"/);
         assert.match(page, /id="wizard-next"/);
-        const examplesResponse = await fetch(`${origin}/api/examples`);
-        const examples = await examplesResponse.json();
+        const auth = await authenticate(origin);
+        const examples = auth.examples;
         assert.equal(examples.capabilities.guided_profile, true);
-        const cookie = examplesResponse.headers.get('set-cookie').split(';')[0];
+        const cookie = auth.cookie;
         const headers = { 'Content-Type': 'application/json; charset=utf-8', Origin: origin, Cookie: cookie, 'X-CSRF-Token': examples.csrf_token };
         const response = await fetch(`${origin}/api/profile-steps`, { method: 'POST', headers, body: JSON.stringify({ schema_version: '1.0', messages: [], restart: true }) });
         assert.equal(response.status, 202);
@@ -130,5 +132,6 @@ test('guided-profile HTTP route validates CSRF, creates a job and returns next q
         assert.match(job.markdown, /客户画像访谈结果/);
     } finally {
         await new Promise(resolve => server.close(resolve));
+        fs.rmSync(authFile, { force: true });
     }
 });
