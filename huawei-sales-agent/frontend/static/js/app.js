@@ -1,9 +1,12 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
+const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
+const profileDimensionLabels = { identity: '身份角色', industry: '行业', usage_scenario: '使用场景', needs: '需求目标', pain_points: '当前痛点', purchase_stage: '采购阶段', budget: '预算', conversation_habit: '对话习惯', platform_knowledge: '了解平台', preferences: '偏好' };
+const profileDimensionIds = Object.keys(profileDimensionLabels);
+
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
 const sourceProducts = ['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024'];
 const sourceHosts = new Set(['consumer.huawei.com', 'www.vmall.com', 'vmall.com', 'm.vmall.com', 'item.vmall.com']);
@@ -65,6 +68,12 @@ function renderCapabilities(capabilities) {
     matchIma.disabled = !capabilities?.ima_configured;
     matchIma.checked = Boolean(capabilities?.ima_configured);
     byId('match-capability-status').textContent = `云端模型：${capabilities?.cloud_model_configured ? '已配置' : '未配置'}；IMA：${capabilities?.ima_configured ? '已配置' : '未配置'}。未配置时不会伪造调用成功。`;
+    const profileStart = byId('profile-start');
+    profileStart.disabled = !capabilities?.cloud_model_configured || state.running;
+    byId('profile-model-status').textContent = capabilities?.cloud_model_configured
+        ? `云端模型 ${capabilities.cloud_model_name || ''} · 逐轮分析`
+        : '云端模型未配置，无法开始访谈';
+    if (!capabilities?.cloud_model_configured) profileStatus('当前未配置云端模型，逐步画像不可用；不会用本地规则冒充云端分析。', true);
 }
 
 function setRunning(running) {
@@ -75,6 +84,13 @@ function setRunning(running) {
     byId('match-button').disabled = running || !state.csrf;
     byId('refresh-source-status').disabled = running || state.sourceLoading;
     byId('new-customer').disabled = running;
+    byId('profile-opening').disabled = running;
+    byId('profile-answer').disabled = running;
+    byId('profile-start').disabled = running || !state.capabilities?.cloud_model_configured;
+    byId('profile-answer-button').disabled = running;
+    byId('profile-reset').disabled = running;
+    byId('profile-to-match').disabled = running;
+    byId('profile-restart-complete').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
     if (!running) byId('resume-polling').hidden = true;
 }
@@ -329,6 +345,267 @@ function renderResult(result, markdown) {
     byId('download-markdown').href = `/api/runs/${encodeURIComponent(state.jobId)}/export?format=markdown`;
     byId('results').hidden = false;
 }
+
+function profileStatus(message, isError = false) {
+    byId('profile-status').textContent = message;
+    byId('profile-status').classList.toggle('error', isError);
+}
+
+function profileStopText(reason) {
+    if (reason === 'coverage_threshold') return '核心维度覆盖已达到阈值，停止追问并生成画像。';
+    if (reason === 'gap_threshold') return '剩余信息缺口已不明显，停止追问并生成画像。';
+    if (reason === 'max_turns') return '已达到最大追问轮数，停止追问并基于现有信息生成画像。';
+    return '画像生成完成。';
+}
+
+function profileEmptyState() {
+    const wrap = element('div');
+    wrap.className = 'conversation-empty';
+    const mark = element('span', 'H');
+    mark.className = 'empty-mark';
+    const copy = element('p');
+    copy.append(element('strong', '准备好后开始画像'), element('small', '可先输入已知背景，或直接进入第一问。'));
+    wrap.append(mark, copy);
+    return wrap;
+}
+
+function renderProfileProgress(result = state.profileResult) {
+    const coverage = result?.coverage;
+    const covered = new Set(coverage?.covered_dimensions || []);
+    const missing = new Set(coverage?.missing_dimensions || profileDimensionIds);
+    const coveredCount = coverage?.covered_count ?? 0;
+    const coreCount = coverage?.core_covered_count ?? 0;
+    const turn = result?.turn ?? state.profileTurn ?? 0;
+    const max = result?.max_turns ?? state.profileMax ?? 8;
+    byId('profile-turn-value').textContent = String(turn);
+    byId('profile-max-value').textContent = String(max);
+    byId('profile-covered-value').textContent = String(coveredCount);
+    byId('profile-core-value').textContent = String(coreCount);
+    const percent = Math.round(coveredCount / profileDimensionIds.length * 100);
+    byId('profile-progress-label').textContent = `${percent}%`;
+    byId('profile-progress-bar').style.width = `${percent}%`;
+    byId('profile-progress-note').textContent = result?.status === 'complete'
+        ? profileStopText(result.stop_reason)
+        : '覆盖 6 个核心维度或缺口不超过 2 项时自动生成画像。';
+    const container = byId('profile-dimensions');
+    container.replaceChildren();
+    for (const identifier of profileDimensionIds) {
+        const chip = element('span', profileDimensionLabels[identifier]);
+        const isCovered = covered.has(identifier);
+        chip.className = `dimension-chip ${isCovered ? 'covered' : 'pending'}`;
+        if (!isCovered && !missing.has(identifier)) chip.classList.remove('pending');
+        container.append(chip);
+    }
+}
+
+function appendProfileMessage(role, content) {
+    const log = byId('profile-conversation');
+    log.querySelector('.conversation-empty')?.remove();
+    const message = element('div');
+    message.className = `chat-message ${role === 'user' ? 'user' : 'agent'}`;
+    message.append(element('small', role === 'user' ? '客户 / 销售' : '画像助手'), element('span', content));
+    log.append(message);
+    log.scrollTop = log.scrollHeight;
+}
+
+function resetProfileInterview(options = {}) {
+    if (state.running) return;
+    state.profileMessages = [];
+    state.profileTurn = 0;
+    state.profileMax = Number(state.capabilities?.guided_profile_max_turns) || 8;
+    state.profileJobId = null;
+    state.profilePolling = false;
+    state.profileResult = null;
+    state.profileStarted = false;
+    state.profileQuestion = null;
+    byId('profile-start-form').reset();
+    byId('profile-answer-form').reset();
+    byId('profile-start-form').hidden = false;
+    byId('profile-question-panel').hidden = true;
+    byId('profile-result').hidden = true;
+    byId('profile-conversation').replaceChildren(profileEmptyState());
+    byId('profile-option-list').replaceChildren();
+    renderProfileProgress(null);
+    profileStatus(state.capabilities?.cloud_model_configured
+        ? '尚未开始。首问由程序给出；客户回答后调用云端模型分析。'
+        : '当前未配置云端模型，逐步画像不可用。', !state.capabilities?.cloud_model_configured);
+    if (!options.silent) byId('profile-studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setProfileQuestion(question) {
+    state.profileQuestion = question;
+    if (!question) {
+        byId('profile-question-panel').hidden = true;
+        return;
+    }
+    byId('profile-start-form').hidden = true;
+    byId('profile-result').hidden = true;
+    byId('profile-question-panel').hidden = false;
+    byId('profile-question-dimension').textContent = profileDimensionLabels[question.dimension] || '进一步信息';
+    byId('profile-question-text').textContent = question.text;
+    const options = byId('profile-option-list');
+    options.replaceChildren();
+    for (const option of question.options || []) {
+        const button = element('button', option);
+        button.type = 'button';
+        button.className = 'option-chip';
+        button.addEventListener('click', () => {
+            byId('profile-answer').value = option;
+            byId('profile-answer').focus();
+            profileStatus('已填入快捷选项。可继续补充细节，再提交给云端分析。');
+        });
+        options.append(button);
+    }
+    byId('profile-answer').focus();
+}
+
+function renderProfileResult(result) {
+    state.profileResult = result;
+    state.profileTurn = result.turn;
+    state.profileMax = result.max_turns;
+    renderProfileProgress(result);
+    byId('profile-model-status').textContent = result.runtime?.called
+        ? `${result.runtime.model || '云端模型'} · 本轮已分析`
+        : '等待首轮客户回答';
+    if (result.status !== 'complete') {
+        state.profileQuestion = result.next_question || null;
+        setProfileQuestion(state.profileQuestion);
+        profileStatus(`第 ${result.turn} 轮分析完成。当前覆盖 ${result.coverage.covered_count}/${result.coverage.total_count} 个维度；请只回答当前这一问。`);
+        return;
+    }
+    state.profileQuestion = null;
+    byId('profile-question-panel').hidden = true;
+    byId('profile-result').hidden = false;
+    byId('profile-summary').textContent = result.summary;
+    byId('profile-stop-reason').textContent = profileStopText(result.stop_reason);
+    const fields = byId('profile-fields');
+    fields.replaceChildren();
+    for (const identifier of profileDimensionIds) {
+        const field = result.fields[identifier] || { value: null, status: 'pending', evidence: [], reason: '待确认' };
+        const item = element('article');
+        item.className = `profile-field ${field.status === 'pending' ? 'pending' : ''}`;
+        const heading = element('strong');
+        heading.append(element('span', profileDimensionLabels[identifier]), element('span', field.status === 'pending' ? '待确认' : statuses[field.status] || field.status));
+        item.append(heading, element('p', field.status === 'pending' ? '尚未取得可定位的客户原话' : readable(field.value)));
+        const evidence = field.evidence?.map(entry => `“${entry.quote}”`).join('；');
+        item.append(element('small', evidence || field.reason || '待确认'));
+        fields.append(item);
+    }
+    appendProfileMessage('agent', '画像已完成。你可以带到产品匹配，或继续创建另一位客户。');
+    profileStatus(`画像已生成：覆盖 ${result.coverage.covered_count}/${result.coverage.total_count} 个维度。请核对待确认项后再进入选品。`);
+}
+
+async function sendProfileMessages(messages, restart = false) {
+    if (state.running) return;
+    if (!state.capabilities?.cloud_model_configured) throw new Error('云端模型未配置，不能进行逐步画像');
+    setRunning(true);
+    state.profilePolling = true;
+    profileStatus(restart ? '正在建立画像访谈，请稍候……' : '正在把本轮回答交给云端模型分析，请稍候……');
+    try {
+        const job = await api('/api/profile-steps', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf },
+            body: JSON.stringify({ schema_version: '1.0', messages, restart }),
+        });
+        state.profileJobId = job.id;
+        while (state.profilePolling) {
+            const current = await api(`/api/runs/${encodeURIComponent(state.profileJobId)}`);
+            if (current.status === 'running') {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+            }
+            if (current.status === 'failed') throw new Error(current.error?.message || '画像访谈未完成');
+            if (current.status !== 'completed' || !current.result) throw new Error('画像访谈结果不完整');
+            state.profilePolling = false;
+            setRunning(false);
+            if (current.result.status === 'question' && current.result.next_question) {
+                state.profileMessages.push({ role: 'assistant', content: current.result.next_question.text });
+                appendProfileMessage('agent', current.result.next_question.text);
+            }
+            renderProfileResult(current.result);
+            return;
+        }
+    } catch (error) {
+        state.profilePolling = false;
+        setRunning(false);
+        throw error;
+    }
+}
+
+async function startGuidedProfile(event) {
+    if (event) event.preventDefault();
+    if (state.running) return;
+    const opening = byId('profile-opening').value.trim();
+    if (opening.length > 800) { profileStatus('已知背景最多 800 字。', true); return; }
+    state.profileMessages = opening ? [{ role: 'user', content: opening }] : [];
+    state.profileTurn = 0;
+    state.profileResult = null;
+    state.profileStarted = true;
+    state.profileQuestion = null;
+    byId('profile-start-form').hidden = true;
+    byId('profile-result').hidden = true;
+    byId('profile-question-panel').hidden = true;
+    byId('profile-conversation').replaceChildren(profileEmptyState());
+    if (opening) appendProfileMessage('user', opening);
+    renderProfileProgress(null);
+    try {
+        await sendProfileMessages(state.profileMessages, true);
+    } catch (error) {
+        state.profileStarted = false;
+        byId('profile-start-form').hidden = false;
+        profileStatus(`无法开始画像：${error.message}。请检查模型配置后重试。`, true);
+    }
+}
+
+async function submitProfileAnswer(event) {
+    if (event) event.preventDefault();
+    if (state.running || !state.profileQuestion) return;
+    const answer = byId('profile-answer').value.trim();
+    if (!answer) { profileStatus('请先填写当前这一问的回答。', true); return; }
+    const previousMessages = [...state.profileMessages];
+    state.profileMessages.push({ role: 'user', content: answer });
+    appendProfileMessage('user', answer);
+    byId('profile-answer').value = '';
+    try {
+        await sendProfileMessages(state.profileMessages, false);
+    } catch (error) {
+        state.profileMessages = previousMessages;
+        byId('profile-answer').value = answer;
+        byId('profile-conversation').querySelectorAll('.chat-message.user').item(-1)?.remove();
+        setProfileQuestion(state.profileQuestion);
+        profileStatus(`本轮分析未完成：${error.message}。回答已保留，可重试。`, true);
+    }
+}
+
+function fillMatchFromProfile() {
+    const profile = state.profileResult?.product_match_profile;
+    if (!profile) return;
+    const setValue = (identifier, value) => {
+        if (value === null || value === undefined || value === '') return;
+        byId(identifier).value = Array.isArray(value) ? value.join('，') : typeof value === 'object' ? JSON.stringify(value) : String(value);
+    };
+    setValue('match-raw-request', profile.raw_request);
+    setValue('match-audience', profile.audience);
+    setValue('match-scenario', profile.scenario);
+    setValue('match-industry', profile.industry);
+    setValue('match-needs', profile.needs);
+    setValue('match-preferences', profile.preferences);
+    setValue('match-pain-points', profile.pain_points);
+    setValue('match-excluded', profile.excluded_requirements);
+    const context = [profile.scenario, ...(profile.needs || []), ...(profile.pain_points || [])].filter(Boolean).join(' ');
+    if (/电脑|笔记本|MateBook|办公设备/.test(context)) setValue('match-product-type', '电脑');
+    if (profile.budget && typeof profile.budget === 'object') {
+        if (Number.isFinite(profile.budget.min)) byId('match-budget-min').value = profile.budget.min;
+        if (Number.isFinite(profile.budget.max)) byId('match-budget-max').value = profile.budget.max;
+        if (profile.budget.scope) byId('match-budget-scope').value = profile.budget.scope;
+        if (Number.isInteger(profile.budget.quantity)) byId('match-quantity').value = profile.budget.quantity;
+    }
+    clearMatchResult();
+    renderCapabilities(state.capabilities || {});
+    matchStatus('已带入逐步画像生成的脱敏信息。请核对未知项，再开始产品匹配。');
+    byId('match-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 
 function matchStatus(message, isError = false) {
     byId('match-status').textContent = message;
@@ -733,6 +1010,12 @@ function renderProductMatchResult(result, markdown) {
     matchStatus('产品匹配结果已生成；请检查【待确认】项、限制和证据，不要仅依据排序分决策。', result.verification.recommended_count === 0);
 }
 
+byId('profile-start-form').addEventListener('submit', startGuidedProfile);
+byId('profile-answer-form').addEventListener('submit', submitProfileAnswer);
+byId('profile-reset').addEventListener('click', () => resetProfileInterview());
+byId('profile-restart-complete').addEventListener('click', () => resetProfileInterview());
+byId('profile-to-match').addEventListener('click', fillMatchFromProfile);
+
 byId('growth-form').addEventListener('submit', startRun);
 byId('content-platform').addEventListener('change', () => {
     clearContentResult();
@@ -775,6 +1058,8 @@ async function initialize() {
         state.matchExamples = Array.isArray(response.match_examples) ? response.match_examples.slice(0, 2) : [];
         byId('engine-status').textContent = engineStatus(response.engine);
         renderCapabilities(response.capabilities || {});
+        state.profileMax = Number(response.capabilities?.guided_profile_max_turns) || 8;
+        renderProfileProgress(null);
         state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${example.label} · Alt+${index + 1}`; });
         state.matchExamples.forEach((example, index) => { byId(`match-example-${index + 1}`).textContent = example.label; });
         setRunning(false);

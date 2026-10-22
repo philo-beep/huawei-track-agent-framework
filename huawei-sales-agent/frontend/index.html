@@ -3,35 +3,132 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>华销智策 —— 针对华为的销售智能体 · 公开演示</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>华销智策 · 华为销售智能体</title>
   <link rel="stylesheet" href="/static/css/styles.css">
   <script src="/static/js/app.js" defer></script>
 </head>
 <body>
-  <header><h1>华销智策 —— 针对华为的销售智能体</h1><p>读懂客户 → 写出内容 → 算报价与准备方案 → 推进成交</p></header>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand-lockup" href="#overview" aria-label="华销智策首页">
+        <span class="huawei-flower" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="brand-copy"><strong>HUAWEI</strong><small>华销智策 · 销售智能体</small></span>
+      </a>
+      <nav class="primary-nav" aria-label="主要功能">
+        <a href="#profile-studio">客户画像</a>
+        <a href="#match-title">产品匹配</a>
+        <a href="#content-studio">内容生成</a>
+        <a href="#plan-studio">报价方案</a>
+        <a href="#results">推进成交</a>
+      </nav>
+      <div class="header-status"><span class="status-dot"></span><span>人工确认边界已启用</span></div>
+    </div>
+  </header>
+
   <main>
-    <section>
-      <h2>三步上手</h2>
-      <ol><li>选择一个合成示例，或点击“新客户”，只输入脱敏、虚构的客户描述。</li><li>核对完整型号、平台和本次场景。未知信息留空，系统会列出待确认项。</li><li>点击“运行四步”，查看准备稿、来源与假设，再下载完整结果。</li></ol>
-      <p><kbd>Alt</kbd> + <kbd>1 / 2 / 3</kbd> 填充示例；<kbd>Ctrl</kbd> + <kbd>Enter</kbd> 运行。快捷键不自动提交示例。</p>
-      <p id="engine-status" class="notice" role="status">正在读取当前引擎模式……</p>
-      <p class="notice">AI 推理、IMA 知识库检索与联网抓取按本次请求显式启用。联网结果只作公开上下文，事实仍须保留来源并经过核验。四级价格是可配置合成假设，非华为官方政策，非真实交易报价。内容为待人工审核的准备稿，不保证曝光或咨询转化。正式图片当前为 0 张。</p>
-      <p>云端与本机 7B 模型版能力不同。当前优先核心交互，前端 UI 将在功能稳定后继续优化。</p>
+    <section id="overview" class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span>HUAWEI SALES COPILOT</span><b>面向销售顾问</b></p>
+        <h1 id="hero-title">把每次客户对话，推进成<span>可执行的下一步</span>。</h1>
+        <p class="hero-lead">从逐步画像开始，联动产品证据、内容准备、报价假设和成交动作。事实与推断分开，未知信息不补造，关键动作由人工确认。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#profile-studio">开始客户画像</a>
+          <a class="button button-quiet" href="#match-title">查看产品匹配</a>
+        </div>
+        <p id="engine-status" class="engine-line" role="status">正在读取当前引擎模式……</p>
+      </div>
+      <aside class="hero-board" aria-label="销售流程概览">
+        <div class="board-head"><span>本次销售工作台</span><span class="live-tag">LIVE</span></div>
+        <ol class="sales-flow">
+          <li><span class="flow-number">01</span><span><strong>客户画像</strong><small>逐题深入，最多 8 轮</small></span><b>进行中</b></li>
+          <li><span class="flow-number">02</span><span><strong>产品匹配</strong><small>候选、限制与逐字证据</small></span><b>待开始</b></li>
+          <li><span class="flow-number">03</span><span><strong>内容准备</strong><small>三平台草稿与发布门禁</small></span><b>待开始</b></li>
+          <li><span class="flow-number">04</span><span><strong>报价与成交</strong><small>假设价格、方案、人工动作</small></span><b>待开始</b></li>
+        </ol>
+        <div class="board-foot"><span>核心画像维度</span><strong>6</strong><span>覆盖即停止</span></div>
+      </aside>
     </section>
-    <section aria-labelledby="source-status-title">
-      <h2 id="source-status-title">资料状态</h2>
-      <p id="source-status-summary" role="status" aria-live="polite">资料尚未核验，暂不能运行。</p>
-      <div class="toolbar"><button id="refresh-source-status" type="button">重新核验资料状态</button></div>
-      <p>以下核验已有官网快照的型号、指纹及7天有效期，不会重新联网抓取。到期需维护者更新并验收资料；进程在线不代表资料可用。规格可用也不代表售价、真实交易报价或图片已核实。</p>
-      <div id="source-status-products"></div>
+
+    <section class="trust-strip" aria-label="使用边界">
+      <div><span class="trust-icon">隐私</span><p><strong>只输入脱敏信息</strong><small>公开演示不接收真实客户隐私、文件或密钥。</small></p></div>
+      <div><span class="trust-icon">证据</span><p><strong>事实与推断分离</strong><small>产品事实、来源限制和待确认项完整保留。</small></p></div>
+      <div><span class="trust-icon">报价</span><p><strong>不冒充正式报价</strong><small>合成价格只作演算，真实成交价缺依据时为 null。</small></p></div>
+      <div><span class="trust-icon">人工</span><p><strong>人工终审再触达</strong><small>系统不自动联系客户，也不保证成交或转化。</small></p></div>
     </section>
-    <section aria-labelledby="match-title">
-      <h2 id="match-title">产品匹配（先选品）</h2>
-      <p>先根据脱敏客户画像从 IMA 与本地产品目录召回候选。每项均显示匹配理由、限制、证据和状态；没有证据的候选固定标为【待确认】。</p>
-      <div class="toolbar"><button id="match-example-1" type="button">匹配示例1</button><button id="match-example-2" type="button">匹配示例2</button><button id="match-clear" type="button">清空匹配条件</button></div>
-      <form id="match-form">
-        <fieldset id="match-fields"><legend>客户画像与选品条件</legend>
-          <label>客户原话或需求描述<textarea id="match-raw-request" rows="3" maxlength="1600" required placeholder="例如：30人制造企业，移动办公，预算暂不确定。"></textarea></label>
+
+    <section id="profile-studio" class="panel feature-panel" aria-labelledby="profile-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">01 / CUSTOMER INTELLIGENCE</p><h2 id="profile-title">逐步问出客户真实决策依据</h2><p>每次只问一个问题。回答交给已配置的云端模型分析，再决定下一问；程序独立守住覆盖阈值、信息缺口和最大轮数。</p></div>
+        <div class="section-kpis"><span><b id="profile-turn-value">0</b> / <em id="profile-max-value">8</em><small>追问轮次</small></span><span><b id="profile-covered-value">0</b> / <em>10</em><small>维度覆盖</small></span><span><b id="profile-core-value">0</b> / <em>6</em><small>核心维度</small></span></div>
+      </div>
+      <div class="profile-grid">
+        <aside class="profile-guide">
+          <div class="guide-badge">GUIDED PROFILE</div>
+          <h3>从一句话开始</h3>
+          <p>可先写下已知背景。系统会将其作为第一条客户信息，随后逐题补齐身份、行业、场景、需求、痛点与采购阶段。</p>
+          <div class="progress-block">
+            <div class="progress-copy"><span>画像覆盖</span><strong id="profile-progress-label">0%</strong></div>
+            <div class="progress-track" aria-hidden="true"><span id="profile-progress-bar"></span></div>
+            <p id="profile-progress-note">覆盖 6 个核心维度或缺口不超过 2 项时自动生成画像。</p>
+          </div>
+          <div class="dimension-grid" id="profile-dimensions" aria-label="画像维度状态"></div>
+          <div class="privacy-note"><span>!</span><p><strong>请使用虚构或脱敏信息。</strong>模型只读取本次访谈对话；画像结果以可定位原话为依据，未取得依据的字段保持待确认。</p></div>
+        </aside>
+        <div class="interview-shell">
+          <div class="interview-head">
+            <div><span class="conversation-indicator"></span><strong>客户画像访谈</strong><small id="profile-model-status">等待开始</small></div>
+            <button id="profile-reset" class="text-button" type="button">重新开始</button>
+          </div>
+          <div id="profile-conversation" class="conversation-log" aria-live="polite">
+            <div class="conversation-empty"><span class="empty-mark">H</span><p><strong>准备好后开始画像</strong><small>可先输入已知背景，或直接进入第一问。</small></p></div>
+          </div>
+          <form id="profile-start-form" class="start-box">
+            <label for="profile-opening">已知背景 <span>可选 · 最多 800 字</span></label>
+            <textarea id="profile-opening" rows="3" maxlength="800" placeholder="例如：合成客户，30 人制造企业采购负责人，正在比较笔记本，预算暂未确定。"></textarea>
+            <div class="box-actions"><button id="profile-start" class="button button-primary" type="submit">开始逐步画像</button><span>云端模型将据此判断更合适的首问。</span></div>
+          </form>
+          <div id="profile-question-panel" hidden>
+            <div class="question-card">
+              <div class="question-meta"><span id="profile-question-dimension">核心维度</span><small>一次只问一个问题</small></div>
+              <h3 id="profile-question-text"></h3>
+              <div id="profile-option-list" class="option-list"></div>
+            </div>
+            <form id="profile-answer-form" class="answer-box">
+              <label for="profile-answer">客户回答 <span>只记录客户明确表达</span></label>
+              <textarea id="profile-answer" rows="3" maxlength="800" placeholder="输入脱敏回答，或选择上方快捷选项……" required></textarea>
+              <div class="box-actions"><button id="profile-answer-button" class="button button-primary" type="submit">提交并分析</button><span>本轮回答将交给云端模型。</span></div>
+            </form>
+          </div>
+          <div id="profile-result" class="profile-result" hidden>
+            <div class="result-banner"><span>画像已完成</span><p id="profile-stop-reason"></p></div>
+            <div id="profile-summary" class="profile-summary"></div>
+            <div id="profile-fields" class="profile-field-grid"></div>
+            <div class="box-actions"><button id="profile-to-match" class="button button-primary" type="button">带入产品匹配</button><button id="profile-restart-complete" class="button button-quiet" type="button">再建一位客户</button></div>
+          </div>
+          <p id="profile-status" class="status-line" role="status" aria-live="polite">尚未开始。未填写背景时首问由程序给出；填写背景或提交回答后将调用云端模型分析。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="source-status-title" class="panel source-panel" aria-labelledby="source-title">
+      <div class="section-heading compact">
+        <div><p class="eyebrow">SOURCE READINESS</p><h2 id="source-title">资料核验状态</h2><p>规格可用不等于价格、真实报价或图片已经核实。</p></div>
+        <button id="refresh-source-status" class="button button-quiet" type="button">重新核验</button>
+      </div>
+      <p id="source-status-summary" class="status-line" role="status" aria-live="polite">资料尚未核验。</p>
+      <div id="source-status-products" class="source-grid"></div>
+    </section>
+
+    <section id="match-title" class="panel" aria-labelledby="match-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">02 / PRODUCT MATCH</p><h2 id="match-heading">用证据匹配，而不是凭感觉推荐</h2><p>从 IMA 与本地产品目录召回候选。匹配理由、限制、逐字引文和逐条件覆盖同时展示；缺少证据时固定标为【待确认】。</p></div>
+        <div class="section-actions"><button id="match-example-1" class="button button-quiet" type="button">匹配示例 1</button><button id="match-example-2" class="button button-quiet" type="button">匹配示例 2</button><button id="match-clear" class="text-button" type="button">清空条件</button></div>
+      </div>
+      <form id="match-form" class="form-surface">
+        <fieldset id="match-fields">
+          <legend>客户画像与选品条件</legend>
+          <label class="field-wide">客户原话或需求描述<textarea id="match-raw-request" rows="3" maxlength="1600" required placeholder="例如：30 人制造企业，移动办公，预算暂不确定。"></textarea></label>
           <div class="fields">
             <label>客户 / 受众<input id="match-audience" maxlength="400" placeholder="例如：采购负责人"></label>
             <label>场景<input id="match-scenario" maxlength="400" placeholder="例如：仓库与办公室轮用"></label>
@@ -43,40 +140,40 @@
             <label>痛点 / 待确认（逗号分隔）<input id="match-pain-points" maxlength="800" placeholder="软件兼容性待确认"></label>
             <label>客户排除项（逗号分隔）<input id="match-excluded" maxlength="800" placeholder="例如：不要台式机"></label>
           </div>
-          <fieldset class="match-budget"><legend>预算（未知可留空）</legend>
-            <div class="fields">
-              <label>最低预算<input id="match-budget-min" type="number" min="0" step="0.01"></label>
-              <label>最高预算<input id="match-budget-max" type="number" min="0" step="0.01"></label>
-              <label>预算口径<select id="match-budget-scope"><option value="">待确认</option><option>单台</option><option>总额</option></select></label>
-              <label>采购数量<input id="match-quantity" type="number" min="1" step="1"></label>
-            </div>
-          </fieldset>
+          <fieldset class="match-budget"><legend>预算（未知可留空）</legend><div class="fields">
+            <label>最低预算<input id="match-budget-min" type="number" min="0" step="0.01"></label>
+            <label>最高预算<input id="match-budget-max" type="number" min="0" step="0.01"></label>
+            <label>预算口径<select id="match-budget-scope"><option value="">待确认</option><option>单台</option><option>总额</option></select></label>
+            <label>采购数量<input id="match-quantity" type="number" min="1" step="1"></label>
+          </div></fieldset>
           <fieldset class="capability-options"><legend>本次启用的外部能力</legend>
             <label><input id="match-use-cloud-model" type="checkbox" checked>云端模型组织匹配理由</label>
             <label><input id="match-use-ima" type="checkbox" checked>IMA 知识库召回</label>
             <p id="match-capability-status">正在核验产品匹配能力……</p>
           </fieldset>
         </fieldset>
-        <div class="toolbar"><button id="match-button" type="submit" disabled>开始产品匹配</button></div>
+        <div class="form-footer"><button id="match-button" class="button button-primary" type="submit" disabled>开始产品匹配</button><span>排序分数不代表匹配概率或成交概率。</span></div>
       </form>
-      <p id="match-status" role="status" aria-live="polite">尚未运行产品匹配。</p>
+      <p id="match-status" class="status-line" role="status" aria-live="polite">尚未运行产品匹配。</p>
       <div id="match-results" hidden>
-        <div class="toolbar"><a id="match-download-json" download>下载匹配 JSON</a><a id="match-download-markdown" download>下载匹配 Markdown</a></div>
+        <div class="result-toolbar"><a id="match-download-json" download>下载匹配 JSON</a><a id="match-download-markdown" download>下载匹配 Markdown</a></div>
         <p id="match-summary" class="notice"></p>
         <h3>候选、理由与证据</h3><div id="match-candidates"></div>
         <h3>匹配诊断</h3><div id="match-diagnostics"></div>
       </div>
-      <div class="toolbar content-platform-picker">
-        <label for="content-platform">内容平台</label>
-        <select id="content-platform"><option>公众号</option><option>小红书</option><option>朋友圈</option></select>
+    </section>
+
+    <section id="content-studio" class="panel" aria-labelledby="content-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">03 / CONTENT STUDIO</p><h2 id="content-heading">把候选变成可审核的内容准备稿</h2><p>选定候选后生成公众号、小红书或朋友圈草稿。发布前先过事实、图片、价格和合规门禁。</p></div>
+        <div class="content-platform-picker"><label for="content-platform">内容平台</label><select id="content-platform"><option>公众号</option><option>小红书</option><option>朋友圈</option></select></div>
       </div>
-      <p id="content-status" role="status" aria-live="polite">选择候选后可生成公众号、小红书或朋友圈内容草稿；不会自动发布。</p>
+      <p id="content-status" class="status-line" role="status" aria-live="polite">请先在产品匹配结果中选择一个候选，再生成内容草稿。系统不会自动发布。</p>
       <div id="content-draft-results" hidden>
-        <div class="toolbar"><a id="content-download-json" download>下载图文 JSON</a><a id="content-download-markdown" download>下载图文 Markdown</a></div>
+        <div class="result-toolbar"><a id="content-download-json" download>下载图文 JSON</a><a id="content-download-markdown" download>下载图文 Markdown</a></div>
         <p id="content-summary" class="notice"></p>
         <h3>强制核验结论</h3><div id="content-verification-summary"></div>
-        <h4>逐项核验</h4><div id="content-verification-items"></div>
-        <h4>风险项清单</h4><div id="content-risk-items"></div>
+        <div class="two-col"><div><h4>逐项核验</h4><div id="content-verification-items"></div></div><div><h4>风险项清单</h4><div id="content-risk-items"></div></div></div>
         <h4>可发布安全版本</h4><div id="content-safe-version"></div>
         <h3>原稿与审稿配图</h3><div id="content-draft"></div>
         <h3>图片来源清单</h3><div id="content-image-sources"></div>
@@ -84,23 +181,25 @@
         <details><summary>完整图文 Markdown（含图片位置、来源与限制）</summary><pre id="content-markdown"></pre></details>
       </div>
     </section>
-    <section>
-      <h2>输入客户信息</h2>
-      <div class="toolbar"><button id="example-1" type="button" disabled>示例1 · Alt+1</button><button id="example-2" type="button" disabled>示例2 · Alt+2</button><button id="example-3" type="button" disabled>示例3 · Alt+3</button><button id="new-customer" type="button">新客户</button></div>
-      <p id="example-note">正在建立独立演示会话……</p>
-      <form id="growth-form">
+
+    <section id="plan-studio" class="panel" aria-labelledby="plan-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">04 / PLAN &amp; PRICING</p><h2 id="plan-heading">四步生成方案，关键金额保持克制</h2><p>基于已选产品和客户上下文生成准备稿、四级假设价格和演示计划。真实成交报价仅在依据充分时使用。</p></div>
+        <div class="section-actions"><button id="example-1" class="button button-quiet" type="button" disabled>示例 1 · Alt+1</button><button id="example-2" class="button button-quiet" type="button" disabled>示例 2 · Alt+2</button><button id="example-3" class="button button-quiet" type="button" disabled>示例 3 · Alt+3</button><button id="new-customer" class="text-button" type="button">新客户</button></div>
+      </div>
+      <p id="example-note" class="status-line">正在建立独立演示会话……</p>
+      <form id="growth-form" class="form-surface">
         <fieldset id="input-fields"><legend>只填写脱敏或虚构信息</legend>
-          <label>客户原话或对话（可选，最多800字）<textarea id="raw-request" rows="3" maxlength="800" placeholder="例如：我想先验证常用软件兼容性，预算还没确定。"></textarea></label>
+          <label class="field-wide">客户原话或对话（可选，最多 800 字）<textarea id="raw-request" rows="3" maxlength="800" placeholder="例如：我想先验证常用软件兼容性，预算还没确定。"></textarea></label>
           <div class="fields">
             <label>产品完整型号<select id="product"><option>HUAWEI MateBook 14 鸿蒙版</option><option>HUAWEI MateBook 14 2024</option></select></label>
             <label>内容平台<select id="platform"><option>公众号</option><option>小红书</option><option>朋友圈</option></select></label>
             <label>客户 / 受众描述（可选）<input id="audience" maxlength="800" placeholder="例如：合成示例，自由职业者"></label>
             <label>本次咨询场景 / 目标（可选）<input id="scenario" maxlength="800" placeholder="例如：首次咨询，先确认文稿编辑和导出"></label>
           </div>
-          <label><input id="demo-pricing" type="checkbox">开启固定5台的四级假设政策演算</label>
-          <p>勾选后使用后端固定演示配置，5台是合成数量，不作为客户真实需求；真实预算和真实报价仍待核实。</p>
-          <fieldset class="capability-options">
-            <legend>本次启用的外部能力</legend>
+          <label class="check-line"><input id="demo-pricing" type="checkbox">开启固定 5 台的四级假设政策演算</label>
+          <p class="help-text">5 台为合成数量，不代表客户真实需求；真实预算与交易报价仍须核实。</p>
+          <fieldset class="capability-options"><legend>本次启用的外部能力</legend>
             <label><input id="use-cloud-model" type="checkbox" checked>云端大模型推理</label>
             <label><input id="use-ima" type="checkbox" checked>IMA 知识库检索</label>
             <label><input id="use-web-research" type="checkbox" checked>联网实时检索与公开网页抓取</label>
@@ -108,22 +207,25 @@
           </fieldset>
           <details><summary>查看当前示例的合成价格配置</summary><pre id="policy-summary">请先选择示例。</pre></details>
         </fieldset>
-        <div class="toolbar"><button id="run-button" type="submit" disabled>运行四步 · Ctrl+Enter</button><button id="resume-polling" type="button" hidden>继续结果查询</button></div>
+        <div class="form-footer"><button id="run-button" class="button button-primary" type="submit" disabled>运行四步 · Ctrl+Enter</button><button id="resume-polling" class="button button-quiet" type="button" hidden>继续结果查询</button><span>快捷键不会自动提交示例。</span></div>
       </form>
-      <p id="run-status" role="status" aria-live="polite">尚未运行。</p>
+      <p id="run-status" class="status-line" role="status" aria-live="polite">尚未运行。</p>
     </section>
-    <section id="results" hidden>
-      <h2>四步结果</h2><p id="result-summary" class="notice"></p>
-      <div class="toolbar"><a id="download-json" download>下载完整 JSON</a><a id="download-markdown" download>下载完整 Markdown</a><button type="button" id="copy-markdown">复制 Markdown</button></div><p id="export-status" role="status"></p>
-      <h3>① 读懂客户</h3><div id="profile"></div><div id="clarifications"></div>
-      <h3>② 写出内容</h3><div id="content"></div>
-      <h3>③ 算报价与准备方案</h3><p class="notice">以下金额仅用于四级假设政策演算。真实成交报价未启用；官网当前价格未核实则为 null。</p><div id="pricing"></div><div id="plan"></div>
-      <h3>④ 推进成交</h3><p>建议由销售人工执行；本应用不会自动发送消息或联系客户。</p><div id="actions"></div>
-      <h3>资料与图片来源</h3><p>保留官网页面、抓取时间及内容指纹。无正式图片时不以占位图冒充。</p><div id="sources"></div>
-      <h3>诊断与限制</h3><div id="diagnostics"></div>
-      <details><summary>完整 Markdown（含来源，纯文本）</summary><pre id="full-markdown"></pre></details>
+
+    <section id="results" class="panel results-panel" aria-labelledby="results-heading" hidden>
+      <div class="section-heading compact"><div><p class="eyebrow">05 / SALES EXECUTION</p><h2 id="results-heading">可执行销售结果</h2><p id="result-summary" class="notice"></p></div><div class="result-toolbar"><a id="download-json" download>下载 JSON</a><a id="download-markdown" download>下载 Markdown</a><button id="copy-markdown" type="button">复制 Markdown</button></div></div>
+      <p id="export-status" class="status-line" role="status"></p>
+      <div class="results-grid">
+        <article><span class="step-index">01</span><h3>读懂客户</h3><div id="profile"></div><div id="clarifications"></div></article>
+        <article><span class="step-index">02</span><h3>写出内容</h3><div id="content"></div></article>
+        <article><span class="step-index">03</span><h3>算报价与准备方案</h3><p class="notice">金额仅用于四级假设政策演算；真实成交报价未启用。</p><div id="pricing"></div><div id="plan"></div></article>
+        <article><span class="step-index">04</span><h3>推进成交</h3><p>建议由销售人工执行；系统不会自动发送消息或联系客户。</p><div id="actions"></div></article>
+        <article class="span-two"><h3>资料与图片来源</h3><div id="sources"></div></article>
+        <article class="span-two"><h3>诊断与限制</h3><div id="diagnostics"></div><details><summary>完整 Markdown（含来源，纯文本）</summary><pre id="full-markdown"></pre></details></article>
+      </div>
     </section>
   </main>
-  <footer>请勿输入真实客户隐私或密钥。输入提交至公开演示服务，使用临时会话；会话过期或服务重启后结果可能失效，请及时导出。</footer>
+
+  <footer class="site-footer"><div><strong>华销智策</strong><span>精准理解 · 克制表达 · 人工推进</span></div><p>请勿输入真实客户隐私或密钥。输入通过临时会话处理；服务重启或会话过期后结果可能失效，请及时导出。本文所述的云端能力以部署环境实际配置为准。</p></footer>
 </body>
 </html>

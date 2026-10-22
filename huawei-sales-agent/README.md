@@ -9,6 +9,18 @@
 3. **给出方案**：用四步规则演算四级价格，并给出 0–30 分钟可执行的演示计划。
 4. **推成交**：输出带负责人、触发条件、依赖项和人工确认边界的下一步动作。
 
+## 逐步客户画像
+
+页面先通过逐题访谈补齐客户画像：每轮只展示一个问题，客户回答后交给已配置的 `deepseek-v4.1-flash` 分析，再决定下一问。程序独立执行以下终止规则：
+
+- 核心维度覆盖达到阈值（至少 6 个维度、其中至少 5 个核心维度）；
+- 剩余待确认缺口不超过 2 项；
+- 最多 8 轮追问，达到上限即基于现有信息生成画像。
+
+每个画像字段保留客户原话证据；模型提取缺少可定位原话时自动降级为【待确认】。预算、采购权限和决策链不由模型补造。画像完成后可一键带入产品匹配。
+
+接口：`POST /api/profile-steps`，复用 `GET /api/runs/<job>` 查询；契约为 `backend/agent/contracts/guided-profile-*.schema.json`。
+
 当前版本支持**按请求显式启用**云端模型、IMA OpenAPI 知识库检索和联网公开网页抓取。云端模型默认配置为 `deepseek-v4.1-flash`；凭据仅从本地 `.env` 或部署环境变量读取。结果仍用于演示和人工复核，不冒充真实成交建议。
 
 ## 多平台内容生成
@@ -84,6 +96,7 @@ bash start.sh
 ## 验证
 
 ```bash
+node --test tests/guided_profile.test.js
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
 node --test tests/extension_regression.test.js
