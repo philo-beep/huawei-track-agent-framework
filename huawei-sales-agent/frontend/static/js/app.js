@@ -2,18 +2,144 @@
 
 const byId = identifier => document.getElementById(identifier);
 const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
-const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
-const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
-const profileDimensionLabels = { identity: '客户角色', industry: '客户行业', usage_scenario: '客户使用场景', needs: '客户需求', pain_points: '客户痛点', purchase_stage: '采购阶段', budget: '客户预算', conversation_habit: '客户沟通偏好', platform_knowledge: '客户方案认知', preferences: '客户偏好' };
+const statuses = { explicit: '客户明确说明', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '需先处理', needs_clarification: '需要补充信息', calculated_demo: '演示测算完成', demo_ready: '销售准备稿已生成', needs_attention: '需要确认', partial: '部分完成', failed: '未完成', missing_basis: '缺少价格依据', basis_sufficient: '依据齐全', cannot_determine: '暂时无法判断', not_provided: '客户未提供', not_evaluated: '尚未判断', not_executed: '尚未执行', pending_assignment: '待指定负责人', pending_confirmation: '待确认', preparation_only: '仅作准备', programmatic_constrained_preparation: '按已核对资料准备', invalid_input: '填写内容需调整' };
+const labels = { identity: '客户角色', relationship: '新老客户关系', industry: '客户行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策参与人', preferences: '客户偏好', pain_points: '当前痛点', purchase_stage: '采购阶段', channels: '可联系渠道' };
+const profileDimensionLabels = { identity: '客户角色', industry: '客户行业', usage_scenario: '使用场景', needs: '客户需求', pain_points: '客户痛点', purchase_stage: '采购阶段', budget: '客户预算', conversation_habit: '沟通偏好', platform_knowledge: '方案了解程度', preferences: '客户偏好' };
+const criterionLabels = { product_type: '产品类型', scenario: '使用场景', need: '明确需求', preference: '客户偏好', pain_point: '待确认问题', budget: '预算', quantity: '采购数量', industry: '客户行业', company_size: '组织规模' };
+const coverageLabels = { supported: '资料支持', pending: '仍需确认', unsupported: '资料不支持', conflict: '信息有冲突', missing: '暂无资料', not_applicable: '不适用' };
+const evidenceLevelLabels = { E1: '产品资料原文', E2: '产品目录', E3: '资料摘要', E4: '客户填写信息' };
+const specLabels = { display_resolution: '屏幕分辨率', memory_options: '内存选项', storage_options: '存储选项', processor: '处理器', operating_system: '操作系统', battery: '电池', weight: '重量', size_and_weight: '尺寸与重量' };
 const wizardMeta = {
-    1: { title: '客户画像', count: 'STEP 01 / 04', description: '销售顾问每次只记录一个问题，逐步形成有原话依据的客户画像。', short: '画像' },
-    2: { title: '产品匹配', count: 'STEP 02 / 04', description: '从客户条件出发，用产品证据、限制和逐条件覆盖筛选候选。', short: '选品' },
-    3: { title: '内容生成', count: 'STEP 03 / 04', description: '将候选转化为公众号、小红书或朋友圈的可审核内容准备稿。', short: '内容' },
-    4: { title: '报价与成交', count: 'STEP 04 / 04', description: '生成四级假设价格、演示方案与带人工确认边界的成交动作。', short: '成交' },
+    1: { title: '客户画像', count: '第 1 步 / 共 4 步', description: '每次只问一个问题，逐步了解客户角色、场景、需求与采购阶段。', short: '画像' },
+    2: { title: '产品匹配', count: '第 2 步 / 共 4 步', description: '按客户需求查找候选型号，并说明推荐理由、使用限制和资料依据。', short: '选品' },
+    3: { title: '内容准备', count: '第 3 步 / 共 4 步', description: '把候选型号变成公众号、小红书或朋友圈的内容准备稿。', short: '内容' },
+    4: { title: '报价与成交', count: '第 4 步 / 共 4 步', description: '整理演示价格、客户演示方案和下一步销售动作。', short: '成交' },
+};
+
+const formatDate = value => {
+    if (!value) return '待确认';
+    const parsed = new Date(value);
+    if (!Number.isFinite(parsed.getTime())) return plainText(value);
+    return new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(parsed);
+};
+const listText = (values, fallback = '待确认') => {
+    const items = Array.isArray(values) ? values.filter(value => value !== null && value !== undefined && value !== '') : [];
+    return items.length ? items.map(value => readable(value)).join('、') : fallback;
+};
+const money = cents => {
+    if (!Number.isSafeInteger(cents)) return '待确认';
+    const amount = BigInt(cents);
+    return `${amount / 100n}.${String(amount % 100n).padStart(2, '0')}元`;
+};
+const statusLabel = status => statuses[status] || plainText(status || '待确认');
+const criterionLabel = kind => criterionLabels[kind] || plainText(String(kind || '其他条件').replaceAll('_', ' '));
+const coverageLabel = status => coverageLabels[status] || plainText(status || '待确认');
+const evidenceLevelLabel = level => evidenceLevelLabels[level] || '资料';
+function plainText(value) {
+    return String(value ?? '')
+        .replace(/deepseek[^\s；,，。]*/gi, '智能分析服务')
+        .replace(/云端(?:大)?模型/g, '智能分析')
+        .replace(/联网(?:实时)?检索/g, '公开资料查询')
+        .replace(/规则画像/g, '客户画像')
+        .replace(/密钥/g, '系统密码')
+        .replace(/合成政策/g, '演示价格规则')
+        .replace(/销售销售配置/g, '销售配置')
+        .replace(/产品资料库\s*知识库/g, '产品资料库')
+        .replace(/销售\s+销售配置/g, '销售配置')
+        .replace(/模型常识/g, '未经核对的信息')
+        .replace(/规则引擎/g, '既定销售规则')
+        .replace(/模型/g, '智能分析')
+        .replace(/产品事实/g, '产品资料')
+        .replace(/事实来源/g, '资料来源')
+        .replace(/事实/g, '资料')
+        .replace(/合成/g, '演示')
+        .replace(/\bIMA(?:\s+OpenAPI)?\b/gi, '产品资料库')
+        .replace(/\bOpenAPI\b/gi, '资料服务')
+        .replace(/\bJSON\b/gi, '数据文件')
+        .replace(/\bMarkdown\b/gi, '说明文档')
+        .replace(/\bHTTP\b/gi, '网络服务')
+        .replace(/\bAPI\b/gi, '服务')
+        .replace(/\bSKU\b/gi, '销售配置')
+        .replace(/字段/g, '信息')
+        .replace(/\bCTA\b/gi, '下一步沟通')
+        .replace(/资格键/g, '适用条件')
+        .replace(/公开价格快照/g, '公开价格参考')
+        .replace(/检索线索/g, '资料线索')
+        .replace(/命中/g, '找到')
+        .replace(/\bofficial-\d+-[a-f0-9]+\b/gi, '相关产品资料')
+        .replace(/\b(?:profile|ev|fact)-[a-f0-9]+\b/gi, '资料依据')
+        .replace(/\bSHA-?256\b/gi, '资料核对信息')
+        .replace(/\bID\b/g, '编号')
+        .replace(/\bnull\b/gi, '待确认')
+        .replace(/\bready\b/gi, '可参考')
+        .replace(/\bneeds_update\b/gi, '需更新')
+        .replace(/\bunknown\b/gi, '待确认')
+        .replace(/\bcalled(?:_with_fallback)?\b/gi, '已使用')
+        .replace(/\bconfigured\b/gi, '已就绪')
+        .replace(/\bE[1-4]事实\b/g, '产品资料')
+        .replace(/\bE[1-4]\b/g, '资料')
+        .replace(/降级/g, '需要调整')
+        .replace(/阻塞/g, '需先处理')
+        .replace(/产品资料库\s*知识库/g, '产品资料库')
+        .replace(/销售\s*销售配置/g, '销售配置')
+        .replace(/事实\s*编号/g, '资料依据')
+        .replace(/四级报价规则/g, '四级价格规则')
+        .replace(/\bURL\b/gi, '公开链接')
+        .replace(/内容指纹/g, '资料核对信息')
+        .replace(/参数事实/g, '参数资料')
+        .replace(/资料证据/g, '资料依据')
+        .replace(/证据/g, '依据')
+        .replace(/产品资料库\s*产品资料/g, '产品资料库')
+        .replace(/产品资料库[^｜\n]*镜像条目/g, '产品资料库')
+        .replace(/完整\s+销售配置/g, '完整销售配置')
+        .replace(/销售配置\s+缺口/g, '销售配置缺口')
+        .replace(/\s+与公开资料查询/g, '与公开资料查询')
+        .replace(/客户画像(?:字段|信息)\s+[a-z][a-z0-9_]*：/gi, '客户填写：')
+        .replace(/\b[a-z][a-z0-9]*_[a-z0-9_]+\b/gi, '相关信息')
+        .replace(/\s*[(（][A-Z][A-Z0-9_]{2,}[)）]\s*/g, '')
+        .trim();
+}
+function cleanProse(value) {
+    return String(value || '').split(/\n{2,}/)
+        .filter(chunk => !/^\s*<!--\s*IMAGE:/i.test(chunk) && !/^\s*>\s*\*\*配图/i.test(chunk))
+        .map(chunk => plainText(chunk).replace(/^来源定位：.*$/gmi, '').trim())
+        .filter(Boolean).join('\n\n').replace(/\n{3,}/g, '\n\n');
+}
+function readable(value) {
+    if (value === null || value === undefined || value === '') return '待确认';
+    if (Array.isArray(value)) return value.length ? value.map(item => readable(item)).join('、') : '无';
+    if (typeof value === 'object') {
+        if (Number.isFinite(value.min) || Number.isFinite(value.max)) {
+            const range = Number.isFinite(value.min) && Number.isFinite(value.max) ? `${value.min} 至 ${value.max}` : Number.isFinite(value.max) ? `不超过 ${value.max}` : `不低于 ${value.min}`;
+            return `${range}${value.currency ? ` ${value.currency}` : ''}${value.scope ? `，按${value.scope}` : ''}${Number.isFinite(value.quantity) ? `，${value.quantity} 台` : ''}`;
+        }
+        if (value.label) return plainText(value.label);
+        const entries = Object.entries(value).filter(([, item]) => item !== null && item !== undefined && item !== '');
+        return entries.length ? entries.map(([key, item]) => `${labels[key] || criterionLabels[key] || plainText(key.replaceAll('_', ' '))}：${readable(item)}`).join('；') : '待确认';
+    }
+    return plainText(value);
+}
+const diagnosticText = value => {
+    const code = typeof value === 'string' ? value : value?.code;
+    const messages = {
+        IMA_REQUEST_FAILED: '产品资料库暂时没有返回有效内容，本次没有把缺失资料当作结论，请联系维护人员检查后重试。',
+        MATCH_MODEL_REASONS_VERIFIED: '推荐理由已逐条对照产品资料，缺少依据的内容已剔除。',
+        MATCH_PENDING_REVIEW: '已找到可能适合的型号，但价格、软件兼容或具体配置仍需确认，暂不标记为可直接推荐。',
+        OFFICIAL_PRICE_UNKNOWN: '尚未取得可核对的正式报价，金额保持待确认。',
+        OFFICIAL_FETCH_UNVERIFIED: '本次未能确认华为公开页面，暂不使用未核实的公开信息作为结论。',
+        PRICE_RULES_MISSING: '缺少正式价格规则，因此不输出成交金额。',
+        IMAGE_EVIDENCE_INCOMPLETE: '当前没有完成发布授权的正式图片，内容只按文字版本准备。',
+        CLOUD_MODEL_USED: '本次已使用智能分析整理建议，产品资料仍按已核对内容写入。',
+        RULE_PREPARATION_USED: '本次按既定销售规则准备内容，未使用智能分析生成建议。',
+        HUMAN_REVIEW_REQUIRED: '系统结果不能代替销售或发布负责人的最终确认。',
+        RELEASE_DOWNGRADED: '发布前检查发现可处理的问题，已生成更稳妥的版本。',
+        VERIFICATION_DOWNGRADE: '部分图片或表述未满足发布要求，已从可发布版本中移除。'
+    };
+    if (messages[code]) return messages[code];
+    return plainText(typeof value === 'string' ? value : value?.message || '需要进一步确认。');
 };
 const profileDimensionIds = Object.keys(profileDimensionLabels);
 
-const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
 const sourceProducts = ['HUAWEI MateBook 14 鸿蒙版', 'HUAWEI MateBook 14 2024'];
 const sourceHosts = new Set(['consumer.huawei.com', 'www.vmall.com', 'vmall.com', 'm.vmall.com', 'item.vmall.com']);
 const sourceWindow = 7 * 86400000;
@@ -39,17 +165,12 @@ function card(identifier, title, value) {
 }
 
 function engineStatus(engine) {
-    if (!engine) return '引擎未确认，请查看本次结果；不能据页面名称判定为模型生成。';
-    const modeNames = {
-        cloud_model: '云端大模型受约束推理',
-        cloud_model_with_rules_fallback: '云端模型调用 + 规则纠错回退',
-        hybrid_rules: '规则引擎 + IMA 检索',
-        hybrid_capable: '云端模型 / IMA / 联网能力可用',
-        rules: '规则准备稿模式（未调用大模型）',
-        qwen_cpu: '本地千问辅助模式'
-    };
-    const mode = modeNames[engine.mode] || `未确认模式：${engine.mode}`;
-    return `${mode}\n模型：${engine.model || '未启用'}；状态：${engine.model_status || '未确认'}\nIMA：${engine.ima_enabled ? '可用' : '未启用'}；联网检索：${engine.web_research_enabled ? '可用' : '未启用'}\n${engine.notice || '最终内容需要人工审核。'}`;
+    const features = [];
+    if (engine && (engine.mode?.includes('cloud') || engine.model_status !== 'disabled')) features.push('智能分析');
+    if (engine?.ima_enabled) features.push('产品资料查询');
+    if (engine?.web_research_enabled) features.push('公开资料查询');
+    const summary = features.length ? features.join('、') : '既定销售规则';
+    return `本次可用：${summary}。\n客户信息、产品资料和演示金额会分别标注，最终结论仍需人工确认。`;
 }
 
 function applyAccessControl(session) {
@@ -62,16 +183,16 @@ function applyAccessControl(session) {
 function renderCapabilities(capabilities) {
     state.capabilities = capabilities || null;
     const mapping = [
-        ['use-cloud-model', Boolean(capabilities?.cloud_model_configured), capabilities?.cloud_model_name ? `云端模型 ${capabilities.cloud_model_name}` : '云端模型'],
-        ['use-ima', Boolean(capabilities?.ima_configured), capabilities?.ima_knowledge_base_name ? `IMA：${capabilities.ima_knowledge_base_name}` : 'IMA 知识库'],
-        ['use-web-research', Boolean(capabilities?.web_research_configured), '联网检索'],
+        ['use-cloud-model', Boolean(capabilities?.cloud_model_configured), '智能生成建议'],
+        ['use-ima', Boolean(capabilities?.ima_configured), '产品资料库查询'],
+        ['use-web-research', Boolean(capabilities?.web_research_configured), '华为公开资料查询'],
     ];
     const labels = [];
     for (const [identifier, enabled, label] of mapping) {
         const control = byId(identifier);
         control.disabled = !enabled;
         control.checked = enabled;
-        labels.push(`${label}：${enabled ? '已配置，将在本次勾选时调用' : '未配置'}`);
+        labels.push(`${label}：${enabled ? '本次可用' : '暂不可用'}`);
     }
     byId('capability-status').textContent = labels.join('；');
     const matchCloud = byId('match-use-cloud-model');
@@ -80,13 +201,13 @@ function renderCapabilities(capabilities) {
     matchCloud.checked = Boolean(capabilities?.cloud_model_configured);
     matchIma.disabled = !capabilities?.ima_configured;
     matchIma.checked = Boolean(capabilities?.ima_configured);
-    byId('match-capability-status').textContent = `云端模型：${capabilities?.cloud_model_configured ? '已配置' : '未配置'}；IMA：${capabilities?.ima_configured ? '已配置' : '未配置'}。未配置时不会伪造调用成功。`;
+    byId('match-capability-status').textContent = `智能生成建议：${capabilities?.cloud_model_configured ? '可用' : '暂不可用'}；产品资料库查询：${capabilities?.ima_configured ? '可用' : '暂不可用'}。暂不可用时不会显示为已完成。`;
     const profileStart = byId('profile-start');
     profileStart.disabled = !capabilities?.cloud_model_configured || state.running;
     byId('profile-model-status').textContent = capabilities?.cloud_model_configured
-        ? `云端模型 ${capabilities.cloud_model_name || ''} · 逐轮分析`
-        : '云端模型未配置，无法开始访谈';
-    if (!capabilities?.cloud_model_configured) profileStatus('当前未配置云端模型，逐步画像不可用；不会用本地规则冒充云端分析。', true);
+        ? '智能分析已准备 · 逐步了解客户'
+        : '智能分析暂不可用，暂时不能开始访谈';
+    if (!capabilities?.cloud_model_configured) profileStatus('智能分析暂不可用，逐步画像暂时无法开始。', true);
 }
 
 function setRunning(running) {
@@ -217,19 +338,23 @@ function renderSourceStatus() {
     if (state.sourceTimer !== null) clearTimeout(state.sourceTimer);
     state.sourceTimer = null;
     byId('source-status-products').replaceChildren();
-    const checked = state.sourceStatus?.checked_at || '尚未成功核验';
+    const checked = state.sourceStatus?.checked_at;
     const product = selectedSource();
     const ready = selectedSourceReady();
-    byId('source-status-summary').textContent = state.sourceLoading ? '正在重新核验已有官网资料，请稍候……' : state.sourceError ? `资料状态未确认：${state.sourceError}。暂不能运行，请点击重新核验；若持续失败，请维护者检查服务和资料。` : `当前型号：${byId('product').value}；${ready ? '资料可用（ready）' : '需要更新或复核（needs_update），暂不能运行'}。\n最近核验：${checked}。真实价格：待核实（unknown / null）。`;
+    byId('source-status-summary').textContent = state.sourceLoading
+        ? '正在重新检查华为公开资料，请稍候……'
+        : state.sourceError
+            ? `产品资料暂时无法确认：${plainText(state.sourceError)}。请重新检查；如仍失败，请联系资料维护人员。`
+            : `当前型号：${byId('product').value}。${ready ? '产品资料可以用于本次准备。' : '产品资料需要更新或复核，暂时不能生成结果。'}\n最近检查：${formatDate(checked)}。正式成交价：待确认。`;
     for (const item of state.sourceStatus?.products || []) {
         const lines = [
-            `规格状态：${sourceReady(item) ? '资料可用（ready）' : '需要更新或复核（needs_update）'}`,
-            `核验时间：${item.checked_at || checked}`,
-            `最早有效抓取时间：${item.oldest_fetched_at || '无有效来源，待更新'}`,
-            `到期需复核时间：${item.expires_at || '无有效来源，待更新'}`,
-            `有效来源：${item.valid_source_count ?? 0}条；真实价格：待核实（unknown / null）；真实交易报价未启用；正式图片0张。`,
-            ...(item.sources || []).map(source => `来源：${source.url}\n抓取：${source.fetched_at}\n到期需复核：${source.expires_at}`),
-            ...(item.diagnostics || []).map(diagnostic => `提示：${diagnostic.message}（${diagnostic.code}）`),
+            `资料情况：${sourceReady(item) ? '可以用于本次准备' : '需要更新或复核'}`,
+            `最近检查：${formatDate(item.checked_at || checked)}`,
+            `资料来源更新：${formatDate(item.oldest_fetched_at)}`,
+            `下次复核时间：${formatDate(item.expires_at)}`,
+            `可参考公开页面：${item.valid_source_count ?? 0} 个；正式成交价：待确认；已授权正式图片：0 张。`,
+            ...(item.sources || []).map(source => `公开资料页：${source.url}\n更新时间：${formatDate(source.fetched_at)}`),
+            ...(item.diagnostics || []).map(diagnostic => `提示：${diagnosticText(diagnostic)}`),
         ];
         card('source-status-products', item.product, lines.join('\n'));
     }
@@ -244,12 +369,12 @@ async function refreshSourceStatus() {
     renderSourceStatus();
     try {
         const response = await api('/api/source-status');
-        if (!response || !['ready', 'needs_update'].includes(response.status) || !checkedRecently(response.checked_at) || response.source_mode !== 'official_public_snapshot' || response.freshness_window_seconds !== sourceWindow / 1000 || response.price_status !== 'unknown' || response.public_price_reference !== null || response.formal_image_count !== 0 || !Array.isArray(response.products) || response.products.length !== sourceProducts.length || !sourceProducts.every(name => response.products.filter(product => product?.product === name).length === 1)) throw new Error('服务返回的资料状态不完整或核验时间已失效');
+        if (!response || !['ready', 'needs_update'].includes(response.status) || !checkedRecently(response.checked_at) || response.source_mode !== 'official_public_snapshot' || response.freshness_window_seconds !== sourceWindow / 1000 || response.price_status !== 'unknown' || response.public_price_reference !== null || response.formal_image_count !== 0 || !Array.isArray(response.products) || response.products.length !== sourceProducts.length || !sourceProducts.every(name => response.products.filter(product => product?.product === name).length === 1)) throw new Error('产品资料状态暂时无法确认，请重新检查');
         const products = response.products.map(product => validSourceProduct(product, response.checked_at) ? product : {
             product: product.product, status: 'needs_update', checked_at: response.checked_at, source_mode: 'official_public_snapshot',
             oldest_fetched_at: null, expires_at: null, valid_source_count: 0, sources: [],
             price_status: 'unknown', public_price_reference: null, actual_transaction_quote: false, formal_image_count: 0,
-            diagnostics: [{ code: 'SOURCE_STATUS_INVALID_RESPONSE', message: '该型号来源状态不完整或日期关系无效，未采用返回的来源与时间；请维护者检查后重新核验。' }],
+            diagnostics: [{ code: 'SOURCE_STATUS_INVALID_RESPONSE', message: '该型号的产品资料暂时无法确认，本次没有采用返回的内容和时间；请稍后重新检查。' }],
         });
         state.sourceStatus = { ...response, products };
     } catch (error) {
@@ -276,8 +401,8 @@ function fillExample(index) {
     const input = example.marketing_input;
     for (const [field, identifier] of [['product', 'product'], ['platform', 'platform'], ['audience', 'audience'], ['scenario', 'scenario'], ['raw_request', 'raw-request']]) byId(identifier).value = input[field] || '';
     byId('demo-pricing').checked = example.demo_pricing === true;
-    byId('policy-summary').textContent = example.pricing_input ? JSON.stringify(example.pricing_input, null, 2) : '固定合成规则由服务端提供；本次结果将保留完整政策与计算过程。';
-    byId('example-note').textContent = `已填合成示例：${example.label}。尚未提交；5台演算仅为假设，不代表客户真实需求。`;
+    byId('policy-summary').textContent = '演示价格设置已就绪；本次结果会用销售能看懂的方式说明每一项假设。';
+    byId('example-note').textContent = `已填入演示示例：${plainText(example.label)}。尚未提交；5 台只是演示数量，不代表客户真实需求。`;
     clearResult();
     renderSourceStatus();
     status('示例已填充，可修改后运行。');
@@ -287,7 +412,7 @@ function clearCustomer() {
     if (state.running) return;
     for (const identifier of ['raw-request', 'audience', 'scenario']) byId(identifier).value = '';
     byId('demo-pricing').checked = false;
-    byId('policy-summary').textContent = '新客户模式未启用合成报价；预算、采购数量不补造。';
+    byId('policy-summary').textContent = '新客户模式未启用演示报价；预算与采购数量不会自动补造。';
     byId('example-note').textContent = '请输入虚构或脱敏客户信息；未知项保留空白。';
     clearResult();
     status('新客户已清空，请补充已知信息。');
@@ -297,19 +422,35 @@ function collectInput() {
     const input = { product: byId('product').value, platform: byId('platform').value };
     for (const [field, identifier] of [['audience', 'audience'], ['scenario', 'scenario'], ['raw_request', 'raw-request']]) {
         const value = byId(identifier).value.trim();
-        if (value.length > 800) throw new Error('每个自由输入字段最多800字。');
+        if (value.length > 800) throw new Error('每项客户描述最多800字。');
         if (value) input[field] = value;
     }
     const request = { marketing_input: input, demo_pricing: byId('demo-pricing').checked, use_cloud_model: byId('use-cloud-model').checked, use_ima: byId('use-ima').checked, use_web_research: byId('use-web-research').checked };
-    if (new TextEncoder().encode(JSON.stringify(request)).length > 4096) throw new Error('输入合计最多4096字节，请缩短描述。');
+    if (new TextEncoder().encode(JSON.stringify(request)).length > 4096) throw new Error('输入内容较长，请精简后再试。');
     return request;
 }
 
 async function api(url, options = {}) {
-    const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', ...options });
+    let response;
+    try {
+        response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', ...options });
+    } catch {
+        throw new Error('暂时无法连接销售工作台，请稍后重试。');
+    }
     let data;
-    try { data = await response.json(); } catch { throw new Error('服务未返回有效JSON，请稍后刷新。'); }
-    if (!response.ok) throw new Error(`${data.error?.message || '请求失败'}（${data.error?.code || response.status}）`);
+    try { data = await response.json(); } catch { throw new Error('工作台返回内容暂时无法读取，请稍后刷新重试。'); }
+    if (!response.ok) {
+        const code = data.error?.code;
+        const messages = {
+            AUTH_REQUIRED: '登录状态已失效，请重新登录。',
+            PERMISSION_DENIED: '当前账号没有执行此操作的权限，请联系管理员。',
+            CSRF_REJECTED: '安全校验已过期，请刷新页面后重试。',
+            RATE_LIMIT: '操作次数较多，请稍后再试。',
+            ORIGIN_REQUIRED: '当前访问地址未获允许，请从正式工作台地址进入。',
+            ORIGIN_FORBIDDEN: '当前访问地址未获允许，请从正式工作台地址进入。'
+        };
+        throw new Error(messages[code] || plainText(data.error?.message || '操作未完成，请稍后重试。'));
+    }
     return data;
 }
 
@@ -321,20 +462,20 @@ async function startRun(event) {
     try { request = collectInput(); } catch (error) { status(error.message, true); return; }
     clearResult();
     setRunning(true);
-    status('正在重新核验当前型号的资料有效期……');
+    status('正在重新检查当前型号的产品资料……');
     try {
         if (!await refreshSourceStatus()) {
             setRunning(false);
-            status('当前型号资料未就绪、已到期或暂时无法核验，未提交生成。请重新核验，或选择资料可用的型号；到期资料需维护者更新并验收。', true);
+            status('当前型号资料尚未准备好、需要更新或暂时无法检查，本次没有提交。请重新检查，或选择资料可用的型号；资料更新请联系资料维护人员。', true);
             return;
         }
         state.startedAt = Date.now();
-        status('资料核验通过，正在执行四步流程；不会自动联系客户。');
+        status('产品资料检查完成，正在整理销售准备结果；不会自动联系客户。');
         const job = await api('/api/runs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(request) });
         state.jobId = job.id;
         state.polling = true;
         await pollRun();
-    } catch (error) { setRunning(false); status(`未完成提交：${error.message}。若会话失效，请刷新页面。`, true); }
+    } catch (error) { setRunning(false); status(`本次未完成：${plainText(error.message)}。若登录已过期，请刷新页面后重试。`, true); }
 }
 
 async function pollRun() {
@@ -342,79 +483,174 @@ async function pollRun() {
     try {
         const job = await api(`/api/runs/${encodeURIComponent(state.jobId)}`);
         if (job.status === 'running') {
-            status(`正在执行，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。请勿重复提交。`);
+            status(`正在处理，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。请勿重复提交。`);
             setTimeout(pollRun, 1000);
             return;
         }
         state.polling = false;
         setRunning(false);
-        if (job.status === 'failed') { status(`执行失败：${job.error?.message || '未知错误'}。没有生成成功结果。`, true); return; }
-        if (job.status !== 'completed' || !job.result) throw new Error('服务结果不完整');
+        if (job.status === 'failed') { status(`本次未完成：${plainText(job.error?.message || '请稍后重试')}。没有生成可用的销售准备结果。`, true); return; }
+        if (job.status !== 'completed' || !job.result) throw new Error('结果暂时不完整，请稍后重试');
         renderResult(job.result, job.markdown || '');
     } catch (error) {
         state.polling = false;
         byId('resume-polling').hidden = false;
-        status(`查询暂停：${error.message}。后台可能仍在运行，请继续查询，避免重复提交。`, true);
+        status(`查询暂停：${plainText(error.message)}。处理可能仍在继续，请点击继续查询，避免重复提交。`, true);
     }
 }
 
-function money(cents) {
-    if (!Number.isSafeInteger(cents)) return '待核实（null）';
-    const amount = BigInt(cents);
-    return `${amount / 100n}.${String(amount % 100n).padStart(2, '0')}元`;
+function appendList(container, title, values, empty = '暂无需要补充的内容。') {
+    const wrap = element('div'); wrap.className = 'result-card';
+    wrap.append(element('strong', title));
+    const items = (values || []).filter(value => value !== null && value !== undefined && value !== '');
+    const list = element('ul');
+    if (!items.length) list.append(element('li', empty));
+    else for (const value of items) list.append(element('li', plainText(value)));
+    wrap.append(list);
+    container.append(wrap);
+}
+
+function cleanSourceTitle(value) {
+    return plainText(String(value || '产品资料').split('｜')[0]
+        .replace(/\s*-\s*产品事实\s*$/i, ' 产品资料')
+        .replace(/^input\.profile\./i, '客户填写：')
+        .replace(/\.[a-f0-9]{12,}(?:\.(?:html?|txt))?$/i, '')
+        .replace(/\.(?:html?|txt)$/i, ''));
+}
+
+function limitationText(value) {
+    const message = plainText(typeof value === 'string' ? value : value?.message || '');
+    if (message.includes('固定5台') || message.includes('固定 5 台')) return '演示价格使用固定的 5 台假设，不代表客户真实采购数量。';
+    if (message.includes('官网快照') || message.includes('公开快照')) return '公开资料有更新时间限制，过期后会要求重新核对。';
+    if (message.includes('产品资料库') || message.includes('公开资料')) return '产品资料和公开资料会分别记录来源；缺少可核对原文时保持待确认。';
+    if (message.includes('正式交易报价') || message.includes('正式图片')) return '正式成交价、正式图片、现场耗时和转化效果仍需人工确认。';
+    if (message.includes('隐私')) return '请只使用虚构或脱敏客户信息，不要输入真实隐私或系统密码。';
+    if (message.includes('人工') || message.includes('最终确认')) return '系统结果只用于准备，不能代替销售或发布负责人的最终确认。';
+    return message;
+}
+
+function renderPricing(pricing = {}) {
+    const wrap = element('div'); wrap.className = 'result-card';
+    wrap.append(element('strong', '演示金额测算'));
+    wrap.append(element('p', `演示数量：${pricing.quantity ?? '待确认'} 台\n单台测算：${money(pricing.unit_amount_cents)}\n合计测算：${money(pricing.amount_cents)}\n正式成交报价：待确认。`));
+    wrap.append(element('p', '以上金额只用于演示四级价格的计算方式，不是华为官方政策，也不是客户成交价。'));
+    byId('pricing').append(wrap);
+    for (const trace of pricing.trace || []) {
+        const item = element('div'); item.className = 'result-card';
+        item.append(element('strong', `第 ${trace.level} 级：${plainText(trace.source?.title || '价格假设')}`));
+        const discount = Number.isSafeInteger(trace.discount_cents) ? money(trace.discount_cents) : '待确认';
+        item.append(element('p', `本步前单台：${money(trace.before_cents)}\n本步优惠：${discount}\n本步后单台：${money(trace.after_cents)}`));
+        if (Number.isSafeInteger(trace.cap_discount_cents)) item.append(element('p', `本步优惠上限：${money(trace.cap_discount_cents)}`));
+        item.append(element('small', plainText(trace.source?.description || '这是一项演示假设，需人工确认。')));
+        byId('pricing').append(item);
+    }
+    const notes = (pricing.diagnostics || []).map(diagnostic => diagnosticText(diagnostic));
+    appendList(byId('pricing'), '价格需要确认的事项', [...new Set(notes)], '正式价格政策仍需确认。');
+}
+
+function renderPlan(plan) {
+    if (!plan) return;
+    const wrap = element('div'); wrap.className = 'result-card';
+    wrap.append(element('strong', '0–30 分钟客户演示准备'), element('p', plainText(plan.goal)));
+    wrap.append(element('p', '这是准备方案，现场实际耗时尚未验证；完成演示后再记录真实结果。'));
+    appendList(byId('plan'), '演示前准备', plan.materials || []);
+    const schedule = element('div'); schedule.className = 'result-card';
+    schedule.append(element('strong', '建议时间安排'));
+    for (const step of plan.schedule || []) {
+        const item = element('div'); item.className = 'business-step';
+        item.append(element('b', `${step.minutes} 分钟 · ${plainText(step.owner)}`));
+        item.append(element('p', `做什么：${plainText(step.operation)}\n完成标准：${plainText(step.acceptance)}\n遇到困难：${plainText(step.fallback)}`));
+        schedule.append(item);
+    }
+    byId('plan').append(schedule);
+}
+
+function renderActions(actions) {
+    (actions || []).forEach((action, index) => {
+        const wrap = element('div'); wrap.className = 'result-card';
+        wrap.append(element('strong', `第 ${index + 1} 项 · ${plainText(action.owner || '待指定负责人')}`));
+        wrap.append(element('p', `要做什么：${plainText(action.action)}\n何时推进：${plainText(action.time_node || action.trigger)}\n完成标准：${plainText(action.completion_criteria)}`));
+        if (action.pending_dependencies?.length) wrap.append(element('p', `先确认：${listText(action.pending_dependencies)}`));
+        byId('actions').append(wrap);
+    });
+}
+
+function renderOfficialReference(official) {
+    if (!official) return;
+    const wrap = element('div'); wrap.className = 'result-card';
+    wrap.append(element('strong', '华为公开产品资料'));
+    wrap.append(element('p', `产品：${plainText(official.product || '待确认')}\n最近核对：${formatDate(official.checked_at)}\n正式成交价：${official.public_price_reference ? money(official.public_price_reference.amount_cents) : '待确认'}`));
+    const specs = (official.specifications || []).map(spec => `${specLabels[spec.name] || plainText(spec.name)}：${readable(spec.value)}${spec.unit ? ` ${spec.unit}` : ''}`);
+    if (specs.length) wrap.append(element('p', specs.join('\n')));
+    for (const source of official.sources || []) {
+        const item = element('div');
+        item.append(element('small', `资料来源：${plainText(source.product || '华为公开页面')}｜更新于 ${formatDate(source.fetched_at)}`));
+        const link = safeSourceLink(source.url, '查看华为公开页面');
+        if (link) item.append(link);
+        wrap.append(item);
+    }
+    const notes = (official.diagnostics || []).map(diagnostic => diagnosticText(diagnostic));
+    if (notes.length) wrap.append(element('p', [...new Set(notes)].join('\n')));
+    byId('diagnostics').append(wrap);
 }
 
 function renderSources(result) {
     const seen = new Set();
     const walk = value => {
         if (!value || typeof value !== 'object') return;
-        if (typeof value.url === 'string' || Array.isArray(value.urls)) {
-            const key = JSON.stringify(value);
+        const addresses = [...(typeof value.url === 'string' ? [value.url] : []), ...(Array.isArray(value.urls) ? value.urls : [])];
+        if (addresses.length) {
+            const key = addresses.join('|') + '|' + String(value.title || value.name || '');
             if (!seen.has(key)) {
                 seen.add(key);
-                const item = card('sources', value.title || value.entry || '来源记录', value);
-                for (const address of [...(value.url ? [value.url] : []), ...(Array.isArray(value.urls) ? value.urls : [])]) {
-                    try {
-                        const url = new URL(address);
-                        if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) continue;
-                        const link = element('a', '打开来源页面');
-                        link.href = url.href;
-                        link.target = '_blank';
-                        link.rel = 'noopener noreferrer';
-                        item.append(link);
-                    } catch { }
+                const wrap = element('div'); wrap.className = 'result-card';
+                wrap.append(element('strong', cleanSourceTitle(value.title || value.name || value.entry)));
+                wrap.append(element('p', `资料更新时间：${formatDate(value.fetched_at || value.checked_at)}`));
+                for (const address of addresses) {
+                    const link = safeSourceLink(address, '查看原始资料');
+                    if (link) wrap.append(link);
                 }
+                if (value.excerpt) {
+                    const details = element('details');
+                    details.append(element('summary', '查看资料摘录'), element('p', plainText(String(value.excerpt).replace(/\s+/g, ' ').slice(0, 320))));
+                    wrap.append(details);
+                }
+                byId('sources').append(wrap);
             }
         }
         for (const child of Object.values(value)) walk(child);
     };
     walk(result.marketing_result?.knowledge_basis);
     walk(result.official_reference);
-    if (!seen.size) card('sources', '没有可展示的官网来源记录', '请查看完整JSON；未把无来源文本当作核实资料。');
-    card('sources', '正式图片来源', '当前正式图片0张；未核实的候选图不展示为产品图片。');
+    if (!seen.size) card('sources', '暂无可展示的华为公开资料来源', '本次没有把无来源内容当作已核实资料。');
+    card('sources', '正式产品图片', '当前没有完成发布授权的正式图片；未确认图片不会作为产品配图展示。');
 }
 
 function renderResult(result, markdown) {
     for (const identifier of ['profile', 'clarifications', 'content', 'pricing', 'plan', 'actions', 'sources', 'diagnostics']) byId(identifier).replaceChildren();
     byId('engine-status').textContent = engineStatus(result.runtime_engine);
     const ready = result.status === 'demo_ready';
-    status(ready ? '演示准备稿已生成，请核对来源、合成金额及待确认项。' : '流程返回了待确认或阻塞项，请先处理下方提示。', !ready);
-    byId('result-summary').textContent = `业务状态：${statuses[result.status] || result.status}；用时${result.timing?.generation_elapsed_seconds ?? '未提供'}秒。\n${engineStatus(result.runtime_engine)}\n生成时间不代表现场30分钟演示已实测。`;
-    for (const [name, field] of Object.entries(result.customer_analysis?.profile || {})) card('profile', labels[name] || name, `值：${readable(field.value)}\n状态：${statuses[field.status] || field.status}\n证据 / 原因：${readable(field.evidence?.length ? field.evidence : field.reason)}`);
-    for (const question of result.customer_analysis?.clarification_questions || []) card('clarifications', '待确认', question);
+    status(ready ? '销售准备结果已生成，请核对待确认项和金额说明。' : '还有信息需要确认，请先处理下方提示。', !ready);
+    byId('result-summary').textContent = `结果状态：${statusLabel(result.status)}；本次处理用时 ${result.timing?.generation_elapsed_seconds ?? '未提供'} 秒。\n${engineStatus(result.runtime_engine)}\n生成用时不代表现场 30 分钟演示已经完成。`;
+    for (const [name, field] of Object.entries(result.customer_analysis?.profile || {})) {
+        const evidence = field.evidence?.length ? field.evidence.map(item => `“${item.quote}”`).join('；') : field.reason;
+        card('profile', labels[name] || '客户信息', `客户信息：${readable(field.value)}\n可信程度：${statusLabel(field.status)}\n依据：${readable(evidence)}`);
+    }
+    for (const question of result.customer_analysis?.clarification_questions || []) card('clarifications', '建议先确认', typeof question === 'string' ? plainText(question) : plainText(question.question || question));
     const content = result.content?.marketing_content;
-    if (content) card('content', content.title || '内容准备稿', `${content.lead || ''}\n\n${content.body || ''}\n\n咨询引导：${content.cta || ''}`);
-    else card('content', '未生成内容', '请补充必要输入；没有把空稿标为成功。');
-    const pricing = result.pricing_result || {};
-    card('pricing', `合成演算：${statuses[pricing.status] || pricing.status || '待核实'}`, `合成数量：${pricing.quantity ?? '待确认'}台\n合成单价：${money(pricing.unit_amount_cents)}\n合成总额：${money(pricing.amount_cents)}\n真实交易报价：null，非华为官方政策。`);
-    for (const trace of pricing.trace || []) card('pricing', `第${trace.level}级合成规则`, trace);
-    if (result.pricing_configuration) card('pricing', '配置与假设来源', result.pricing_configuration);
-    for (const diagnostic of pricing.diagnostics || []) card('pricing', '报价诊断', diagnostic);
-    if (result.solution?.demonstration_plan) card('plan', '0–30分钟演示准备方案（现场耗时待验证）', result.solution.demonstration_plan);
-    for (const action of result.next_actions || []) card('actions', action.owner || '人工下一步', action);
+    if (content) card('content', content.title || '内容准备稿', `${plainText(content.lead || '')}\n\n${plainText(content.body || '')}\n\n下一步沟通：${plainText(content.cta || '')}`);
+    else card('content', '暂未生成内容', '请先补齐必要信息；系统不会把空白内容标为已完成。');
+    renderPricing(result.pricing_result || {});
+    renderPlan(result.solution?.demonstration_plan);
+    renderActions(result.next_actions || []);
     renderSources(result);
-    if (result.official_reference) card('diagnostics', '官网参数与价格核验', result.official_reference);
-    for (const value of [...(result.limitations || []), ...(result.diagnostics || []), ...(result.marketing_result?.diagnostics || [])]) card('diagnostics', '限制 / 诊断', value);
+    renderOfficialReference(result.official_reference);
+    const notes = [
+        ...(result.limitations || []).map(limitationText),
+        ...(result.diagnostics || []).map(diagnosticText),
+        ...(result.marketing_result?.diagnostics || []).map(diagnosticText)
+    ].filter(Boolean);
+    appendList(byId('diagnostics'), '使用边界与待确认事项', [...new Set(notes)], '仍需人工确认最终内容与销售动作。');
     state.markdown = markdown;
     byId('full-markdown').textContent = markdown;
     byId('download-json').href = `/api/runs/${encodeURIComponent(state.jobId)}/export?format=json`;
@@ -431,9 +667,9 @@ function profileStatus(message, isError = false) {
 }
 
 function profileStopText(reason) {
-    if (reason === 'coverage_threshold') return '核心维度覆盖已达到阈值，停止追问并生成画像。';
-    if (reason === 'gap_threshold') return '剩余信息缺口已不明显，停止追问并生成画像。';
-    if (reason === 'max_turns') return '已达到最大追问轮数，停止追问并基于现有信息生成画像。';
+    if (reason === 'coverage_threshold') return '关键客户信息已基本齐全，系统生成了客户画像。';
+    if (reason === 'gap_threshold') return '剩余待确认项已经较少，系统生成了客户画像。';
+    if (reason === 'max_turns') return '已经问完本轮建议的问题，系统基于现有信息生成了客户画像。';
     return '画像生成完成。';
 }
 
@@ -465,7 +701,7 @@ function renderProfileProgress(result = state.profileResult) {
     byId('profile-progress-bar').style.width = `${percent}%`;
     byId('profile-progress-note').textContent = result?.status === 'complete'
         ? profileStopText(result.stop_reason)
-        : '覆盖 6 个核心维度或缺口不超过 2 项时自动生成画像。';
+        : '关键客户信息基本齐全时，系统会自动生成画像。';
     const container = byId('profile-dimensions');
     container.replaceChildren();
     for (const identifier of profileDimensionIds) {
@@ -507,8 +743,8 @@ function resetProfileInterview(options = {}) {
     renderProfileProgress(null);
     updateWizardChrome();
     profileStatus(state.capabilities?.cloud_model_configured
-        ? '尚未开始。首问由程序给出；销售顾问提交客户信息后调用云端模型分析。'
-        : '当前未配置云端模型，逐步画像不可用。', !state.capabilities?.cloud_model_configured);
+        ? '尚未开始。系统会先给出一个问题；销售顾问提交客户信息后会继续智能分析。'
+        : '智能分析暂不可用，逐步画像暂时无法开始。', !state.capabilities?.cloud_model_configured);
     if (!options.silent) byId('profile-studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -532,7 +768,7 @@ function setProfileQuestion(question) {
         button.addEventListener('click', () => {
             byId('profile-answer').value = option;
             byId('profile-answer').focus();
-            profileStatus('已填入快捷选项。可继续补充细节，再提交给云端分析。');
+            profileStatus('已填入快捷选项。可继续补充细节，再提交分析。');
         });
         options.append(button);
     }
@@ -546,12 +782,12 @@ function renderProfileResult(result) {
     state.profileMax = result.max_turns;
     renderProfileProgress(result);
     byId('profile-model-status').textContent = result.runtime?.called
-        ? `${result.runtime.model || '云端模型'} · 本轮已分析`
+        ? '智能分析 · 本轮已完成'
         : '等待销售顾问录入首轮信息';
     if (result.status !== 'complete') {
         state.profileQuestion = result.next_question || null;
         setProfileQuestion(state.profileQuestion);
-        profileStatus(`第 ${result.turn} 轮分析完成。当前覆盖 ${result.coverage.covered_count}/${result.coverage.total_count} 个维度；请只回答当前这一问。`);
+        profileStatus(`第 ${result.turn} 轮分析完成。当前已了解 ${result.coverage.covered_count}/${result.coverage.total_count} 项客户信息；请只回答当前这一问。`);
         return;
     }
     state.profileQuestion = null;
@@ -573,15 +809,15 @@ function renderProfileResult(result) {
         fields.append(item);
     }
     appendProfileMessage('agent', '画像已完成。你可以带到产品匹配，或继续创建另一位客户。');
-    profileStatus(`画像已生成：覆盖 ${result.coverage.covered_count}/${result.coverage.total_count} 个维度。请核对待确认项后再进入选品。`);
+    profileStatus(`客户画像已生成：已了解 ${result.coverage.covered_count}/${result.coverage.total_count} 项信息。请核对待确认项后再进入选品。`);
 }
 
 async function sendProfileMessages(messages, restart = false) {
     if (state.running) return;
-    if (!state.capabilities?.cloud_model_configured) throw new Error('云端模型未配置，不能进行逐步画像');
+    if (!state.capabilities?.cloud_model_configured) throw new Error('智能分析暂不可用，暂时不能进行逐步画像');
     setRunning(true);
     state.profilePolling = true;
-    profileStatus(restart ? '正在建立画像访谈，请稍候……' : '正在把本轮回答交给云端模型分析，请稍候……');
+    profileStatus(restart ? '正在准备客户画像访谈，请稍候……' : '正在根据本轮回答继续分析，请稍候……');
     try {
         const job = await api('/api/profile-steps', {
             method: 'POST',
@@ -634,7 +870,7 @@ async function startGuidedProfile(event) {
     } catch (error) {
         state.profileStarted = false;
         byId('profile-start-form').hidden = false;
-        profileStatus(`无法开始画像：${error.message}。请检查模型配置后重试。`, true);
+        profileStatus(`暂时无法开始画像：${plainText(error.message)}。请稍后重试或联系管理员。`, true);
     }
 }
 
@@ -654,7 +890,7 @@ async function submitProfileAnswer(event) {
         byId('profile-answer').value = answer;
         byId('profile-conversation').querySelectorAll('.chat-message.user').item(-1)?.remove();
         setProfileQuestion(state.profileQuestion);
-        profileStatus(`本轮分析未完成：${error.message}。回答已保留，可重试。`, true);
+        profileStatus(`本轮分析未完成：${plainText(error.message)}。回答已保留，可重试。`, true);
     }
 }
 
@@ -730,7 +966,7 @@ function fillMatchExample(index) {
     byId('match-use-cloud-model').checked = Boolean(input.use_cloud_model && state.capabilities?.cloud_model_configured);
     byId('match-use-ima').checked = Boolean((input.mode === 'ima' || input.mode === 'hybrid') && state.capabilities?.ima_configured);
     clearMatchResult();
-    matchStatus(`已填充合成匹配示例：${example.label}。尚未提交。`);
+    matchStatus(`已填入演示选品示例：${plainText(example.label)}。尚未提交。`);
 }
 
 function clearMatchCustomer() {
@@ -775,7 +1011,7 @@ function collectMatchInput() {
             budget: hasBudget ? { min, max, currency: 'CNY', scope: byId('match-budget-scope').value || null, quantity } : null,
         },
     };
-    if (new TextEncoder().encode(JSON.stringify(request)).length > 16384) throw new Error('产品匹配输入最多16384字节，请缩短描述。');
+    if (new TextEncoder().encode(JSON.stringify(request)).length > 16384) throw new Error('输入内容较长，请精简后再试。');
     return request;
 }
 
@@ -788,7 +1024,7 @@ async function startProductMatch(event) {
     clearMatchResult();
     setRunning(true);
     state.startedAt = Date.now();
-    matchStatus('正在召回候选并核验证据；云端模型不可用时会如实回退规则理由。');
+    matchStatus('正在查找候选型号并核对产品资料；如智能分析暂不可用，会按已核对资料整理推荐理由。');
     try {
         const job = await api('/api/product-matches', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(request) });
         state.matchJobId = job.id;
@@ -808,13 +1044,13 @@ async function pollProductMatch() {
         }
         state.matchPolling = false;
         setRunning(false);
-        if (job.status === 'failed') { matchStatus(`产品匹配失败：${job.error?.message || '未知错误'}。`, true); return; }
-        if (job.status !== 'completed' || !job.result) throw new Error('服务结果不完整');
+        if (job.status === 'failed') { matchStatus(`选品未完成：${plainText(job.error?.message || '请稍后重试')}。`, true); return; }
+        if (job.status !== 'completed' || !job.result) throw new Error('结果暂时不完整，请稍后重试');
         renderProductMatchResult(job.result, job.markdown || '');
     } catch (error) {
         state.matchPolling = false;
         setRunning(false);
-        matchStatus(`产品匹配查询暂停：${error.message}。请勿重复提交，可刷新后重试。`, true);
+        matchStatus(`选品查询暂停：${plainText(error.message)}。请勿重复提交，可刷新后重试。`, true);
     }
 }
 
@@ -850,7 +1086,7 @@ async function startContentDraft(candidateId) {
     const platform = byId('content-platform').value;
     const imageLimit = platform === '朋友圈' ? 1 : platform === '小红书' ? 3 : 4;
     state.contentPlatform = platform;
-    contentStatus(`正在按${platform}结构重新核验候选、事实原文与精确型号图片，不会使用近似型号替代。`);
+    contentStatus(`正在按${platform}的内容结构核对候选型号、产品原文和可用图片，不会使用近似型号替代。`);
     try {
         const payload = { schema_version: '1.0', match_input: state.matchInput, candidate_id: candidateId, platform, image_limit: imageLimit };
         const job = await api('/api/content-drafts', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(payload) });
@@ -874,13 +1110,13 @@ async function pollContentDraft() {
         }
         state.contentPolling = false;
         setRunning(false);
-        if (job.status === 'failed') { contentStatus(`图文生成失败：${job.error?.message || '未知错误'}。`, true); return; }
-        if (job.status !== 'completed' || !job.result) throw new Error('服务结果不完整');
+        if (job.status === 'failed') { contentStatus(`内容准备未完成：${plainText(job.error?.message || '请稍后重试')}。`, true); return; }
+        if (job.status !== 'completed' || !job.result) throw new Error('结果暂时不完整，请稍后重试');
         renderContentDraftResult(job.result, job.markdown || '');
     } catch (error) {
         state.contentPolling = false;
         setRunning(false);
-        contentStatus(`图文查询暂停：${error.message}。请勿重复提交，可刷新后重试。`, true);
+        contentStatus(`内容查询暂停：${plainText(error.message)}。请勿重复提交，可刷新后重试。`, true);
     }
 }
 
@@ -900,25 +1136,26 @@ function verificationBadge(status, label) {
 
 function renderVerificationResult(verification) {
     const overallClass = verification.overall_status === 'blocked' ? 'fail' : verification.overall_status === 'downgraded' ? 'downgrade' : 'pass';
+    const checkLabels = { product_model: '产品型号', parameters: '产品参数', price: '价格与报价', image_identity: '图片来源', overreach: '表达边界', source_completeness: '资料来源' };
     const summary = element('div'); summary.className = 'verification-summary';
     const heading = element('div'); heading.className = 'verification-heading';
-    heading.append(element('strong', '发布门禁结论'), verificationBadge(overallClass, verification.status_label));
+    heading.append(element('strong', '发布前检查结论'), verificationBadge(overallClass, plainText(verification.status_label)));
     summary.append(heading);
-    summary.append(element('p', `六项核验：通过 ${verification.summary.pass_count}｜降级 ${verification.summary.downgrade_count}｜不通过 ${verification.summary.fail_count}`));
-    summary.append(element('p', `原稿公开发布就绪：${verification.publication_ready ? '是' : '否'}；可发布安全版本：${verification.safe_content_ready ? '可用' : '不可用'}。`));
-    summary.append(element('p', `策略版本：${verification.policy_version}；核验时间：${verification.checked_at}`));
+    summary.append(element('p', `六项检查：通过 ${verification.summary.pass_count} 项｜需要调整 ${verification.summary.downgrade_count} 项｜不通过 ${verification.summary.fail_count} 项`));
+    summary.append(element('p', `原稿可直接发布：${verification.publication_ready ? '是' : '否'}；稳妥版本：${verification.safe_content_ready ? '可用' : '暂不可用'}。`));
+    summary.append(element('p', `检查时间：${formatDate(verification.checked_at)}`));
     byId('content-verification-summary').append(summary);
 
     const itemList = element('div'); itemList.className = 'verification-item-list';
     for (const item of verification.items) {
         const card = element('article'); card.className = 'verification-item';
         const head = element('div'); head.className = 'verification-heading';
-        head.append(element('strong', item.label), verificationBadge(item.status, item.status_label));
-        card.append(head, element('p', item.summary));
+        head.append(element('strong', checkLabels[item.id] || plainText(item.label)), verificationBadge(item.status, item.status === 'downgrade' ? '需要调整' : plainText(item.status_label)));
+        card.append(head, element('p', plainText(item.summary)));
         const itemDetails = item.details || [];
         if (itemDetails.length) {
             const details = element('ul');
-            for (const detail of itemDetails) details.append(element('li', detail));
+            for (const detail of itemDetails) details.append(element('li', plainText(detail)));
             card.append(details);
         }
         itemList.append(card);
@@ -926,16 +1163,16 @@ function renderVerificationResult(verification) {
     byId('content-verification-items').append(itemList);
 
     if (!verification.risk_items.length) {
-        byId('content-risk-items').append(element('p', '未发现需要阻塞或降级的风险项。', ''));
+        byId('content-risk-items').append(element('p', '未发现需要处理的问题。'));
     } else {
         const riskList = element('div'); riskList.className = 'verification-risk-list';
         for (const risk of verification.risk_items) {
             const card = element('article'); card.className = `verification-risk ${risk.risk_level}`;
             const head = element('div'); head.className = 'verification-heading';
-            head.append(element('strong', risk.title), verificationBadge(risk.risk_level === 'blocking' ? 'fail' : 'downgrade', risk.risk_level_label));
-            card.append(head, element('p', `问题：${risk.issue}`), element('p', `处理建议：${risk.recommendation}`));
+            head.append(element('strong', plainText(risk.title)), verificationBadge(risk.risk_level === 'blocking' ? 'fail' : 'downgrade', risk.risk_level === 'blocking' ? '需先处理' : '已调整'));
+            card.append(head, element('p', `问题：${plainText(risk.issue)}`), element('p', `怎么处理：${plainText(risk.recommendation)}`));
             const affected = risk.affected || [];
-            if (affected.length) card.append(element('p', `影响项：${affected.join('、')}`));
+            if (affected.length) card.append(element('p', `影响内容：${affected.map(item => plainText(item)).join('、')}`));
             riskList.append(card);
         }
         byId('content-risk-items').append(riskList);
@@ -944,21 +1181,21 @@ function renderVerificationResult(verification) {
     const safe = verification.safe_content;
     if (safe.ready && safe.content) {
         const article = element('article'); article.className = 'content-safe-copy';
-        article.append(element('h4', safe.content.title), element('p', safe.content.lead));
-        const body = element('pre', safe.content.body_markdown); body.className = 'content-body';
-        article.append(body, element('strong', '行动引导'), element('p', safe.content.cta));
-        const imageIds = safe.content.image_ids || [];
-        article.append(element('p', `本版本纳入图片：${imageIds.length ? imageIds.join('、') : '无（图片已作为降级项移除）'}`));
+        article.append(element('h4', plainText(safe.content.title)), element('p', plainText(safe.content.lead)));
+        const body = element('pre', cleanProse(safe.content.body_markdown)); body.className = 'content-body';
+        article.append(body, element('strong', '下一步沟通'), element('p', plainText(safe.content.cta)));
+        const imageCount = (safe.content.image_ids || []).length;
+        article.append(element('p', `本版本纳入图片：${imageCount ? imageCount + ' 张' : '无（图片暂未满足发布要求）'}`));
         if (safe.disclosures.length) {
             const disclosure = element('div'); disclosure.className = 'verification-disclosures';
-            disclosure.append(element('strong', '降级说明'));
+            disclosure.append(element('strong', '已做的稳妥处理'));
             const list = element('ul');
-            for (const item of safe.disclosures) list.append(element('li', item));
+            for (const item of safe.disclosures) list.append(element('li', plainText(item)));
             disclosure.append(list); article.append(disclosure);
         }
         byId('content-safe-version').append(article);
     } else {
-        const blocked = element('p', '当前没有可发布版本。请按风险项清单完成修复并重新核验。', '');
+        const blocked = element('p', '当前没有可直接使用的版本。请先按“需要处理的问题”调整后重新检查。');
         blocked.className = 'error';
         byId('content-safe-version').append(blocked);
     }
@@ -969,42 +1206,43 @@ function renderContentDraftResult(result, markdown) {
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
-    byId('content-summary').textContent = `平台：${result.platform}；强制核验：${result.verification.status_label}；可发布安全版本：${result.verification.safe_content_ready ? '可用' : '不可用'}；产品：${result.product.resolved_name}；原稿图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。原稿、图片和完整 Markdown 仅用于审稿。`;
+    byId('content-summary').textContent = `平台：${result.platform}；发布前检查：${plainText(result.verification.status_label)}；稳妥版本：${result.verification.safe_content_ready ? '可用' : '暂不可用'}；产品：${result.product.resolved_name}；可核对资料：${result.citations.length} 项。原稿和待审图片只用于内部审稿。`;
     const article = element('article'); article.className = 'content-draft-copy';
-    article.append(element('h3', result.draft.title), element('p', result.draft.lead));
-    const body = element('pre', result.draft.body_markdown); body.className = 'content-body';
-    article.append(body, element('strong', '行动引导'), element('p', result.draft.cta));
-    article.append(element('p', `标签：${result.draft.tags.join('、')}`));
+    article.append(element('h3', plainText(result.draft.title)), element('p', plainText(result.draft.lead)));
+    const body = element('pre', cleanProse(result.draft.body_markdown)); body.className = 'content-body';
+    article.append(body, element('strong', '下一步沟通'), element('p', plainText(result.draft.cta)));
+    article.append(element('p', `内容标签：${result.draft.tags.map(tag => plainText(tag)).join('、')}`));
     byId('content-draft').append(article);
 
-    if (!result.image_sources.length) byId('content-image-sources').append(element('p', '原稿未纳入图片；未使用其他型号或未核验候选图替代。'));
+    if (!result.image_sources.length) byId('content-image-sources').append(element('p', '本次未使用图片；没有用其他型号或未确认图片替代。'));
     const imageGrid = element('div'); imageGrid.className = 'content-image-grid';
     for (const image of result.image_sources) {
         const figure = element('figure'); figure.className = 'content-image-card';
         const picture = element('img'); picture.src = image.asset_url; picture.alt = image.caption; picture.loading = 'lazy';
         const caption = element('figcaption');
-        caption.append(element('strong', image.caption), element('span', `型号匹配：${image.model_match_status}；发布状态：${image.rights_status}`));
-        const original = safeSourceLink(image.original_url, '打开原图来源'); if (original) caption.append(original);
+        const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
+        caption.append(element('strong', plainText(image.caption)), element('span', `型号核对：一致；图片状态：${rights}`));
+        const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) caption.append(original);
         figure.append(picture, caption); imageGrid.append(figure);
     }
     byId('content-image-sources').append(imageGrid);
     const sourceList = element('div'); sourceList.className = 'content-source-list';
     for (const image of result.image_sources) {
         const item = element('details'); item.className = 'content-source-item';
-        item.append(element('summary', `${image.image_id}｜${image.file_name}`));
-        item.append(element('p', `说明：${image.caption}`), element('p', `IMA 条目：${image.ima_entry}`), element('p', `IMA 知识库：${image.ima_kb_name}｜KB ID：${image.ima_kb_id}｜检索请求：${image.ima_search_request_ids.join('、')}`), element('p', `来源：${image.source_name}`));
-        const original = safeSourceLink(image.original_url, '原始图片 URL'); if (original) item.append(original);
-        const page = image.page_url ? safeSourceLink(image.page_url, '产品页面') : null; if (page) item.append(page);
-        item.append(element('p', `SHA-256：${image.sha256}`), element('p', `核验状态：${image.model_match_status}｜${image.visual_review_status}｜${image.rights_status}`));
+        item.append(element('summary', plainText(image.caption)));
+        item.append(element('p', `资料来源：${plainText(image.source_name)}`));
+        item.append(element('p', '使用状态：型号已核对；公开发布授权和人工终审仍需确认。'));
+        const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) item.append(original);
+        const page = image.page_url ? safeSourceLink(image.page_url, '查看产品页面') : null; if (page) item.append(page);
         sourceList.append(item);
     }
     byId('content-image-sources').append(sourceList);
 
     if (!result.insertion_plan.length) {
-        byId('content-insertion-plan').append(element('p', '无可建议的图片插入位置。'));
+        byId('content-insertion-plan').append(element('p', '没有建议的图片插入位置。'));
     } else {
         const plan = element('ol');
-        for (const item of result.insertion_plan) plan.append(element('li', `${item.position}｜${item.instruction}｜${item.caption}（${item.image_id}）`));
+        for (const item of result.insertion_plan) plan.append(element('li', `${plainText(item.position)}｜${plainText(item.instruction)}｜${plainText(item.caption)}`));
         byId('content-insertion-plan').append(plan);
     }
     byId('content-markdown').textContent = markdown;
@@ -1013,86 +1251,94 @@ function renderContentDraftResult(result, markdown) {
     byId('content-download-markdown').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=markdown`;
     byId('content-draft-results').hidden = false;
     updateWizardChrome();
-    contentStatus(`强制核验完成：${result.verification.status_label}。${result.verification.safe_content_ready ? '可发布安全版本已生成，请仍由发布责任人做最终确认。' : '当前版本被阻塞，请先处理风险项。'}`);
+    contentStatus(`发布前检查完成：${plainText(result.verification.status_label)}。${result.verification.safe_content_ready ? '已生成更稳妥的版本，仍请发布负责人做最终确认。' : '当前版本暂不可用，请先处理问题。'}`);
 }
-function appendMatchText(container, label, values) {
+
+function appendInlineList(container, label, values, empty = '暂无') {
     const title = element('strong', label);
-    container.append(title);
     const list = element('ul');
-    for (const value of values.length ? values : ['无']) list.append(element('li', typeof value === 'string' ? value : JSON.stringify(value)));
-    container.append(list);
+    const items = (values || []).filter(value => value !== null && value !== undefined && value !== '');
+    if (!items.length) list.append(element('li', empty));
+    else for (const value of items) list.append(element('li', plainText(value)));
+    container.append(title, list);
+}
+
+function renderMatchSummary(result) {
+    const verification = result.verification || {};
+    const scope = result.provenance?.requested_mode === 'hybrid' ? '产品资料库与产品目录' : '产品目录与已有资料';
+    const analysis = result.provenance?.model?.status === 'called' ? '已结合智能分析整理推荐理由' : '按已核对资料整理推荐理由';
+    return `找到 ${verification.candidate_count ?? result.candidates.length} 个候选型号；可直接推荐 ${verification.recommended_count ?? 0} 个；仍需确认 ${verification.pending_count ?? 0} 个。\n本次查询范围：${scope}；${analysis}。\n推荐顺序只表示当前资料下的优先查看顺序，不代表匹配概率或成交概率。`;
+}
+
+function renderMatchCandidate(candidate, index) {
+    const article = element('article');
+    article.className = `result-card match-card ${candidate.status}`;
+    const heading = element('div'); heading.className = 'match-heading';
+    const evidenceLabel = candidate.evidence_status === 'verified_fact_partial' ? '已有部分产品资料' : candidate.evidence_status === 'discovery_only' ? '目前只找到产品目录' : '资料仍需确认';
+    heading.append(element('strong', `${index + 1}. ${plainText(candidate.status_label)}｜${plainText(candidate.product_name)}`), element('span', `${plainText(candidate.category)}${candidate.operating_system ? ' · ' + plainText(candidate.operating_system) : ''} · ${evidenceLabel}`));
+    article.append(heading);
+
+    appendInlineList(article, '为什么优先查看', (candidate.matching_reasons || []).map(reason => reason.text), '当前没有通过资料核对的推荐理由。');
+    appendInlineList(article, '客户需求是否被资料支持', (candidate.criteria_coverage || []).map(item => `${criterionLabel(item.kind)}：${coverageLabel(item.status)}｜${plainText(item.note)}`), '暂时没有可对照的需求条件。');
+    appendInlineList(article, '需要提前说明的限制', candidate.limitations, '暂无额外限制。');
+    appendInlineList(article, '还需要向客户确认', candidate.missing_information, '暂无已识别的缺失信息，但仍需人工确认配置与价格。');
+
+    const evidence = candidate.evidence || [];
+    if (evidence.length) {
+        const details = element('details');
+        details.append(element('summary', `查看 ${Math.min(evidence.length, 5)} 条产品资料依据`));
+        const list = element('ul'); list.className = 'match-evidence';
+        for (const item of evidence.slice(0, 5)) {
+            const row = element('li');
+            row.append(element('strong', cleanSourceTitle(item.title)));
+            row.append(element('p', plainText(String(item.excerpt || '').replace(/\s+/g, ' ').slice(0, 280))));
+            if (item.url) {
+                const link = safeSourceLink(item.url, '查看华为公开页面');
+                if (link) row.append(link);
+            }
+            list.append(row);
+        }
+        details.append(list);
+        article.append(details);
+    }
+
+    const actions = element('div'); actions.className = 'match-actions';
+    if (sourceProducts.includes(candidate.product_name)) {
+        const use = element('button', '带入报价与成交'); use.type = 'button'; use.className = 'match-use-candidate';
+        use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已带入所选型号，请重新检查资料后生成结果。'); showWizardStep(4); });
+        actions.append(use);
+    }
+    const content = element('button', `准备${byId('content-platform').value}内容`); content.type = 'button'; content.className = 'content-generate-candidate';
+    content.title = '重新核对所选型号、产品资料和可使用的图片后再生成内容';
+    content.addEventListener('click', () => startContentDraft(candidate.candidate_id));
+    actions.append(content);
+    article.append(actions);
+    return article;
 }
 
 function renderProductMatchResult(result, markdown) {
     byId('match-candidates').replaceChildren();
     byId('match-diagnostics').replaceChildren();
-    const modelStatus = result.provenance?.model?.status || '未确认';
-    byId('match-summary').textContent = `匹配状态：${result.status}；候选${result.verification.candidate_count}项；推荐${result.verification.recommended_count}项；【待确认】${result.verification.pending_count}项。\n请求模式：${result.provenance.requested_mode}；实际模式：${result.provenance.effective_mode}；模型：${modelStatus}${result.provenance.model?.name ? `（${result.provenance.model.name}）` : ''}。\n注册表：${result.provenance.registry_version || '未加载'}；结构化事实：${result.provenance.product_fact_count}条；当前成交报价：${result.provenance.current_quote_count}条。\n匹配分数只用于排序，不是匹配概率或成交概率。`;
-    const criteria = element('div', `匹配条件：${result.criteria.map(item => `${item.kind}=${typeof item.value === 'object' ? JSON.stringify(item.value) : item.value}`).join('；') || '待确认'}`);
+    byId('match-summary').textContent = renderMatchSummary(result);
+    const criteria = element('div', `本次选品条件：${result.criteria.map(item => `${criterionLabel(item.kind)}：${readable(item.value)}`).join('；') || '待确认'}`);
     criteria.className = 'notice';
     byId('match-candidates').append(criteria);
-    for (const candidate of result.candidates) {
-        const article = element('article');
-        article.className = `result-card match-card ${candidate.status}`;
-        const heading = element('div'); heading.className = 'match-heading';
-        const evidenceLabel = candidate.evidence_status === 'verified_fact_partial' ? '部分E1事实' : candidate.evidence_status === 'discovery_only' ? '仅目录发现' : candidate.evidence_status || '证据待确认';
-        heading.append(element('strong', `${candidate.status_label}｜${candidate.product_name}`), element('span', `${candidate.category}${candidate.operating_system ? ` · ${candidate.operating_system}` : ''} · ${evidenceLabel} · 排序分 ${candidate.match_score}`));
-        const badge = element('span', candidate.status_label); badge.className = 'status-badge'; heading.append(badge);
-        article.append(heading);
-        appendMatchText(article, '匹配理由', candidate.matching_reasons.map(reason => `${reason.text}（引文：${reason.cited_span || '未提供'}；证据：${reason.evidence_ids.join('、')}；来源：${reason.origin}）`));
-        appendMatchText(article, '逐条件覆盖', (candidate.criteria_coverage || []).map(item => `${item.kind}：${item.status}｜${item.note}`));
-        appendMatchText(article, '限制', candidate.limitations);
-        appendMatchText(article, '缺失信息', candidate.missing_information);
-        const evidenceTitle = element('strong', '核心证据');
-        const evidenceList = element('ul'); evidenceList.className = 'match-evidence';
-        const renderEvidenceItems = (target, items) => {
-            for (const evidence of items) {
-                const item = element('li', `${evidence.evidence_id}｜${evidence.source_level}｜${evidence.title}｜${evidence.locator}`);
-                const excerpt = element('div', evidence.excerpt.slice(0, 500)); excerpt.className = 'notice';
-                item.append(excerpt);
-                if (evidence.url) {
-                    try {
-                        const url = new URL(evidence.url);
-                        if (['http:', 'https:'].includes(url.protocol)) {
-                            const link = element('a', '打开来源页面'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; item.append(link);
-                        }
-                    } catch { }
-                }
-                target.append(item);
-            }
-        };
-        const evidence = candidate.evidence || [];
-        renderEvidenceItems(evidenceList, evidence.slice(0, 5));
-        article.append(evidenceTitle, evidenceList);
-        if (evidence.length > 5) {
-            const details = element('details');
-            details.append(element('summary', `查看其余 ${evidence.length - 5} 条证据`));
-            const restList = element('ul'); restList.className = 'match-evidence';
-            renderEvidenceItems(restList, evidence.slice(5));
-            details.append(restList);
-            article.append(details);
-        }
-        const actions = element('div'); actions.className = 'match-actions';
-        if (sourceProducts.includes(candidate.product_name)) {
-            const use = element('button', '用此候选进入四步流程'); use.type = 'button'; use.className = 'match-use-candidate';
-            use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); showWizardStep(4); });
-            actions.append(use);
-        }
-        const content = element('button', `生成${byId('content-platform').value}草稿`); content.type = 'button'; content.className = 'content-generate-candidate';
-        content.title = '重新核验候选、事实原文和精确型号 IMA 图片后生成可审稿图文';
-        content.addEventListener('click', () => startContentDraft(candidate.candidate_id));
-        actions.append(content);
-        article.append(actions);
-        byId('match-candidates').append(article);
+    const candidates = result.candidates || [];
+    for (const [index, candidate] of candidates.slice(0, 3).entries()) byId('match-candidates').append(renderMatchCandidate(candidate, index));
+    if (candidates.length > 3) {
+        const details = element('details');
+        details.append(element('summary', `查看其余 ${candidates.length - 3} 个候选型号`));
+        for (const [offset, candidate] of candidates.slice(3).entries()) details.append(renderMatchCandidate(candidate, offset + 3));
+        byId('match-candidates').append(details);
     }
-    if (!result.candidates.length) byId('match-candidates').append(element('p', '未取得候选，未使用模型常识补造产品。'));
-    for (const diagnostic of result.diagnostics || []) card('match-diagnostics', diagnostic.code || '诊断', diagnostic.message || diagnostic);
-    if (!result.diagnostics?.length) card('match-diagnostics', '诊断', '无额外诊断；仍须人工复核 SKU、价格和兼容性。');
+    if (!candidates.length) byId('match-candidates').append(element('p', '这次没有找到可展示的候选型号，也没有用未核对的常识补造产品。'));
+    const notes = [...new Set((result.diagnostics || []).map(diagnosticText))];
+    appendList(byId('match-diagnostics'), '需要确认的问题', notes, '暂无额外问题；仍须人工确认具体配置、价格和软件兼容性。');
     state.matchMarkdown = markdown;
     byId('match-download-json').href = `/api/runs/${encodeURIComponent(state.matchJobId)}/export?format=json`;
     byId('match-download-markdown').href = `/api/runs/${encodeURIComponent(state.matchJobId)}/export?format=markdown`;
     byId('match-results').hidden = false;
-    matchStatus('产品匹配结果已生成；请检查【待确认】项、限制和证据，不要仅依据排序分决策。', result.verification.recommended_count === 0);
+    matchStatus(`选品结果已生成：可直接推荐 ${result.verification.recommended_count} 个，仍需确认 ${result.verification.pending_count} 个。请先核对限制和待确认项。`, result.verification.recommended_count === 0);
     updateWizardChrome();
 }
 
@@ -1109,7 +1355,7 @@ byId('profile-to-match').addEventListener('click', fillMatchFromProfile);
 byId('growth-form').addEventListener('submit', startRun);
 byId('content-platform').addEventListener('change', () => {
     clearContentResult();
-    document.querySelectorAll('.content-generate-candidate').forEach(button => { button.textContent = `生成${byId('content-platform').value}草稿`; });
+    document.querySelectorAll('.content-generate-candidate').forEach(button => { button.textContent = `准备${byId('content-platform').value}内容`; });
 });
 byId('match-form').addEventListener('submit', startProductMatch);
 byId('match-clear').addEventListener('click', clearMatchCustomer);
@@ -1118,8 +1364,8 @@ byId('new-customer').addEventListener('click', clearCustomer);
 for (let index = 0; index < 3; index += 1) byId(`example-${index + 1}`).addEventListener('click', () => fillExample(index));
 for (const identifier of ['raw-request', 'audience', 'product']) byId(identifier).addEventListener('input', () => {
     byId('demo-pricing').checked = false;
-    byId('example-note').textContent = '客户描述或产品已变更，合成演算已关闭，避免继承示例假设。';
-    byId('policy-summary').textContent = '旧示例配置预览已清除。如重新勾选，后端将按当前完整型号生成固定5台合成政策，以本次结果为准。';
+    byId('example-note').textContent = '客户描述或产品已变更，演示价格计算已关闭，避免沿用示例假设。';
+    byId('policy-summary').textContent = '旧示例设置已清除。如重新勾选，系统会按当前型号和固定 5 台演示数量重新计算。';
     clearResult();
     renderSourceStatus();
 });
@@ -1129,10 +1375,10 @@ byId('refresh-source-status').addEventListener('click', async () => {
 });
 byId('resume-polling').addEventListener('click', () => { byId('resume-polling').hidden = true; state.polling = true; pollRun(); });
 byId('copy-markdown').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(state.markdown); byId('export-status').textContent = '已复制含来源的完整Markdown。'; }
-    catch { byId('export-status').textContent = '浏览器未允许复制，请下载Markdown，或从下方纯文本手动复制。'; }
+    try { await navigator.clipboard.writeText(state.markdown); byId('export-status').textContent = '已复制完整销售说明。'; }
+    catch { byId('export-status').textContent = '浏览器未允许复制，请下载销售说明，或从下方内容手动复制。'; }
 });
-for (const identifier of ['download-json', 'download-markdown']) byId(identifier).addEventListener('click', () => { byId('export-status').textContent = '已请求下载，请在浏览器下载列表确认；若会话过期请重新运行。'; });
+for (const identifier of ['download-json', 'download-markdown']) byId(identifier).addEventListener('click', () => { byId('export-status').textContent = '已请求下载，请在浏览器下载列表确认；若登录已过期，请重新生成后再下载。'; });
 document.addEventListener('keydown', event => {
     if (event.repeat || event.isComposing || event.keyCode === 229) return;
     if (event.altKey && !event.ctrlKey && !event.metaKey && ['1', '2', '3'].includes(event.key)) { event.preventDefault(); fillExample(Number(event.key) - 1); }
@@ -1146,7 +1392,7 @@ async function initialize(sessionOverride = null) {
     applyAccessControl(session);
     try {
         const response = await api('/api/examples');
-        if (!response.csrf_token || !Array.isArray(response.examples)) throw new Error('初始化响应不完整');
+        if (!response.csrf_token || !Array.isArray(response.examples)) throw new Error('工作台数据暂时不完整，请刷新重试');
         state.csrf = response.csrf_token;
         state.examples = response.examples.slice(0, 3);
         state.matchExamples = Array.isArray(response.match_examples) ? response.match_examples.slice(0, 2) : [];
@@ -1154,14 +1400,14 @@ async function initialize(sessionOverride = null) {
         renderCapabilities(response.capabilities || {});
         state.profileMax = Number(response.capabilities?.guided_profile_max_turns) || 8;
         renderProfileProgress(null);
-        state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${example.label} · Alt+${index + 1}`; });
-        state.matchExamples.forEach((example, index) => { byId(`match-example-${index + 1}`).textContent = example.label; });
+        state.examples.forEach((example, index) => { byId(`example-${index + 1}`).textContent = `${plainText(example.label)} · Alt+${index + 1}`; });
+        state.matchExamples.forEach((example, index) => { byId(`match-example-${index + 1}`).textContent = plainText(example.label); });
         setRunning(false);
         if (state.examples.length) fillExample(0);
         if (state.matchExamples.length) fillMatchExample(0);
         showWizardStep(1, { scroll: false });
         await refreshSourceStatus();
-    } catch (error) { status(`服务初始化失败：${error.message}。请稍后刷新页面。`, true); }
+    } catch (error) { status(`工作台暂时未能准备好：${plainText(error.message)}。请稍后刷新重试。`, true); }
 }
 
 window.addEventListener('huawei:authenticated', event => { initialize(event.detail); });

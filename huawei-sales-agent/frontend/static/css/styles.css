@@ -500,3 +500,8 @@ body.app-ready { background: radial-gradient(circle at 8% 4%, rgba(199,0,11,.04)
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+.business-step { padding: .8rem 0; border-top: 1px solid rgba(15, 23, 42, .1); }
+.business-step:first-of-type { border-top: 0; }
+.business-step b { display: block; margin-bottom: .35rem; color: #13243a; }
+.business-step p { margin: 0; white-space: pre-line; color: #4a5565; }
+.result-card > ul, .verification-item ul { padding-left: 1.15rem; }

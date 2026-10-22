@@ -7,7 +7,30 @@
     const ready = new Promise(resolve => { readyResolve = resolve; });
 
     const roleNames = { admin: '管理员', member: '成员', viewer: '只读' };
-    const permissionNames = { 'analysis:run': '运行分析', 'admin:users': '管理用户与权限' };
+    const permissionNames = { 'analysis:run': '使用智能销售功能', 'admin:users': '管理用户与权限' };
+    const errorMessages = {
+        NETWORK_ERROR: '暂时无法连接销售工作台，请稍后重试。',
+        AUTH_REQUIRED: '登录状态已失效，请重新登录。',
+        PERMISSION_DENIED: '当前账号没有执行此操作的权限，请联系管理员。',
+        CSRF_REJECTED: '安全校验已过期，请刷新页面后重试。',
+        RATE_LIMIT: '操作次数较多，请稍后再试。',
+        INPUT_INVALID: '填写内容有误，请检查后重试。'
+    };
+    function friendlyMessage(message, code = '') {
+        return errorMessages[code] || String(message || '操作未完成，请稍后重试。')
+            .replace(/服务端/g, '销售工作台')
+            .replace(/云端模型/g, '智能分析')
+            .replace(/模型/g, '智能分析')
+            .replace(/规则引擎/g, '既定销售规则')
+            .replace(/\bJSON\b/gi, '数据文件')
+            .replace(/UTF-8/g, '文字')
+            .replace(/令牌/g, '安全校验')
+            .replace(/会话/g, '登录')
+            .replace(/字节/g, '内容长度')
+            .replace(/接口/g, '服务')
+            .replace(/（[A-Z][A-Z0-9_]+）$/g, '')
+            .replace(/\s*[(（][A-Z][A-Z0-9_]{2,}[)）]\s*/g, '');
+    }
 
     function rememberMotion() {
         try { state.motionPaused = localStorage.getItem('huawei.motion.paused') === '1'; } catch { state.motionPaused = false; }
@@ -35,7 +58,7 @@
         state.busy = busy;
         byId('auth-form').setAttribute('aria-busy', String(busy));
         for (const id of ['auth-username', 'auth-password', 'auth-submit', 'password-toggle']) byId(id).disabled = busy;
-        byId('auth-submit-label').textContent = busy ? '正在校验…' : state.mode === 'login' ? '安全登录' : '创建账号';
+        byId('auth-submit-label').textContent = busy ? '正在登录…' : state.mode === 'login' ? '登录' : '创建账号';
         for (const button of document.querySelectorAll('[data-auth-mode]')) button.disabled = busy;
     }
 
@@ -56,14 +79,14 @@
         byId('auth-mode-register').classList.toggle('is-active', state.mode === 'register');
         byId('auth-mode-login').setAttribute('aria-selected', String(state.mode === 'login'));
         byId('auth-mode-register').setAttribute('aria-selected', String(state.mode === 'register'));
-        byId('auth-eyebrow').textContent = state.mode === 'login' ? 'WELCOME BACK' : 'JOIN THE WORKSPACE';
+        byId('auth-eyebrow').textContent = state.mode === 'login' ? '欢迎回来' : '首次使用';
         byId('auth-title').textContent = state.mode === 'login' ? '欢迎回来' : '创建你的账号';
-        byId('auth-intro').textContent = state.mode === 'login' ? '登录后继续你的销售推进工作。' : '注册后进入受保护的销售智能工作台。';
+        byId('auth-intro').textContent = state.mode === 'login' ? '登录后继续你的销售准备工作。' : '注册后进入销售工作台。';
         byId('auth-username-hint').hidden = state.mode !== 'register';
         byId('auth-password-hint').hidden = state.mode !== 'register';
         byId('auth-first-admin').hidden = state.mode !== 'register';
         byId('auth-password').setAttribute('autocomplete', state.mode === 'login' ? 'current-password' : 'new-password');
-        byId('auth-submit-label').textContent = state.mode === 'login' ? '安全登录' : '创建账号';
+        byId('auth-submit-label').textContent = state.mode === 'login' ? '登录' : '创建账号';
         setMessage('', '');
     }
 
@@ -76,14 +99,14 @@
         try {
             response = await fetch(path, { ...rest, headers, body: body === undefined ? undefined : JSON.stringify(body), credentials: 'same-origin', cache: 'no-store' });
         } catch {
-            const error = new Error('无法连接服务端，请确认服务已启动后重试');
+            const error = new Error('暂时无法连接销售工作台，请稍后重试');
             error.code = 'NETWORK_ERROR';
             throw error;
         }
         let payload = null;
         try { payload = await response.json(); } catch { /* 错误响应也可能不是 JSON。 */ }
         if (!response.ok) {
-            const error = new Error(payload?.error?.message || `请求失败（${response.status}）`);
+            const error = new Error(friendlyMessage(payload?.error?.message || '操作未完成，请稍后重试', payload?.error?.code));
             error.status = response.status;
             error.code = payload?.error?.code || 'REQUEST_FAILED';
             if (response.status === 401 && !anonymous) expire(error);
@@ -98,7 +121,7 @@
         state.usersLoaded = false;
         showStage('auth');
         setMode('login');
-        setMessage('error', error?.message || '登录状态已失效，请重新登录。');
+        setMessage('error', friendlyMessage(error?.message || '登录状态已失效，请重新登录。', error?.code));
         window.dispatchEvent(new CustomEvent('huawei:session-ended'));
     }
     function updateAccountUi() {
@@ -125,7 +148,7 @@
     }
 
     function establishSession(payload) {
-        if (!payload?.user?.id || !payload?.csrf_token) throw new Error('登录响应不完整，请重试');
+        if (!payload?.user?.id || !payload?.csrf_token) throw new Error('登录信息暂时不完整，请重试');
         state.session = { user: payload.user, csrf_token: payload.csrf_token, expires_at: payload.expires_at };
         revealApp();
     }
@@ -140,7 +163,7 @@
             if (error.status !== 401) {
                 showStage('auth');
                 setMode('login');
-                setMessage('error', error.message);
+                setMessage('error', friendlyMessage(error.message, error.code));
             }
         } finally {
             readyResolve(state.session);
@@ -188,7 +211,7 @@
                     renderUsers(items);
                 } catch (error) {
                     select.value = user.role;
-                    byId('admin-status').textContent = error.message;
+                    byId('admin-status').textContent = friendlyMessage(error.message, error.code);
                 }
             });
             const toggle = document.createElement('button');
@@ -203,7 +226,7 @@
                     byId('admin-status').textContent = `${user.username} 已${user.active ? '启用' : '停用'}。`;
                     renderUsers(items);
                 } catch (error) {
-                    byId('admin-status').textContent = error.message;
+                    byId('admin-status').textContent = friendlyMessage(error.message, error.code);
                 }
             });
             controls.append(select, toggle);
@@ -219,7 +242,7 @@
             state.usersLoaded = true;
             byId('admin-status').textContent = '';
         } catch (error) {
-            byId('admin-status').textContent = error.message;
+            byId('admin-status').textContent = friendlyMessage(error.message, error.code);
         }
     }
 
@@ -243,7 +266,7 @@
         const username = byId('auth-username').value.trim();
         const password = byId('auth-password').value;
         if (!username || !password) return setMessage('error', '请填写用户名和密码。');
-        if (password.length < 10 || password.length > 128) return setMessage('error', '密码长度需为 10–128 个字符。');
+        if (password.length < 10 || password.length > 128) return setMessage('error', '密码长度需为 10 至 128 个字符。');
         setBusy(true);
         setMessage('', '');
         try {
@@ -261,7 +284,7 @@
                 window.dispatchEvent(new CustomEvent('huawei:authenticated', { detail: state.session }));
             }
         } catch (error) {
-            setMessage('error', error.message);
+            setMessage('error', friendlyMessage(error.message, error.code));
         } finally {
             setBusy(false);
         }
@@ -271,7 +294,7 @@
         if (!state.session) return;
         byId('logout-button').disabled = true;
         try { await request('/api/auth/logout', { method: 'POST', csrf: true }); }
-        catch (error) { byId('access-notice').hidden = false; byId('access-notice').textContent = error.message; return; }
+        catch (error) { byId('access-notice').hidden = false; byId('access-notice').textContent = friendlyMessage(error.message, error.code); return; }
         state.session = null;
         window.location.assign('/');
     }
