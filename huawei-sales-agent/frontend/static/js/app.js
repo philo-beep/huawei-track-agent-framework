@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
+const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentResult: null, contentHistory: [], contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null, copyFeedbackTimer: null };
 const statuses = { explicit: '客户明确说明', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '需先处理', needs_clarification: '需要补充信息', calculated_demo: '演示测算完成', demo_ready: '销售准备稿已生成', needs_attention: '需要确认', partial: '部分完成', failed: '未完成', missing_basis: '缺少价格依据', basis_sufficient: '依据齐全', cannot_determine: '暂时无法判断', not_provided: '客户未提供', not_evaluated: '尚未判断', not_executed: '尚未执行', pending_assignment: '待指定负责人', pending_confirmation: '待确认', preparation_only: '仅作准备', programmatic_constrained_preparation: '按已核对资料准备', invalid_input: '填写内容需调整' };
 const labels = { identity: '客户角色', relationship: '新老客户关系', industry: '客户行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策参与人', preferences: '客户偏好', pain_points: '当前痛点', purchase_stage: '采购阶段', channels: '可联系渠道' };
 const profileDimensionLabels = { identity: '客户角色', industry: '客户行业', usage_scenario: '使用场景', needs: '客户需求', pain_points: '客户痛点', purchase_stage: '采购阶段', budget: '客户预算', conversation_habit: '沟通偏好', platform_knowledge: '方案了解程度', preferences: '客户偏好' };
@@ -154,6 +154,55 @@ function element(tagName, text) {
 function status(message, isError = false) {
     byId('run-status').textContent = message;
     byId('run-status').classList.toggle('error', isError);
+}
+
+async function copyPlainText(value) {
+    const text = String(value || '');
+    if (!text) throw new Error('没有可复制的内容');
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+    }
+    const helper = element('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    helper.style.pointerEvents = 'none';
+    document.body.append(helper);
+    helper.select();
+    helper.setSelectionRange(0, helper.value.length);
+    const copied = document.execCommand('copy');
+    helper.remove();
+    if (!copied) throw new Error('浏览器未允许自动复制');
+}
+
+function showCopyFeedback(message, isError = false) {
+    const feedback = byId('content-copy-feedback');
+    if (!feedback) return;
+    clearTimeout(state.copyFeedbackTimer);
+    feedback.textContent = message;
+    feedback.classList.toggle('error', isError);
+    state.copyFeedbackTimer = setTimeout(() => { feedback.textContent = ''; feedback.classList.remove('error'); }, 4200);
+}
+
+function bindCopyButton(button, value, label) {
+    button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        const previous = button.textContent;
+        try {
+            await copyPlainText(value);
+            button.textContent = '已复制';
+            showCopyFeedback(`已复制${label}，可以直接粘贴。`);
+        } catch (error) {
+            button.textContent = '请手动复制';
+            showCopyFeedback(`${label}未能自动复制：${plainText(error.message)}。请选中预览文字手动复制。`, true);
+        } finally {
+            setTimeout(() => { button.disabled = false; button.textContent = previous; }, 1600);
+        }
+    });
+    return button;
 }
 
 function card(identifier, title, value) {
@@ -1061,6 +1110,9 @@ function contentStatus(message, isError = false) {
 
 function clearContentResult() {
     byId('content-draft-results').hidden = true;
+    byId('content-copy-blocks').replaceChildren();
+    byId('content-cover-copy').replaceChildren();
+    byId('content-platform-checks').replaceChildren();
     byId('content-verification-summary').replaceChildren();
     byId('content-verification-items').replaceChildren();
     byId('content-risk-items').replaceChildren();
@@ -1069,9 +1121,11 @@ function clearContentResult() {
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
     byId('content-markdown').textContent = '';
+    byId('content-copy-feedback').textContent = '';
     state.contentJobId = null;
     state.contentPolling = false;
     state.contentMarkdown = '';
+    state.contentResult = null;
     updateWizardChrome();
     contentStatus(`选择候选后可生成${byId('content-platform').value}内容草稿；不会自动发布。`);
 }
@@ -1247,12 +1301,189 @@ function appendDraftBodyWithImages(container, bodyMarkdown, imageSources) {
         container.append(heading, grid);
     }
 }
-function renderContentDraftResult(result, markdown) {
+function checkLabel(status) {
+    return { pass: '通过', warning: '需调整', fail: '不通过', info: '提示' }[status] || plainText(status || '待确认');
+}
+
+function checkClass(status) {
+    return `check-${['pass', 'warning', 'fail', 'info'].includes(status) ? status : 'none'}`;
+}
+
+function fallbackCopyBlocks(result) {
+    const copy = result.publish_copy || {};
+    return [
+        { id: 'title', label: '标题', text: copy.title || result.draft?.title || '', character_count: Array.from(copy.title || result.draft?.title || '').length, status: 'pass', counter: `${Array.from(copy.title || result.draft?.title || '').length} 字`, note: '直接复制到平台标题栏。' },
+        { id: 'body', label: '正文', text: copy.body || plainText(copy.markdown || ''), character_count: Array.from(copy.body || copy.markdown || '').length, status: 'pass', counter: `${Array.from(copy.body || copy.markdown || '').length} 字`, note: '复制前请快速通读一次。' },
+        { id: 'tags', label: '标签', text: (copy.tags || []).map(tag => `#${tag}`).join(' '), character_count: (copy.tags || []).length, status: 'pass', counter: `${(copy.tags || []).length} 个`, note: '放到正文末尾或标签栏。' },
+    ];
+}
+
+function renderPublicationReadiness(result) {
+    const containers = ['content-copy-blocks', 'content-platform-matrix', 'content-cover-copy', 'content-platform-checks'];
+    for (const identifier of containers) byId(identifier)?.replaceChildren();
+    const readiness = result.publication_readiness || {};
+    const blocks = Array.isArray(readiness.copy_blocks) && readiness.copy_blocks.length === 3 ? readiness.copy_blocks : fallbackCopyBlocks(result);
+    for (const block of blocks) {
+        const card = element('article'); card.className = `copy-block ${block.status || 'pass'}`;
+        const head = element('div'); head.className = 'copy-block-head';
+        const heading = element('div'); heading.append(element('strong', block.label), element('span', checkLabel(block.status)));
+        heading.lastElementChild.className = checkClass(block.status);
+        head.append(heading, element('span', block.counter || `${block.character_count || 0} 字`));
+        head.lastElementChild.className = 'copy-block-counter';
+        const preview = element('pre', block.text || '当前没有可复制内容');
+        const note = element('p', block.note || '复制前请快速通读一次。'); note.className = 'copy-block-note';
+        const actions = element('div'); actions.className = 'copy-block-actions';
+        const copy = element('button', block.text ? `复制${block.label}` : '暂无可复制内容'); copy.type = 'button'; copy.disabled = !block.text;
+        bindCopyButton(copy, block.text, block.label);
+        actions.append(copy);
+        card.append(head, preview, note, actions);
+        byId('content-copy-blocks').append(card);
+    }
+
+    const matrix = Array.isArray(readiness.platform_matrix) ? readiness.platform_matrix : [];
+    byId('content-platform-matrix').closest('.platform-matrix-panel').hidden = !matrix.length;
+    for (const variant of matrix) {
+        const card = element('article'); card.className = `matrix-card${variant.selected ? ' is-selected' : ''}`;
+        const head = element('div'); head.className = 'matrix-card-head';
+        const badge = element('em', checkLabel(variant.status)); badge.className = checkClass(variant.status);
+        head.append(element('strong', `${variant.platform}${variant.selected ? ' · 当前' : ''}`), badge);
+        const summary = variant.summary || { pass_count: 0, warning_count: 0, fail_count: 0 };
+        const stats = element('div'); stats.className = 'matrix-card-stats';
+        for (const block of variant.copy_blocks || []) stats.append(element('span', `${block.label} ${block.counter}`));
+        const note = element('p', `通过 ${summary.pass_count} 项；需调整 ${summary.warning_count} 项；不通过 ${summary.fail_count} 项。${(variant.checks?.layout?.tips || []).slice(0, 1).join('')}`);
+        const contentText = (variant.copy_blocks || []).map(block => block.text).filter(Boolean).join('\n\n');
+        const copy = element('button', variant.selected ? '复制当前整套' : `复制${variant.platform}整套`); copy.type = 'button';
+        bindCopyButton(copy, contentText, `${variant.platform}整套内容`);
+        card.append(head, stats, note, copy);
+        byId('content-platform-matrix').append(card);
+    }
+
+    const cover = readiness.cover_copy;
+    if (cover) {
+        const preview = element('div'); preview.className = 'cover-copy-preview';
+        preview.append(element('small', cover.eyebrow), element('strong', cover.headline), element('span', cover.support), element('em', cover.badge));
+        const meta = element('div'); meta.className = 'cover-copy-meta';
+        meta.append(element('span', `版式：${cover.suggested_layout}`), element('span', `参考图：${cover.image_caption}`), element('span', cover.footer));
+        const actions = element('div'); actions.className = 'cover-copy-actions';
+        const copyAll = element('button', '复制整段封面文案'); copyAll.type = 'button'; bindCopyButton(copyAll, cover.copy_text, '封面文案');
+        const copyHeadline = element('button', '只复制主标题'); copyHeadline.type = 'button'; copyHeadline.className = 'secondary'; bindCopyButton(copyHeadline, cover.headline, '封面主标题');
+        actions.append(copyAll, copyHeadline);
+        byId('content-cover-copy').append(preview, meta, actions, element('p', cover.safety_note));
+        byId('content-cover-copy').lastElementChild.className = 'copy-block-note';
+    } else {
+        byId('content-cover-copy').append(element('p', '封面文案暂未生成；可直接复制正文首段作为纯文字封面。'));
+    }
+
+    const checks = readiness.checks;
+    if (!checks) {
+        byId('content-platform-checks').append(element('p', '当前结果未包含平台尺寸检查，请重新生成内容。'));
+    } else {
+        const head = element('div'); head.className = 'platform-check-head';
+        const heading = element('strong', `${result.platform}｜长度、图片与排版`);
+        const badge = element('span', checkLabel(checks.overall_status)); badge.className = checkClass(checks.overall_status);
+        head.append(heading, badge);
+        const summary = element('p', `通过 ${checks.summary.pass_count} 项；需调整 ${checks.summary.warning_count} 项；不通过 ${checks.summary.fail_count} 项。`); summary.className = 'platform-check-summary';
+        const list = element('ul'); list.className = 'platform-check-list';
+        for (const item of checks.items || []) {
+            const row = element('li'); row.className = 'platform-check-item';
+            const status = element('em', checkLabel(item.status)); status.className = checkClass(item.status);
+            row.append(element('strong', item.label), element('span', item.summary || item.value || ''), status);
+            list.append(row);
+            if (item.id === 'image_checks' && item.items?.length) {
+                const dimensions = element('ul'); dimensions.className = 'image-dimension-list';
+                for (const image of item.items) {
+                    const entry = element('li');
+                    entry.append(element('span', `${image.order || ''}${image.order ? '. ' : ''}${plainText(image.file_name)}`), element('strong', `${image.dimension_label || '尺寸待读取'}${image.aspect_ratio ? ` · ${image.aspect_ratio}` : ''}`));
+                    dimensions.append(entry);
+                }
+                list.append(dimensions);
+            }
+        }
+        const layout = element('p', `建议结构：${(checks.layout?.structure || []).join(' → ')}。${(checks.layout?.tips || []).join(' ')}`); layout.className = 'layout-tip';
+        const note = element('p', checks.note || '平台规则可能调整，发布时以编辑器提示为准。'); note.className = 'rules-note';
+        byId('content-platform-checks').append(head, summary, list, layout, note);
+    }
+
+    const pack = readiness.image_pack;
+    const packLink = byId('content-download-images');
+    packLink.href = `/api/runs/${encodeURIComponent(state.contentJobId)}/images.zip`;
+    packLink.textContent = pack?.total_count ? '下载审稿图片包' : '下载图片包说明';
+    packLink.title = pack?.note || '下载图片、尺寸和授权状态清单';
+}
+
+function renderContentHistory() {
+    const panel = byId('content-history-panel');
+    const container = byId('content-history');
+    container.replaceChildren();
+    panel.hidden = !state.contentHistory.length;
+    for (const entry of state.contentHistory) {
+        const button = element('button', `${entry.platform}｜${entry.product}｜${entry.time}`);
+        button.type = 'button';
+        button.title = `复用 ${entry.platform} 内容`;
+        button.addEventListener('click', () => {
+            state.contentJobId = entry.jobId;
+            renderContentDraftResult(entry.result, entry.markdown, { fromHistory: true });
+            showWizardStep(3, { scroll: false });
+            contentStatus(`已恢复 ${entry.time} 生成的${entry.platform}内容，可继续复制或下载。`);
+            byId('content-draft-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        container.append(button);
+    }
+}
+
+function rememberContentResult(result, markdown) {
+    const time = new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+    const same = state.contentHistory.findIndex(entry => entry.jobId === state.contentJobId);
+    if (same >= 0) state.contentHistory.splice(same, 1);
+    state.contentHistory.unshift({ jobId: state.contentJobId, result, markdown, platform: result.platform, product: result.product?.resolved_name || result.product?.product_name || '候选产品', time });
+    state.contentHistory = state.contentHistory.slice(0, 5);
+    renderContentHistory();
+}
+
+function downloadJson(value, fileName) {
+    const blob = new Blob([JSON.stringify(value, null, 2) + '\n'], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = element('a'); link.href = url; link.download = fileName; link.hidden = true;
+    document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function downloadStoreTaskPack() {
+    if (!state.contentResult) return;
+    const result = state.contentResult;
+    const readiness = result.publication_readiness || {};
+    const payload = {
+        schema_version: '1.0',
+        kind: 'store-content-task-pack',
+        generated_at: new Date().toISOString(),
+        product: result.product,
+        selected_platform: result.platform,
+        platforms: (readiness.platform_matrix || []).map(item => ({
+            platform: item.platform,
+            selected: item.selected,
+            status: item.status,
+            copy_blocks: item.copy_blocks,
+            cover_copy: item.cover_copy,
+            checks: item.checks,
+        })),
+        image_pack: readiness.image_pack,
+        note: '三平台内容可直接复制；图片包的授权状态以清单为准，公开发布前仍需人工确认。',
+    };
+    const safeProduct = String(result.product?.resolved_name || 'candidate').replace(/[<>:"/\\|?*/]/g, '-').slice(0, 40);
+    downloadJson(payload, `huawei-store-task-pack-${safeProduct}-${new Date().toISOString().slice(0, 10)}.json`);
+    showCopyFeedback('门店任务包已导出，包含三平台文案、封面文案和发布检查。');
+}
+
+function renderContentDraftResult(result, markdown, options = {}) {
+    state.contentResult = result;
+    renderPublicationReadiness(result);
     renderVerificationResult(result.verification);
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
-    byId('content-summary').textContent = `平台：${result.platform}；发布前检查：${plainText(result.verification.status_label)}；稳妥版本：${result.verification.safe_content_ready ? '可用' : '暂不可用'}；产品：${result.product.resolved_name}；可核对资料：${result.citations.length} 项；待审图片：${result.image_sources.length} 张。原稿中的图片只用于内部审稿。`;
+    const readiness = result.publication_readiness;
+    const platformCheck = readiness?.checks;
+    byId('content-summary').textContent = `平台：${result.platform}；内容：标题、正文、标签已分块；平台检查：${platformCheck ? checkLabel(platformCheck.overall_status) : '未包含'}；资料检查：${plainText(result.verification.status_label)}；产品：${result.product.resolved_name}；可核对资料：${result.citations.length} 项；图片：${result.image_sources.length} 张（发布授权状态单独标注）。`;
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', plainText(result.draft.title)), element('p', plainText(result.draft.lead)));
     const body = element('div'); body.className = 'content-body-with-images';
@@ -1289,6 +1520,7 @@ function renderContentDraftResult(result, markdown) {
     byId('content-draft-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
     updateWizardChrome();
     contentStatus(`发布前检查完成：${plainText(result.verification.status_label)}。${result.verification.safe_content_ready ? '已生成更稳妥的版本，仍请发布负责人做最终确认。' : '当前版本暂不可用，请先处理问题。'}`);
+    if (!options.fromHistory) rememberContentResult(result, markdown);
 }
 
 function appendInlineList(container, label, values, empty = '暂无') {
@@ -1411,6 +1643,22 @@ byId('refresh-source-status').addEventListener('click', async () => {
     await refreshSourceStatus();
 });
 byId('resume-polling').addEventListener('click', () => { byId('resume-polling').hidden = true; state.polling = true; pollRun(); });
+byId('content-copy-all').addEventListener('click', async () => {
+    if (!state.contentResult) return;
+    const readiness = state.contentResult.publication_readiness;
+    const blocks = readiness?.copy_blocks || fallbackCopyBlocks(state.contentResult);
+    const text = blocks.map(block => block.text).filter(Boolean).join('\n\n');
+    try {
+        await copyPlainText(text);
+        showCopyFeedback('已复制整套内容；现在按平台编辑器顺序粘贴即可。');
+    } catch (error) {
+        showCopyFeedback(`未能自动复制：${plainText(error.message)}。请在复制块中手动选择文字。`, true);
+    }
+});
+byId('content-download-images').addEventListener('click', () => {
+    showCopyFeedback('已请求下载审稿图片包；公开发布前仍请核对图片授权。');
+});
+byId('content-download-task-pack').addEventListener('click', downloadStoreTaskPack);
 byId('copy-markdown').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(state.markdown); byId('export-status').textContent = '已复制完整销售说明。'; }
     catch { byId('export-status').textContent = '浏览器未允许复制，请下载销售说明，或从下方内容手动复制。'; }

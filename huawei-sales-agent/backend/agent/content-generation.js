@@ -10,6 +10,7 @@ const { runReleaseVerification } = require('./release-verification');
 const { assessBudget } = require('./budget-assessment');
 const { plainText, cleanProse, humanStatus, humanDate, cleanSourceTitle } = require('./sales-copy');
 const { composeCreativeDraft, renderPublishMarkdown } = require('./creative-copy');
+const { buildPublicationReadiness, inspectImageFile, markdownToPlainText } = require('./publication-readiness');
 
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const DEFAULT_REGISTRY_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'image_review_registry.json');
@@ -413,33 +414,41 @@ async function runContentDraft(input, options = {}) {
     used_in: 'body',
     ...sourceForFact(fact),
   }));
-  const imageSources = images.map(image => ({
-    image_id: image.image_id,
-    product: resolved.product_name,
-    file_name: image.file_name,
-    caption: image.caption,
-    position: image.position,
-    marker: image.marker,
-    asset_url: `/api/content-images/${image.sha256}`,
-    original_url: image.original_url,
-    page_url: image.page_url || null,
-    source_name: '华为PC产品资料库｜华为公开产品素材',
-    ima_entry: image.ima_entry,
-    ima_kb_name: registry.knowledge_base.kb_name,
-    ima_kb_id: registry.knowledge_base.kb_id,
-    ima_search_request_ids: registry.knowledge_base.live_search_request_ids || [],
-    sha256: image.sha256,
-    mime_type: image.mime_type,
-    model_match_status: 'exact_product_match_verified',
-    visual_review_status: image.visual_review_status,
-    rights_status: image.rights_status,
-    source_status: image.source_status,
-    source_checked_at: image.source_checked_at || null,
-    reviewed_at: image.reviewed_at || null,
-    visual_review_note: image.visual_review_note || null,
-    formal_publication_verified: image.formal_publication_verified === true,
-    publication_ready: image.publication_ready === true && image.formal_publication_verified === true,
-  }));
+  const imageSources = images.map(image => {
+    let metadata = { width: null, height: null, aspect_ratio: null, file_size_bytes: null };
+    try { metadata = inspectImageFile(path.resolve(DATA_ROOT, image.local_path)); } catch {}
+    return {
+      image_id: image.image_id,
+      product: resolved.product_name,
+      file_name: image.file_name,
+      caption: image.caption,
+      position: image.position,
+      marker: image.marker,
+      asset_url: `/api/content-images/${image.sha256}`,
+      original_url: image.original_url,
+      page_url: image.page_url || null,
+      source_name: '华为PC产品资料库｜华为公开产品素材',
+      ima_entry: image.ima_entry,
+      ima_kb_name: registry.knowledge_base.kb_name,
+      ima_kb_id: registry.knowledge_base.kb_id,
+      ima_search_request_ids: registry.knowledge_base.live_search_request_ids || [],
+      sha256: image.sha256,
+      mime_type: image.mime_type,
+      width: metadata.width,
+      height: metadata.height,
+      aspect_ratio: metadata.aspect_ratio,
+      file_size_bytes: metadata.file_size_bytes,
+      model_match_status: 'exact_product_match_verified',
+      visual_review_status: image.visual_review_status,
+      rights_status: image.rights_status,
+      source_status: image.source_status,
+      source_checked_at: image.source_checked_at || null,
+      reviewed_at: image.reviewed_at || null,
+      visual_review_note: image.visual_review_note || null,
+      formal_publication_verified: image.formal_publication_verified === true,
+      publication_ready: image.publication_ready === true && image.formal_publication_verified === true,
+    };
+  });
   const insertionPlan = images.map(image => ({
     after_marker: image.marker,
     position: image.position,
@@ -468,10 +477,63 @@ async function runContentDraft(input, options = {}) {
     cta: draft.cta,
     tags: draft.tags,
   });
+  const publishSourceTitles = [...new Set(composed.fact_highlights.map(item => item.source_title).filter(Boolean))];
+  const publishSourceNote = publishSourceTitles.length
+    ? `资料来源：${publishSourceTitles.join('、')}。`
+    : '资料来源：华为官网公开产品页。';
+  const publishBodyMarkdown = [draft.lead, ...composed.blocks.map(block => block.markdown), draft.cta, publishSourceNote].filter(Boolean).join('\n\n');
+  const publicationReadiness = buildPublicationReadiness({
+    platform: input.platform,
+    title: draft.title,
+    body: publishBodyMarkdown,
+    tags: draft.tags,
+    images: imageSources,
+    strategy: composed.expression_strategy,
+    product: { ...resolved, resolved_name: resolved.product_name },
+  });
+  publicationReadiness.platform_matrix = Object.keys(PLATFORM_SPECS).map(platform => {
+    if (platform === input.platform) {
+      return {
+        platform,
+        platform_id: spec.id,
+        selected: true,
+        status: publicationReadiness.checks.overall_status,
+        summary: publicationReadiness.checks.summary,
+        copy_blocks: publicationReadiness.copy_blocks,
+        cover_copy: publicationReadiness.cover_copy,
+        checks: publicationReadiness.checks,
+      };
+    }
+    const matrixSpec = platformSpec(platform);
+    const matrixFacts = facts.slice(0, matrixSpec.max_facts);
+    const matrixBundle = composeDraftBundle(input.match_input.profile, resolved, matrixFacts, images, platform);
+    const matrixImages = imageSources.slice(0, matrixSpec.default_image_limit);
+    const matrixBody = [matrixBundle.draft.lead, ...matrixBundle.blocks.map(block => block.markdown), matrixBundle.draft.cta].filter(Boolean).join('\n\n');
+    const matrixReadiness = buildPublicationReadiness({
+      platform,
+      title: matrixBundle.draft.title,
+      body: matrixBody,
+      tags: matrixBundle.draft.tags,
+      images: matrixImages,
+      strategy: matrixBundle.expression_strategy,
+      product: { ...resolved, resolved_name: resolved.product_name },
+    });
+    return {
+      platform,
+      platform_id: matrixSpec.id,
+      selected: false,
+      status: matrixReadiness.checks.overall_status,
+      summary: matrixReadiness.checks.summary,
+      copy_blocks: matrixReadiness.copy_blocks,
+      cover_copy: matrixReadiness.cover_copy,
+      checks: matrixReadiness.checks,
+    };
+  });
   const publishCopy = {
     status: verification.overall_status === 'blocked' ? 'blocked' : verification.publication_ready ? 'ready' : 'text_only_ready',
     text_ready: verification.overall_status !== 'blocked' && verification.safe_content_ready,
     title: draft.title,
+    body: markdownToPlainText(publishBodyMarkdown),
     markdown: publishMarkdown,
     character_count: Array.from(publishMarkdown).length,
     tags: draft.tags,
@@ -492,10 +554,10 @@ async function runContentDraft(input, options = {}) {
       rights_status: image.rights_status,
       publication_ready: image.publication_ready,
     })),
-    source_note: '资料来源为华为官网公开产品页；具体配置、软件适配、库存与报价以实际确认结果为准。',
+    source_note: publishSourceNote,
   };
   const result = {
-    schema_version: '1.3',
+    schema_version: '1.4',
     status: verification.overall_status === 'blocked' ? 'blocked' : 'ready_for_review',
     synthetic: /合成样例|合成测试|虚构客户/.test(String(input.match_input.profile.raw_request || '')),
     generated_at: new Date().toISOString(),
@@ -526,6 +588,7 @@ async function runContentDraft(input, options = {}) {
     expression_strategy: composed.expression_strategy,
     draft,
     publish_copy: publishCopy,
+    publication_readiness: publicationReadiness,
     image_sources: imageSources,
     insertion_plan: insertionPlan,
     citations,
@@ -537,7 +600,8 @@ async function runContentDraft(input, options = {}) {
         message: `发布前检查完成：通过 ${verification.summary.pass_count} 项、需要调整 ${verification.summary.downgrade_count} 项、不通过 ${verification.summary.fail_count} 项。`,
       },
       ...verification.risk_items.map(risk => ({ code: risk.risk_level === 'blocking' ? 'VERIFICATION_BLOCKING_RISK' : 'VERIFICATION_DOWNGRADE', message: `${risk.title}：${risk.recommendation}` })),
-      { code: 'PLATFORM_APPLIED', message: `内容已按${input.platform}结构准备；产品资料只使用已核对内容，图片还需人工确认。` },
+      { code: 'PLATFORM_APPLIED', message: `内容已按${input.platform}结构准备；标题、正文和标签可分别复制。` },
+      { code: 'PUBLICATION_READINESS', message: `平台发布检查：通过 ${publicationReadiness.checks.summary.pass_count} 项、需调整 ${publicationReadiness.checks.summary.warning_count} 项、不通过 ${publicationReadiness.checks.summary.fail_count} 项。` },
       { code: 'BUDGET_ASSESSMENT', message: budgetAssessment.message },
       { code: 'HUMAN_REVIEW_REQUIRED', message: '系统检查不能替代发布责任人的最终确认；公开发布仍需核对来源、价格、图片授权和表达边界。' },
     ],

@@ -19,7 +19,7 @@ test('generates a reviewable public-account draft with exact-model IMA images', 
     const { input, result } = await matchExample(0);
     const candidate = result.candidates[0];
     const output = await runContentDraft({ schema_version: '1.0', match_input: input, candidate_id: candidate.candidate_id, platform: '公众号', image_limit: 4 });
-    assert.equal(output.schema_version, '1.3');
+    assert.equal(output.schema_version, '1.4');
     assert.equal(output.status, 'ready_for_review');
     assert.equal(output.product.resolved_name, 'HUAWEI MateBook 14（鸿蒙版）');
     assert.match(output.draft.title, /仓库与办公室轮用/);
@@ -30,6 +30,18 @@ test('generates a reviewable public-account draft with exact-model IMA images', 
     assert.equal(output.expression_strategy.fact_policy.price_locked, true);
     assert.equal(output.publish_copy.status, 'text_only_ready');
     assert.equal(output.publish_copy.text_ready, true);
+    assert.equal(output.publish_copy.title, output.draft.title);
+    assert.equal(output.publication_readiness.copy_blocks.length, 3);
+    assert.deepEqual(output.publication_readiness.copy_blocks.map(block => block.id), ['title', 'body', 'tags']);
+    assert.equal(output.publication_readiness.copy_blocks[0].text, output.draft.title);
+    assert.doesNotMatch(output.publication_readiness.copy_blocks[1].text, /^#|\*\*|<!--|!\[/m);
+    assert.match(output.publication_readiness.copy_blocks[2].text, /#华为笔记本/);
+    assert.equal(output.publication_readiness.checks.items.length, 5);
+    assert.deepEqual(output.publication_readiness.platform_matrix.map(item => item.platform), ['公众号', '小红书', '朋友圈']);
+    assert.equal(output.publication_readiness.platform_matrix.filter(item => item.selected).length, 1);
+    assert.match(output.publication_readiness.cover_copy.headline, /仓库与办公室/);
+    assert.ok(output.image_sources.every(image => Number.isInteger(image.width) && Number.isInteger(image.height)));
+    assert.ok(output.publication_readiness.image_pack.items.every(item => /^\d+×\d+$/.test(item.dimension_label)));
     assert.deepEqual(output.publish_copy.image_order.map(image => image.order), [1, 2, 3, 4]);
     assert.doesNotMatch(output.publish_copy.markdown, /<!--\s*IMAGE:/i);
     assert.doesNotMatch(output.publish_copy.markdown, /fact-|official-|发布前检查|资料核对卡|字段|JSON|Markdown/i);

@@ -45,6 +45,9 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(page, /content-verification-summary/);
         assert.match(page, /content-risk-items/);
         assert.match(page, /content-safe-version/);
+        assert.match(page, /content-copy-blocks/);
+        assert.match(page, /content-platform-matrix/);
+        assert.match(page, /content-download-images/);
         const scriptResponse = await fetch(`${origin}/static/js/app.js`);
         assert.equal(scriptResponse.status, 200);
         const script = await scriptResponse.text();
@@ -54,6 +57,9 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(script, /renderVerificationResult/);
         assert.match(script, /appendDraftBodyWithImages/);
         assert.match(script, /createContentImagePreview/);
+        assert.match(script, /renderPublicationReadiness/);
+        assert.match(script, /copyPlainText/);
+        assert.match(script, /content-platform-matrix/);
         const auth = await authenticate(origin);
         const examples = auth.examples;
         const cookie = auth.cookie;
@@ -77,10 +83,12 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(contentJob.kind, 'content-draft');
         const completedContent = await waitJob(origin, contentJob.id, cookie);
         assert.equal(completedContent.status, 'completed');
-        assert.equal(completedContent.result.schema_version, '1.3');
+        assert.equal(completedContent.result.schema_version, '1.4');
         assert.equal(completedContent.result.status, 'ready_for_review');
         assert.equal(completedContent.result.platform, '公众号');
         assert.equal(completedContent.result.platform_profile.id, 'wechat_article');
+        assert.equal(completedContent.result.publication_readiness.platform_matrix.length, 3);
+        assert.deepEqual(completedContent.result.publication_readiness.copy_blocks.map(block => block.id), ['title', 'body', 'tags']);
         assert.equal(completedContent.result.image_sources.length, 4);
         assert.equal(completedContent.result.verification.overall_status, 'downgraded');
         assert.equal(completedContent.result.verification.publication_ready, false);
@@ -103,6 +111,12 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(imageResponse.headers.get('content-type'), 'image/png');
         const bytes = Buffer.from(await imageResponse.arrayBuffer());
         assert.ok(bytes.length > 10000);
+        const packResponse = await fetch(`${origin}/api/runs/${contentJob.id}/images.zip`, { headers: { Cookie: cookie } });
+        assert.equal(packResponse.status, 200);
+        assert.equal(packResponse.headers.get('content-type'), 'application/zip');
+        const packBytes = Buffer.from(await packResponse.arrayBuffer());
+        assert.equal(packBytes.subarray(0, 2).toString('ascii'), 'PK');
+        assert.ok(packBytes.length > bytes.length);
     } finally {
         await new Promise(resolve => server.close(resolve));
         fs.rmSync(authFile, { force: true });
@@ -141,7 +155,7 @@ test('content-draft API accepts all three supported platforms through real HTTP'
                 const contentJob = await contentResponse.json();
                 const completedContent = await waitJob(origin, contentJob.id, cookie);
                 assert.equal(completedContent.status, 'completed');
-                assert.equal(completedContent.result.schema_version, '1.3');
+                assert.equal(completedContent.result.schema_version, '1.4');
                 assert.equal(completedContent.result.platform, platform);
                 assert.equal(completedContent.result.status, 'ready_for_review');
                 assert.ok(completedContent.result.citations.length >= 1);

@@ -11,6 +11,7 @@ const { getSourceStatus, sourceReadiness } = require('./source-health');
 const { MANIFEST } = require('./official');
 const { runProductMatch, renderProductMatchMarkdown, productMatchExamples } = require('./product-match');
 const { runContentDraft, renderContentDraftMarkdown, readReviewedImage } = require('./content-generation');
+const { buildContentImagePack } = require('./image-pack');
 const { runGuidedProfile, renderGuidedProfileMarkdown, MAX_GUIDED_TURNS } = require('./guided-profile');
 
 const TTL = 20 * 60 * 1000;
@@ -377,12 +378,26 @@ function createCloudServer(options = {}) {
                 });
                 return;
             }
-            const match = url.pathname.match(/^\/api\/runs\/([a-f0-9-]{36})(\/export)?$/i);
+            const match = url.pathname.match(/^\/api\/runs\/([a-f0-9-]{36})(\/export|\/images\.zip)?$/i);
             if (request.method === 'GET' && match) {
                 const job = jobs.get(match[1]);
                 if (!requireAuth(response, currentAuth)) return;
                 if (!session || session.ownerId !== currentAuth.user.id || !job || job.session !== session.id) return fail(response, 404, 'RUN_NOT_FOUND', '当前登录下找不到这次任务，或任务已过期，请重新发起');
                 if (!match[2]) { const { session: omittedSession, created: omittedCreated, ...publicJob } = job; return send(response, 200, publicJob); }
+                if (match[2] === '/images.zip') {
+                    if (url.search) return fail(response, 400, 'PACK_QUERY_FORBIDDEN', '图片包不接受额外参数');
+                    if (job.status !== 'completed' || job.kind !== 'content-draft' || !job.result) return fail(response, 409, 'RUN_NOT_COMPLETED', '图片包仍在准备中，请稍后再试');
+                    try {
+                        const pack = buildContentImagePack(job.result);
+                        response.setHeader('Cache-Control', 'no-store');
+                        response.setHeader('Content-Disposition', `attachment; filename="huawei-content-review-${job.id.slice(0, 8)}.zip"`);
+                        response.writeHead(200, { 'Content-Type': 'application/zip' });
+                        response.end(pack.buffer);
+                    } catch (error) {
+                        return fail(response, 404, error instanceof PipelineError ? error.code : 'IMAGE_PACK_UNAVAILABLE', '图片包暂时不可用，请稍后重试');
+                    }
+                    return;
+                }
                 const format = url.searchParams.get('format');
                 if (!['json', 'markdown'].includes(format) || [...url.searchParams.keys()].some(name => name !== 'format')) return fail(response, 400, 'EXPORT_FORMAT_INVALID', '暂不支持该下载格式');
                 if (job.status !== 'completed') return fail(response, 409, 'RUN_NOT_COMPLETED', '结果仍在准备中，请稍后再下载');

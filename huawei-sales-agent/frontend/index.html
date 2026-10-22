@@ -248,10 +248,29 @@
         <div class="content-platform-picker"><label for="content-platform">内容平台</label><select id="content-platform"><option>公众号</option><option>小红书</option><option>朋友圈</option></select></div>
       </div>
       <p id="content-status" class="status-line" role="status" aria-live="polite">请先在产品匹配结果中选择一个候选，再生成内容草稿。系统不会自动发布。</p>
+      <section id="content-history-panel" class="content-history-panel" hidden aria-labelledby="content-history-title">
+        <div><h3 id="content-history-title">最近生成</h3><p>仅保留本次登录中的结果，刷新页面即清空，不写入服务器。</p></div>
+        <div id="content-history" class="content-history"></div>
+      </section>
       <div id="content-draft-results" hidden>
-        <div class="result-toolbar"><a id="content-download-json" download title="完整数据文件，供技术或存档使用">下载内容数据备份</a><a id="content-download-markdown" download title="可直接阅读和整理的内容说明">下载内容说明</a></div>
+        <div class="result-toolbar"><a id="content-download-json" download title="完整数据文件，供技术或存档使用">下载内容数据备份</a><a id="content-download-markdown" download title="可直接阅读和整理的内容说明">下载内容说明</a><a id="content-download-images" download title="含图片、尺寸与授权状态的内部审稿包">下载审稿图片包</a><button id="content-download-task-pack" type="button">导出门店任务包</button><button id="content-copy-all" type="button">复制整套内容</button></div>
         <p id="content-summary" class="notice"></p>
-        <h3>发布前检查结论</h3><div id="content-verification-summary"></div>
+        <section class="content-handoff" aria-labelledby="content-handoff-title">
+          <div class="content-handoff-heading">
+            <div><p class="eyebrow">一分钟发布</p><h3 id="content-handoff-title">标题、正文、标签各复制一次</h3><p>纯文本已经去除标题符号、图片标记和内部字段，可直接粘贴到对应平台。</p></div>
+            <span id="content-copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span>
+          </div>
+          <div id="content-copy-blocks" class="content-copy-blocks"></div>
+          <section class="platform-matrix-panel" aria-labelledby="platform-matrix-title">
+            <div class="platform-matrix-heading"><div><h4 id="platform-matrix-title">三平台一次看清</h4><p>同一候选已按公众号、小红书、朋友圈分别整理，可直接复制任一平台整套内容。</p></div><span class="matrix-hint">长度 · 图片尺寸 · 排版</span></div>
+            <div id="content-platform-matrix" class="platform-matrix"></div>
+          </section>
+          <div class="content-handoff-grid">
+            <section class="cover-copy-panel"><h4>封面文案</h4><div id="content-cover-copy"></div></section>
+            <section class="platform-check-panel"><h4>发布检查</h4><div id="content-platform-checks"></div></section>
+          </div>
+        </section>
+        <h3>资料与版权检查</h3><div id="content-verification-summary"></div>
         <div class="two-col"><div><h4>检查项目</h4><div id="content-verification-items"></div></div><div><h4>需要处理的问题</h4><div id="content-risk-items"></div></div></div>
         <h4>可发布安全版本</h4><div id="content-safe-version"></div>
         <h3>内容原稿与待审图片</h3><div id="content-draft"></div>

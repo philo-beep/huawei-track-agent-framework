@@ -440,7 +440,7 @@ function tagsFor(platform, task) {
   const tags = TAG_SETS[task.id] || TAG_SETS.general;
   if (platform === '朋友圈') return tags.slice(0, 2);
   if (platform === '小红书') return tags.slice(0, 4);
-  return [];
+  return tags.slice(0, 3);
 }
 
 function buildExpressionStrategy(profile, platform) {
@@ -521,12 +521,12 @@ function renderPublishMarkdown(input) {
   const sourceTitles = [...new Set((input.fact_highlights || []).map(item => item.source_title).filter(Boolean))];
   const sourceNote = sourceTitles.length ? '资料来源：' + sourceTitles.join('、') + '。' : '资料来源：华为官网公开产品页。';
   if (platform === '朋友圈') {
-    return [lead, ...blocks, cta, input.tags.length ? input.tags.map(tag => '#' + tag).join(' ') : ''].filter(Boolean).join('\n\n').trim() + '\n';
+    return [lead, ...blocks, cta, sourceNote, input.tags.length ? input.tags.map(tag => '#' + tag).join(' ') : ''].filter(Boolean).join('\n\n').trim() + '\n';
   }
   if (platform === '小红书') {
-    return [title, '', lead, '', ...blocks.flatMap(block => [block, '']), cta, '', input.tags.map(tag => '#' + tag).join(' ')].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
+    return [title, '', lead, '', ...blocks.flatMap(block => [block, '']), cta, '', sourceNote, '', input.tags.map(tag => '#' + tag).join(' ')].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
   }
-  return ['# ' + title, '', lead, '', ...blocks.flatMap(block => [block, '']), '## 下一步沟通', '', cta].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
+  return ['# ' + title, '', lead, '', ...blocks.flatMap(block => [block, '']), '## 下一步沟通', '', cta, '', sourceNote].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
 }
 
 module.exports = {
