@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
+const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -477,7 +477,7 @@ function clearContentResult() {
     state.contentJobId = null;
     state.contentPolling = false;
     state.contentMarkdown = '';
-    contentStatus('选择候选后可生成公众号图文草稿；不会自动发布。');
+    contentStatus(`选择候选后可生成${byId('content-platform').value}内容草稿；不会自动发布。`);
 }
 
 async function startContentDraft(candidateId) {
@@ -486,9 +486,12 @@ async function startContentDraft(candidateId) {
     clearContentResult();
     setRunning(true);
     state.startedAt = Date.now();
-    contentStatus('正在重新核验候选、事实原文与精确型号图片，不会使用近似型号替代。');
+    const platform = byId('content-platform').value;
+    const imageLimit = platform === '朋友圈' ? 1 : platform === '小红书' ? 3 : 4;
+    state.contentPlatform = platform;
+    contentStatus(`正在按${platform}结构重新核验候选、事实原文与精确型号图片，不会使用近似型号替代。`);
     try {
-        const payload = { schema_version: '1.0', match_input: state.matchInput, candidate_id: candidateId, platform: '公众号', image_limit: 4 };
+        const payload = { schema_version: '1.0', match_input: state.matchInput, candidate_id: candidateId, platform, image_limit: imageLimit };
         const job = await api('/api/content-drafts', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify(payload) });
         state.contentJobId = job.id;
         state.contentPolling = true;
@@ -504,7 +507,7 @@ async function pollContentDraft() {
     try {
         const job = await api(`/api/runs/${encodeURIComponent(state.contentJobId)}`);
         if (job.status === 'running') {
-            contentStatus(`正在生成图文，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。`);
+            contentStatus(`正在生成${state.contentPlatform}内容，已等待${Math.round((Date.now() - state.startedAt) / 1000)}秒。`);
             setTimeout(pollContentDraft, 1000);
             return;
         }
@@ -605,7 +608,7 @@ function renderContentDraftResult(result, markdown) {
     byId('content-draft').replaceChildren();
     byId('content-image-sources').replaceChildren();
     byId('content-insertion-plan').replaceChildren();
-    byId('content-summary').textContent = `强制核验：${result.verification.status_label}；可发布安全版本：${result.verification.safe_content_ready ? '可用' : '不可用'}；产品：${result.product.resolved_name}；原稿图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。原稿、图片和完整 Markdown 仅用于审稿。`;
+    byId('content-summary').textContent = `平台：${result.platform}；强制核验：${result.verification.status_label}；可发布安全版本：${result.verification.safe_content_ready ? '可用' : '不可用'}；产品：${result.product.resolved_name}；原稿图片：${result.image_sources.length}张；事实引用：${result.citations.length}条。原稿、图片和完整 Markdown 仅用于审稿。`;
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', result.draft.title), element('p', result.draft.lead));
     const body = element('pre', result.draft.body_markdown); body.className = 'content-body';
@@ -713,7 +716,7 @@ function renderProductMatchResult(result, markdown) {
             use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); byId('input-fields').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
             actions.append(use);
         }
-        const content = element('button', '生成公众号图文'); content.type = 'button'; content.className = 'content-generate-candidate';
+        const content = element('button', `生成${byId('content-platform').value}草稿`); content.type = 'button'; content.className = 'content-generate-candidate';
         content.title = '重新核验候选、事实原文和精确型号 IMA 图片后生成可审稿图文';
         content.addEventListener('click', () => startContentDraft(candidate.candidate_id));
         actions.append(content);
@@ -731,6 +734,10 @@ function renderProductMatchResult(result, markdown) {
 }
 
 byId('growth-form').addEventListener('submit', startRun);
+byId('content-platform').addEventListener('change', () => {
+    clearContentResult();
+    document.querySelectorAll('.content-generate-candidate').forEach(button => { button.textContent = `生成${byId('content-platform').value}草稿`; });
+});
 byId('match-form').addEventListener('submit', startProductMatch);
 byId('match-clear').addEventListener('click', clearMatchCustomer);
 for (let index = 0; index < 2; index += 1) byId(`match-example-${index + 1}`).addEventListener('click', () => fillMatchExample(index));

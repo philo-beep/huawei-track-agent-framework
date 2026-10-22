@@ -11,21 +11,28 @@
 
 当前版本支持**按请求显式启用**云端模型、IMA OpenAPI 知识库检索和联网公开网页抓取。云端模型默认配置为 `deepseek-v4.1-flash`；凭据仅从本地 `.env` 或部署环境变量读取。结果仍用于演示和人工复核，不冒充真实成交建议。
 
-## 公众号图文生成
+## 多平台内容生成
 
-产品匹配结果中的每个候选都可进入“生成公众号图文”：
+当前固定回归两款具体型号：`HUAWEI MateBook 14 鸿蒙版` 与 `HUAWEI MateBook 14 2024（酷睿 Ultra）`；同一候选可按三个平台生成不同结构的审稿稿：
+
+- **公众号**：分层长文，最多 3 条可回溯事实，默认 4 张精确型号审稿图。
+- **小红书**：短段落任务清单，最多 2 条事实，默认 3 张审稿图。
+- **朋友圈**：短帖，最多 1 条事实，默认 1 张审稿图。
+
+产品匹配结果中的每个候选都可进入“生成内容草稿”：
 
 - 服务端重新执行产品匹配，按 `candidate_id` 校验候选、客户画像和 E1 证据，不信任前端传来的现成正文。
 - 产品事实逐字取自可定位原文，并在 JSON 与 Markdown 中保留事实 ID、来源条目、URL 和 SHA-256。
-- 图片只从 `datasets/cleaned/image_review_registry.json` 中选取**具体型号一致**的 IMA 条目；每张图给出画面说明、原图 URL、产品页面、IMA 条目和指纹。
+- 图片只从 `datasets/cleaned/image_review_registry.json` 中选取**具体型号一致**的 IMA 条目；每张图给出画面说明、原图 URL、产品页面、IMA 条目和指纹。目标型号无精确图片时降级为纯文字，不借用另一型号。
 - 草稿正文用 `<!-- IMAGE:... -->` 标注插入位置，并另附图片来源清单和插入建议。
+- 客户预算只与同型号公开价格快照做“待确认”比较，`current_transaction_quote=false`；不把快照写成成交报价。
 - 当前图片核验是 AI 辅助视觉核对，授权和人工终审尚未完成，因此输出固定为 `ready_for_review`、`publication_ready=false`；不得当作已获准发布的正式图文。
 
-接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`。
+接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`；输出 v1.2 新增 `platform_profile`、`product.model_key` 与 `budget_assessment`。
 
 ## 发布前强制核验
 
-所有公众号图文结果在返回前必须经过同一门禁，不允许由前端或调用方跳过：
+所有平台内容结果在返回前必须经过同一门禁，不允许由前端或调用方跳过：
 
 1. 型号：候选、发布型号与 E1 证据中的具体型号一致。
 2. 参数：每条参数事实逐字存在于来源原文，限制脚注同步保留。
@@ -79,6 +86,7 @@ bash start.sh
 ```bash
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
+node --test tests/extension_regression.test.js
 node --test tests/release_verification.test.js
 node --test tests/content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js

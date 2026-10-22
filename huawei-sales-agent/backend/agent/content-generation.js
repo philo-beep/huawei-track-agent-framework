@@ -7,6 +7,7 @@ const { ROOT, PipelineError, validateSchema } = require('./support');
 const { runProductMatch } = require('./product-match');
 const { localKnowledge, extractFacts } = require('./knowledge');
 const { runReleaseVerification } = require('./release-verification');
+const { assessBudget } = require('./budget-assessment');
 
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const DEFAULT_REGISTRY_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'image_review_registry.json');
@@ -14,13 +15,40 @@ const INPUT_SCHEMA = JSON.parse(fs.readFileSync(path.join(__dirname, 'contracts'
 const OUTPUT_SCHEMA = JSON.parse(fs.readFileSync(path.join(__dirname, 'contracts', 'content-generation-output.schema.json'), 'utf8'));
 const MARKER_ORDER = ['after_title', 'after_requirements', 'after_facts', 'before_cta'];
 const POSITION_LABELS = { cover: '封面主视觉', scene: '使用场景', detail: '机身细节', before_cta: '行动引导前配图' };
+const SUPPORTED_MODELS = Object.freeze({
+  'matebook-14-harmonyos': { label: 'HUAWEI MateBook 14 鸿蒙版', operating_system: 'HarmonyOS', family: 'MateBook 14', category: '消费笔记本' },
+  'matebook-14-2024': { label: 'HUAWEI MateBook 14 2024', operating_system: 'Windows', family: 'MateBook 14', category: '消费笔记本' },
+});
+const PLATFORM_SPECS = Object.freeze({
+  '公众号': { id: 'wechat_article', format: '分层长文：场景 → 任务清单 → 原文核对 → 限制 → CTA', max_facts: 3, default_image_limit: 4, max_image_limit: 6, image_policy: '至多保留全部已核验插入位；未获授权时安全版本转纯文字', content_goal: '用可回溯资料完成完整选型核对', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
+  '小红书': { id: 'xiaohongshu_note', format: '短段落清单：单一任务 → 2 条原文核对卡 → 待确认事项', max_facts: 2, default_image_limit: 3, max_image_limit: 6, image_policy: '优先封面、场景与细节；最多 3 张进入默认审稿稿', content_goal: '围绕一个具体任务提供可收藏的核对清单', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
+  '朋友圈': { id: 'moments_short_post', format: '短帖：一行任务 → 1 条原文核对 → 待确认与 CTA', max_facts: 1, default_image_limit: 1, max_image_limit: 3, image_policy: '默认 1 张封面或场景图；不堆叠参数', content_goal: '用简短可信表述邀请补充任务条件', source_policy: '本地 E1 产品事实 + 精确型号图片审稿清单' },
+});
 
 function normalizeName(value) {
-  return String(value || '').toLowerCase().replace(/huawei/g, '').replace(/鸿蒙版|harmonyos/g, '').replace(/[\s\-_/（）()·]/g, '');
+  return String(value || '').toLowerCase().replace(/huawei|华为/g, '').replace(/harmonyos/g, '鸿蒙版').replace(/[\s\-_/（）()·]/g, '');
 }
 
 function strictName(value) {
   return String(value || '').toLowerCase().replace(/[\s\-_/（）()·]/g, '');
+}
+
+function modelKey(value) {
+  const text = String(value || '').toLowerCase();
+  if (/matebook\s*14/.test(text) && /2024|酷睿\s*ultra/.test(text)) return 'matebook-14-2024';
+  if (/matebook\s*14/.test(text) && /鸿蒙|harmonyos/.test(text)) return 'matebook-14-harmonyos';
+  return null;
+}
+
+function candidateModelKey(candidate) {
+  const evidenceText = (candidate.evidence || []).map(item => `${item.title || ''} ${item.locator || ''} ${item.excerpt || ''}`).join(' ');
+  return modelKey(`${candidate.product_name || ''} ${candidate.product_family || ''} ${evidenceText}`);
+}
+
+function platformSpec(platform) {
+  const spec = PLATFORM_SPECS[platform];
+  if (!spec) throw new PipelineError('UNSUPPORTED_PLATFORM', '仅支持公众号、小红书和朋友圈三个内容平台');
+  return spec;
 }
 
 function readRegistry(registryPath = DEFAULT_REGISTRY_PATH) {
@@ -35,26 +63,31 @@ function readRegistry(registryPath = DEFAULT_REGISTRY_PATH) {
 }
 
 function resolveReviewedProduct(registry, candidate) {
+  const targetKey = candidateModelKey(candidate);
   const candidates = (registry.products || []).filter(product => {
     const names = [product.product_name, ...(product.aliases || [])].filter(Boolean);
-    if (names.some(name => normalizeName(name) === normalizeName(candidate.product_name))) return true;
-    const targetBase = normalizeName(candidate.product_name);
-    return names.some(name => normalizeName(name) === targetBase)
-      && (!candidate.operating_system || !product.operating_system || String(candidate.operating_system).toLowerCase() === String(product.operating_system).toLowerCase());
+    if (targetKey) return names.some(name => modelKey(name) === targetKey);
+    return names.some(name => normalizeName(name) === normalizeName(candidate.product_name));
   });
   const evidence = candidate.evidence || [];
-  const withExactEvidence = candidates.filter(product => evidence.some(item => item.source_level === 'E1' && strictName(`${item.title} ${item.locator}`).includes(strictName(product.product_name))));
-  return withExactEvidence[0] || null;
+  return candidates.find(product => {
+    const names = [product.product_name, ...(product.aliases || [])].filter(Boolean);
+    return evidence.some(item => item.source_level === 'E1' && names.some(name => strictName(`${item.title} ${item.locator}`).includes(strictName(name))));
+  }) || null;
 }
 
 function fallbackProductIdentity(candidate) {
   const productEvidence = (candidate.evidence || []).find(item => item.source_level === 'E1' && /^HUAWEI\s+/i.test(String(item.title || '')));
   const evidenceName = productEvidence ? String(productEvidence.title).split(/\s+-\s+/)[0].trim() : '';
+  const productName = evidenceName || candidate.product_name;
+  const key = candidateModelKey(candidate);
+  const supported = key ? SUPPORTED_MODELS[key] : null;
   return {
-    product_name: evidenceName || candidate.product_name,
-    family: null,
-    category: null,
-    operating_system: null,
+    product_name: productName,
+    family: candidate.product_family || supported?.family || null,
+    category: candidate.category || supported?.category || null,
+    operating_system: candidate.operating_system || supported?.operating_system || null,
+    model_key: key,
   };
 }
 
@@ -63,10 +96,14 @@ function fileSha256(filePath) {
 }
 
 function verifiedImages(registry, product, limit) {
+  const expectedKey = modelKey(product.product_name);
   const available = (product.images || []).filter(image => image.model_verified === true && String(image.source_status || '').startsWith('http_200'));
   const selected = [...available].sort((first, second) => MARKER_ORDER.indexOf(first.marker) - MARKER_ORDER.indexOf(second.marker)).slice(0, limit);
   if (!selected.length) return [];
   return selected.map(image => {
+    const imageIdentityText = `${image.file_name || ''} ${image.caption || ''} ${image.ima_entry || ''} ${image.original_url || ''}`;
+    const imageKey = modelKey(imageIdentityText);
+    if (expectedKey && imageKey && imageKey !== expectedKey) throw new PipelineError('IMAGE_MODEL_MISMATCH', `图片型号与目标型号不一致：${image.image_id}`);
     const assetPath = path.resolve(DATA_ROOT, image.local_path);
     if (!assetPath.startsWith(DATA_ROOT + path.sep) || !fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile() || fs.lstatSync(assetPath).isSymbolicLink()) throw new PipelineError('IMAGE_ASSET_UNAVAILABLE', `图片文件不可用：${image.image_id}`);
     if (!/^[a-f0-9]{64}$/.test(image.sha256 || '') || fileSha256(assetPath) !== image.sha256) throw new PipelineError('IMAGE_HASH_MISMATCH', `图片指纹不匹配：${image.image_id}`);
@@ -132,13 +169,32 @@ function listText(values, fallback = '未提供') {
   return Array.isArray(values) && values.length ? values.map(inlineText).filter(Boolean).join('、') : fallback;
 }
 
-function composeDraft(profile, product, facts, images) {
+function draftContext(profile, product, facts) {
   const audience = inlineText(profile.audience) || '客户';
   const scenario = inlineText(profile.scenario) || '本次办公任务';
   const shortScenario = String(scenario).split(/[，,。；;]/)[0].replace(/需要移动办公$/, '').slice(0, 32) || '本次办公任务';
   const needs = listText(profile.needs);
   const preferences = listText(profile.preferences);
   const painPoints = listText(profile.pain_points);
+  const organization = [profile.industry, Number.isInteger(profile.company_size) ? `${profile.company_size}人组织` : null].filter(Boolean).join('、');
+  return { audience, scenario, shortScenario, needs, preferences, painPoints, organization, facts };
+}
+
+function factsAsCards(facts, compact = false) {
+  return facts.flatMap(fact => {
+    const heading = String(fact.claim).split('\n').find(line => line.startsWith('## '))?.replace(/^##\s+/, '') || '公开资料';
+    const citation = sourceForFact(fact);
+    const claim = compact ? String(fact.claim).split(/\n\s*\n/).filter(Boolean).slice(0, 3).join('\n\n') : fact.claim;
+    return [
+      `### ${compact ? '原文核对卡' : '官网原文'}｜${heading}`,
+      claim,
+      `来源定位：${citation.source_title}｜${citation.source_entry}｜${fact.id}`,
+    ];
+  });
+}
+
+function composePublicAccount(context, product, images) {
+  const { audience, scenario, shortScenario, needs, preferences, painPoints, organization, facts } = context;
   const title = `${shortScenario}的笔记本，先核对 ${facts.length} 项公开资料`;
   const lead = `这次需求来自${audience}：${scenario}。不先比谁的宣传语更响，而是把实际任务、软件与文件条件、可追溯资料放在同一张清单里。`;
   const cover = images.find(image => image.marker === 'after_title');
@@ -149,32 +205,72 @@ function composeDraft(profile, product, facts, images) {
   if (cover) blocks.push(imageCallout(cover, images.indexOf(cover), '主标题与导语之后，作为封面或正文首图'));
   blocks.push('## 先把实际任务说清楚');
   blocks.push(`这篇准备稿面向${audience}，场景是“${scenario}”。先确认每天究竟要打开、编辑、保存和导出哪些文件，再讨论型号。`);
-  const organization = [profile.industry, Number.isInteger(profile.company_size) ? `${profile.company_size}人组织` : null].filter(Boolean).join('、');
   blocks.push(`- 客户背景：${organization || '行业与组织规模待确认'}（仅来自客户输入，不代表采购权限）`);
   blocks.push(`- 明确需求：${needs}`);
   blocks.push(`- 当前偏好：${preferences}`);
   blocks.push(`- 待确认问题：${painPoints}`);
-  blocks.push('- 预算：客户未提供时保持未知；客户提供的预算也不能直接当成产品报价。');
+  blocks.push('- 预算：客户未提供时保持未知；客户提供的预算也不能直接当成产品报价；与公开快照不一致时只标记待复核。');
   if (scene) blocks.push(imageCallout(scene, images.indexOf(scene), '“先把实际任务说清楚”一节之后'));
   blocks.push(`## 候选机型：${product.product_name}`);
   blocks.push('以下只放可逐字回溯到 IMA 产品事实原文的公开资料。它们用于核对，不等同于实际体验、软件兼容结论或完整销售 SKU。');
-  for (const fact of facts) {
-    const heading = String(fact.claim).split('\n').find(line => line.startsWith('## '))?.replace(/^##\s+/, '') || '公开资料';
-    const citation = sourceForFact(fact);
-    blocks.push(`### 官网原文｜${heading}`);
-    blocks.push(fact.claim);
-    blocks.push(`来源定位：${citation.source_title}｜${citation.source_entry}｜${fact.id}`);
-  }
+  blocks.push(...factsAsCards(facts));
   if (detail) blocks.push(imageCallout(detail, images.indexOf(detail), '官网原文核对段之后'));
   blocks.push('## 这些事项还不能直接下结论');
   blocks.push('- 软件兼容性：必须按客户实际软件名称、版本、文件格式和外设逐项验证；资料存在不等于兼容已通过。');
   blocks.push('- 完整 SKU 与配色：当前资料是系列或具体型号级线索，颜色、键盘版本和销售配置仍需确认。');
   blocks.push('- 价格与库存：没有完整 SKU、地区、数量、有效期和有效报价依据时，不输出成交金额。');
-  blocks.push('- 图片授权：以下图片已做型号与画面辅助核验，但正式公开发布前仍需人工终审和授权确认。');
+  blocks.push('- 图片授权：如稿中出现图片，仅完成型号与画面辅助核验，正式公开发布前仍需人工终审和授权确认。');
   if (beforeCta) blocks.push(imageCallout(beforeCta, images.indexOf(beforeCta), '行动引导（CTA）之前'));
-  const body = blocks.join('\n\n');
-  const cta = '把常用软件及版本、主要文件格式、外设和移动频次发来；我们会先核对是否具备演示条件，再由人工确认下一步，不先承诺兼容或报价。';
-  return { title, lead, body_markdown: body, cta, tags: ['华为笔记本', '移动办公', '选型核对', '软件兼容性'] };
+  return {
+    title,
+    lead,
+    body_markdown: blocks.join('\n\n'),
+    cta: '把常用软件及版本、主要文件格式、外设和移动频次发来；我们会先核对是否具备演示条件，再由人工确认下一步，不先承诺兼容或报价。',
+    tags: ['华为笔记本', '移动办公', '选型核对', '软件兼容性'],
+  };
+}
+
+function composeXiaohongshu(context, product, images) {
+  const { audience, scenario, shortScenario, needs, preferences, painPoints, facts } = context;
+  const title = `${shortScenario}｜先列任务，再核对 ${facts.length} 项资料`;
+  const lead = `${audience}在准备“${scenario}”。这是一份合成需求下的选型核对清单，不冒充真实使用体验。`;
+  const blocks = ['### ① 先列任务', `- 要完成：${scenario}`, `- 已知需求：${needs}`, `- 当前偏好：${preferences}`, `- 还要确认：${painPoints}`];
+  for (const image of images) blocks.push(imageCallout(image, images.indexOf(image), `小红书 ${POSITION_LABELS[image.position] || '配图'}位置`));
+  blocks.push('### ② 资料核对卡', ...factsAsCards(facts, true));
+  blocks.push('### ③ 这些还不能直接下结论', '- 软件兼容性需要按名称、版本、文件格式和外设实际验证。', '- 颜色、键盘、内存和存储等完整 SKU 仍需确认。', '- 价格与库存没有当前有效依据时不写成成交价。', '- 图片如出现，仅为审稿建议，公开发布授权与人工终审待确认。');
+  return {
+    title,
+    lead,
+    body_markdown: blocks.join('\n\n'),
+    cta: '把你的使用场景、常用软件版本和文件格式留言说明；先一起整理待核对清单，再确认演示条件。',
+    tags: ['华为笔记本', '选购清单', '移动办公', '备课展示'],
+  };
+}
+
+function composeMoments(context, product, images) {
+  const { audience, scenario, shortScenario, needs, facts } = context;
+  const title = `${product.product_name}｜${shortScenario}`;
+  const lead = `${audience}的“${scenario}”，先核对任务和资料，不先许诺兼容与价格。`;
+  const blocks = [`任务重点：${needs}。`, `一条可回溯资料：`, factsAsCards(facts, true).join('\n\n'), '仍需确认：软件版本、文件格式、完整 SKU、库存与当前有效报价。'];
+  for (const image of images) blocks.push(imageCallout(image, images.indexOf(image), '朋友圈短帖配图位置'));
+  return {
+    title,
+    lead,
+    body_markdown: blocks.join('\n\n'),
+    cta: '愿意继续核对的话，请说明使用任务和方便联系的渠道；不在评论区假定成交或承诺效果。',
+    tags: ['华为笔记本', '办公选型'],
+  };
+}
+
+function composeDraft(profile, product, facts, images, platform = '公众号') {
+  const spec = platformSpec(platform);
+  const context = draftContext(profile, product, facts);
+  const draft = platform === '小红书'
+    ? composeXiaohongshu(context, product, images)
+    : platform === '朋友圈'
+      ? composeMoments(context, product, images)
+      : composePublicAccount(context, product, images);
+  return draft;
 }
 
 function renderArticleMarkdown(result) {
@@ -203,10 +299,13 @@ function renderArticleMarkdown(result) {
   ];
   return [
     `# ${result.draft.title}`, '',
+    `> 平台：${result.platform}；内容结构：${result.platform_profile.format}；事实数上限：${result.platform_profile.max_facts}；图片上限：${result.platform_profile.image_limit}。`, '',
     result.draft.lead, '',
     result.draft.body_markdown, '',
     '## 下一步沟通', '',
     result.draft.cta, '',
+    '## 预算核对', '',
+    `> 状态：${result.budget_assessment.status}。${result.budget_assessment.message}`, '',
     '---', '',
     '## 强制核验结果', '',
     `> 总体结论：${result.verification.status_label}；策略版本：${result.verification.policy_version}；原始稿公开发布就绪：${result.verification.publication_ready ? '是' : '否'}；安全版本可用：${result.verification.safe_content_ready ? '是' : '否'}。`, '',
@@ -227,7 +326,7 @@ function renderArticleMarkdown(result) {
   ].join('\n');
 }
 
-function safeProfile(profile) {
+function safeProfile(profile, budgetAssessment = null) {
   const integerOrNull = value => Number.isInteger(value) ? value : null;
   const array = value => Array.isArray(value) ? value.map(inlineText).filter(Boolean) : [];
   return {
@@ -238,7 +337,7 @@ function safeProfile(profile) {
     needs: array(profile.needs),
     preferences: array(profile.preferences),
     pain_points: array(profile.pain_points),
-    budget_status: profile.budget ? '客户已提供预算条件，但预算不是产品报价，仍需完整SKU与有效报价依据' : '客户未提供预算；不推断价格或采购资格',
+    budget_status: budgetAssessment?.status || (profile.budget ? '预算条件待核对' : '客户未提供预算；不推断价格或采购资格'),
   };
 }
 
@@ -252,13 +351,17 @@ async function runContentDraft(input, options = {}) {
   if (!candidate) throw new PipelineError('MATCH_CANDIDATE_NOT_FOUND', '所选候选不在本次重新核验的产品匹配结果中');
   const reviewedProduct = resolveReviewedProduct(registry, candidate);
   const resolved = reviewedProduct || fallbackProductIdentity(candidate);
-  const knowledge = await localKnowledge(candidate.product_name);
-  const facts = selectFacts(knowledge, candidate.product_name, input.match_input.profile);
-  const limit = input.image_limit || 4;
+  const resolvedModelKey = resolved.model_key || modelKey(resolved.product_name) || candidateModelKey(candidate);
+  const knowledge = await localKnowledge(resolved.product_name);
+  const facts = selectFacts(knowledge, resolved.product_name, input.match_input.profile);
+  const spec = platformSpec(input.platform);
+  const selectedFacts = facts.slice(0, spec.max_facts);
+  const limit = Math.min(input.image_limit || spec.default_image_limit, spec.max_image_limit);
   const images = reviewedProduct ? verifiedImages(registry, reviewedProduct, limit).map(image => ({ ...image, ima_kb_name: registry.knowledge_base.kb_name })) : [];
-  const draft = composeDraft(input.match_input.profile, resolved, facts, images);
-  const profileBasis = safeProfile(input.match_input.profile);
-  const citations = facts.map(fact => ({
+  const budgetAssessment = assessBudget(input.match_input.profile, resolved.product_name, knowledge);
+  const draft = composeDraft(input.match_input.profile, resolved, selectedFacts, images, input.platform);
+  const profileBasis = safeProfile(input.match_input.profile, budgetAssessment);
+  const citations = selectedFacts.map(fact => ({
     fact_id: fact.id,
     claim: fact.claim,
     used_in: 'body',
@@ -297,35 +400,48 @@ async function runContentDraft(input, options = {}) {
     image_id: image.image_id,
     caption: image.caption,
     instruction: image.marker === 'after_title' ? '标题和导语之后'
-      : image.marker === 'after_requirements' ? '“先把实际任务说清楚”之后'
-        : image.marker === 'after_facts' ? '官网原文核对段之后'
+      : image.marker === 'after_requirements' ? '任务清单之后'
+        : image.marker === 'after_facts' ? '原文核对段之后'
           : '行动引导之前',
   }));
   const verification = runReleaseVerification({
     product: { requested_name: candidate.product_name, resolved_name: resolved.product_name, model_verified: true },
     candidate,
     draft,
-    facts,
+    facts: selectedFacts,
     image_sources: imageSources,
     citations,
     image_expected: limit,
   });
   const result = {
-    schema_version: '1.1',
+    schema_version: '1.2',
     status: verification.overall_status === 'blocked' ? 'blocked' : 'ready_for_review',
     synthetic: /合成样例|合成测试|虚构客户/.test(String(input.match_input.profile.raw_request || '')),
     generated_at: new Date().toISOString(),
-    platform: '公众号',
+    platform: input.platform,
+    platform_profile: {
+      id: spec.id,
+      label: input.platform,
+      content_goal: spec.content_goal,
+      format: spec.format,
+      max_facts: spec.max_facts,
+      image_limit: limit,
+      image_policy: spec.image_policy,
+      source_policy: spec.source_policy,
+      data_sources: ['local_kb_index', 'image_review_registry'],
+    },
     product: {
       candidate_id: candidate.candidate_id,
       requested_name: candidate.product_name,
       resolved_name: resolved.product_name,
+      model_key: resolvedModelKey,
       family: resolved.family || null,
       category: resolved.category || null,
       operating_system: resolved.operating_system || null,
       model_verified: verification.product_model_match === 'verified',
     },
     profile_basis: profileBasis,
+    budget_assessment: budgetAssessment,
     draft,
     image_sources: imageSources,
     insertion_plan: insertionPlan,
@@ -338,6 +454,8 @@ async function runContentDraft(input, options = {}) {
         message: `强制核验结论：${verification.status_label}；通过${verification.summary.pass_count}项、降级${verification.summary.downgrade_count}项、不通过${verification.summary.fail_count}项。`,
       },
       ...verification.risk_items.map(risk => ({ code: risk.risk_level === 'blocking' ? 'VERIFICATION_BLOCKING_RISK' : 'VERIFICATION_DOWNGRADE', message: `${risk.title}：${risk.recommendation}` })),
+      { code: 'PLATFORM_APPLIED', message: `已按${input.platform}结构生成，事实上限${spec.max_facts}条，图片上限${limit}张；来源仍为本地E1事实与精确型号审稿清单。` },
+      { code: 'BUDGET_ASSESSMENT', message: budgetAssessment.message },
       { code: 'HUMAN_REVIEW_REQUIRED', message: '自动核验不替代发布责任人的最终确认；公开发布仍不得越过来源、价格、图片授权和人工确认边界。' },
     ],
   };
@@ -363,15 +481,15 @@ function renderContentDraftMarkdown(result) {
 }
 
 function contentGenerationExamples() {
-  return [
-    {
-      id: 'content-matebook14-harmonyos',
-      label: '合成示例：制造企业移动办公图文',
-      synthetic: true,
-      candidate_id: null,
-      note: '先运行产品匹配，再选择对应候选生成；不预置候选ID，避免跨请求串用。',
-    },
-  ];
+  return Object.entries(PLATFORM_SPECS).map(([platform, spec]) => ({
+    id: `content-${spec.id}`,
+    label: `合成示例：${platform}内容审稿`,
+    platform,
+    synthetic: true,
+    candidate_id: null,
+    note: '先运行产品匹配，再选择具体候选生成；不预置候选ID，避免跨请求串用。',
+    expected: { platform, max_facts: spec.max_facts, image_limit: spec.default_image_limit },
+  }));
 }
 
 module.exports = {
@@ -380,4 +498,7 @@ module.exports = {
   readReviewedImage,
   contentGenerationExamples,
   DEFAULT_REGISTRY_PATH,
+  PLATFORM_SPECS,
+  SUPPORTED_MODELS,
+  platformSpec,
 };

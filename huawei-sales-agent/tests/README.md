@@ -10,7 +10,9 @@
 
 - `test_chat.py`：Agent 四步契约、产品匹配 HTTP 接口、来源、边界、页面和导出测试。
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
-- `content_generation.test.js`：公众号图文草稿、事实回溯、精确型号图片、插入位置、六项门禁、授权降级和错误型号拒绝测试。
+- `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项门禁、授权降级和错误型号拒绝测试。
+- `extension_regression.test.js`：两款型号 × 三个平台的正常矩阵，以及信息缺失、预算冲突、图片错配和边界场景。
+- `extension_coverage_matrix.json`：功能 × 场景 × 型号 / 平台覆盖清单；测试会校验 6 个型号平台组合无缺口。
 - `release_verification.test.js`：型号、参数、价格、图片身份、超范围承诺和来源完整性六项门禁；覆盖全部通过、阻塞和降级到安全版本。
 - `solution_planning.test.js`：基础方案、预算判断、报价状态和成交动作；覆盖正式价格 null、合成演算隔离、负责人/触发条件/时间节点及数量冲突。
 - `content_api.test.js`：图文接口、CSRF、任务轮询、双格式导出、图片路由和哈希清单测试；沙箱内回环连接受限时须在沙箱外运行。
@@ -41,13 +43,21 @@
 ```powershell
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
+node --test tests/extension_regression.test.js
 node --test tests/release_verification.test.js
 node --test tests/solution_planning.test.js
 node --test tests/content_api.test.js
+# 本机回环受沙箱限制时，需在沙箱外运行 content_api.test.js
 $env:HUAWEI_DATA_ROOT="../huawei-sales-agent-data"; node tests/verify_product_data.js
 python -B -m unittest discover -s tests -v
 $env:HUAWEI_HTTP_SMOKE='1'; python -B -m unittest discover -s tests -v
 ```
+
+## 扩展回归输出
+
+- 回归集：`node --test tests/extension_regression.test.js`，输出全部型号/平台子用例和异常场景结果。
+- 覆盖矩阵：`extension_coverage_matrix.json` 固定列出 2 款型号 × 3 个平台 = 6 个正常组合，并映射信息缺失、预算冲突、图片错配和平台边界用例。
+- 所有结果直接调用产品匹配、本地知识库、预算快照与发布核验实现，不使用伪造通过数据。
 
 ## 交接
 

@@ -10,7 +10,7 @@ B 后端接口工程师。
 - `upload.py`：维护文件上传接口边界；当前策略是明确拒绝上传，避免客户资料落盘。
 - 负责数据入库接口、缓存、请求限流、异常捕获、会话记忆和聊天历史持久化的接口边界。
 - 公开 `POST /api/product-matches` 产品匹配任务；复用会话、CSRF、限流和 `/api/runs/{id}` 查询/导出边界。
-- 公开 `POST /api/content-drafts` 公众号图文任务；服务端按 `match_input + candidate_id` 重新核验，不信任前端现成正文。
+- 公开 `POST /api/content-drafts` 多平台内容任务，`platform` 仅接受公众号、小红书、朋友圈；服务端按 `match_input + candidate_id` 重新核验，不信任前端现成正文。
 - `GET /api/content-images/<sha256>` 只提供图片审稿清单中登记的附件；未知指纹返回 404。
 - 为 C 提供标准化 JSON、错误码和接口文档，为 A 的 Agent 模块提供稳定调用入口。
 - 与 `backend/main.py`、`backend/agent/cloud-server.js` 和 `backend/agent/contracts/` 保持一致。

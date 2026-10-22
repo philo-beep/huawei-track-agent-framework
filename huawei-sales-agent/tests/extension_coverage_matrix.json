@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-10-22",
+  "scope": "内容生成扩展回归；测试直接运行产品匹配、本地知识库、预算快照和发布核验实现。",
+  "models": [
+    {
+      "model_key": "matebook-14-harmonyos",
+      "requested_name": "HUAWEI MateBook 14 鸿蒙版",
+      "resolved_source_name": "HUAWEI MateBook 14（鸿蒙版）",
+      "system": "HarmonyOS"
+    },
+    {
+      "model_key": "matebook-14-2024",
+      "requested_name": "HUAWEI MateBook 14 2024（酷睿 Ultra）",
+      "resolved_source_name": "HUAWEI MateBook 14 酷睿 Ultra",
+      "system": "Windows / Linux V20"
+    }
+  ],
+  "platforms": ["公众号", "小红书", "朋友圈"],
+  "scenarios": [
+    {
+      "scenario": "正常输入",
+      "expected": "两款型号 × 三个平台均生成 ready_for_review、六项核验无 fail、安全版本可用",
+      "covered_by": "normal input covers the complete 2 models x 3 platforms matrix"
+    },
+    {
+      "scenario": "信息缺失",
+      "expected": "关键场景/产品类型缺失时返回 needs_clarification，不猜测候选",
+      "covered_by": "missing critical profile fields asks for clarification without inventing a candidate"
+    },
+    {
+      "scenario": "预算冲突",
+      "expected": "预算低于同型号真实公开快照时标记待确认，reference 保持非交易报价",
+      "covered_by": "budget below the real same-model public snapshot is marked pending, never quoted"
+    },
+    {
+      "scenario": "图片错配",
+      "expected": "无精确型号图片时降级纯文字；人为错绑图片触发 IMAGE_MODEL_MISMATCH",
+      "covered_by": "missing exact-model images downgrade to text and never substitute the other model; a deliberately misassigned harmony image is rejected for the 2024 model"
+    },
+    {
+      "scenario": "边界场景",
+      "expected": "朋友圈图片上限收敛、未支持平台被输入契约拒绝",
+      "covered_by": "platform image limits and unsupported platform boundary are enforced"
+    }
+  ],
+  "rows": [
+    { "model_key": "matebook-14-harmonyos", "model": "HUAWEI MateBook 14 鸿蒙版", "platform": "公众号", "facts": 3, "default_image_limit": 4, "scenario": "正常输入" },
+    { "model_key": "matebook-14-harmonyos", "model": "HUAWEI MateBook 14 鸿蒙版", "platform": "小红书", "facts": 2, "default_image_limit": 3, "scenario": "正常输入" },
+    { "model_key": "matebook-14-harmonyos", "model": "HUAWEI MateBook 14 鸿蒙版", "platform": "朋友圈", "facts": 1, "default_image_limit": 1, "scenario": "正常输入" },
+    { "model_key": "matebook-14-2024", "model": "HUAWEI MateBook 14 2024（酷睿 Ultra）", "platform": "公众号", "facts": 3, "default_image_limit": 4, "scenario": "正常输入" },
+    { "model_key": "matebook-14-2024", "model": "HUAWEI MateBook 14 2024（酷睿 Ultra）", "platform": "小红书", "facts": 2, "default_image_limit": 3, "scenario": "正常输入" },
+    { "model_key": "matebook-14-2024", "model": "HUAWEI MateBook 14 2024（酷睿 Ultra）", "platform": "朋友圈", "facts": 1, "default_image_limit": 1, "scenario": "正常输入" }
+  ],
+  "source_dimensions": {
+    "facts": "huawei-sales-agent-data/datasets/cleaned/local_kb_index.json（同型号 product_fact）",
+    "prices": "local_kb_index.json 内同型号 price_records；仅作预算核对快照，current_transaction_quote=false",
+    "images": "huawei-sales-agent-data/datasets/cleaned/image_review_registry.json；只有精确型号且 model_verified=true 的条目可进入审稿稿",
+    "publication": "全部结果经 release-verification.js 六项门禁；图片授权未完成时从安全版本移除"
+  }
+}

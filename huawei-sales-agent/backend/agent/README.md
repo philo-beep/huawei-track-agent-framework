@@ -36,7 +36,8 @@
 | `product-catalog.js` | A | 规范产品注册表、目录召回、证据卡和质量数据适配 |
 | `product-match.js` | A | 产品匹配、多查询 IMA 召回、逐条件覆盖和云端理由编排 |
 | `product-match-verification.js` | A | 模型理由、数值、价格和兼容性证据核验 |
-| `content-generation.js` | A | 客户画像与事实证据约束的公众号图文草稿、精确型号 IMA 图片来源清单和插入建议 |
+| `content-generation.js` | A | 客户画像与事实证据约束的公众号/小红书/朋友圈草稿、精确型号 IMA 图片来源清单、平台结构与插入建议 |
+| `budget-assessment.js` | A | 客户预算与同型号公开价格快照的待确认比较；不把快照写成交易报价 |
 | `prompts/product-match.md` | A | 产品匹配证据选择和输出边界提示词 |
 | `verification.js` | A | 事实、图片、合规和适配核验；同时导出发布门禁能力 |
 | `release-verification.js` | A | 发布前六项强制核验、阻塞/降级冲突处理、风险清单与安全版本输出 |

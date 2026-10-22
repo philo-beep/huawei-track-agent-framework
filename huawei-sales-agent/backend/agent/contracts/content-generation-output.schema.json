@@ -1,29 +1,87 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:huawei-growth:content-generation-output:1.1",
-  "title": "公众号图文生成与强制核验输出 v1.1",
-  "description": "基于客户画像、所选候选和可追溯证据生成的审稿稿。所有结果先经六项强制核验，输出逐项结论、风险清单和移除降级项后的安全版本。",
+  "$id": "urn:huawei-growth:content-generation-output:1.2",
+  "title": "多平台内容生成与强制核验输出 v1.2",
+  "description": "基于客户画像、平台规则、所选候选和可追溯证据生成的审稿稿；固定覆盖公众号、小红书、朋友圈，并输出型号、预算、来源和六项发布核验。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "status", "synthetic", "generated_at", "platform", "product", "profile_basis", "draft", "image_sources", "insertion_plan", "citations", "verification", "article_markdown", "diagnostics"],
+  "required": ["schema_version", "status", "synthetic", "generated_at", "platform", "platform_profile", "product", "profile_basis", "budget_assessment", "draft", "image_sources", "insertion_plan", "citations", "verification", "article_markdown", "diagnostics"],
   "properties": {
-    "schema_version": {"const": "1.1"},
+    "schema_version": {"const": "1.2"},
     "status": {"enum": ["ready_for_review", "blocked"]},
     "synthetic": {"type": "boolean"},
     "generated_at": {"type": "string", "minLength": 1},
-    "platform": {"const": "公众号"},
+    "platform": {"enum": ["公众号", "小红书", "朋友圈"]},
+    "platform_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "content_goal", "format", "max_facts", "image_limit", "image_policy", "source_policy", "data_sources"],
+      "properties": {
+        "id": {"enum": ["wechat_article", "xiaohongshu_note", "moments_short_post"]},
+        "label": {"enum": ["公众号", "小红书", "朋友圈"]},
+        "content_goal": {"type": "string", "minLength": 1},
+        "format": {"type": "string", "minLength": 1},
+        "max_facts": {"type": "integer", "minimum": 1, "maximum": 3},
+        "image_limit": {"type": "integer", "minimum": 1, "maximum": 6},
+        "image_policy": {"type": "string", "minLength": 1},
+        "source_policy": {"type": "string", "minLength": 1},
+        "data_sources": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"enum": ["local_kb_index", "image_review_registry"]}}
+      }
+    },
     "product": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["candidate_id", "requested_name", "resolved_name", "family", "category", "operating_system", "model_verified"],
+      "required": ["candidate_id", "requested_name", "resolved_name", "model_key", "family", "category", "operating_system", "model_verified"],
       "properties": {
         "candidate_id": {"type": "string", "minLength": 1},
         "requested_name": {"type": "string", "minLength": 1},
         "resolved_name": {"type": "string", "minLength": 1},
+        "model_key": {"type": ["string", "null"], "enum": ["matebook-14-harmonyos", "matebook-14-2024", null]},
         "family": {"type": ["string", "null"]},
         "category": {"type": ["string", "null"]},
         "operating_system": {"type": ["string", "null"]},
         "model_verified": {"type": "boolean"}
+      }
+    },
+    "budget_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "budget", "reference_price", "current_transaction_quote", "message"],
+      "properties": {
+        "status": {"enum": ["not_provided", "not_evaluated", "potential_conflict_pending_confirmation", "within_public_reference_pending_confirmation"]},
+        "budget": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["min", "max", "currency", "scope", "quantity", "complete"],
+          "properties": {
+            "min": {"type": "number", "minimum": 0},
+            "max": {"type": "number", "minimum": 0},
+            "currency": {"type": ["string", "null"]},
+            "scope": {"type": ["string", "null"]},
+            "quantity": {"type": ["integer", "null"], "minimum": 1},
+            "complete": {"type": "boolean"}
+          }
+        },
+        "reference_price": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["amount_cents", "currency", "price_type", "sku", "condition", "source_title", "source_entry", "verified_at", "record_id", "record_status", "current_transaction_quote"],
+          "properties": {
+            "amount_cents": {"type": "integer", "minimum": 1},
+            "currency": {"const": "CNY"},
+            "price_type": {"type": "string", "minLength": 1},
+            "sku": {"type": ["string", "null"]},
+            "condition": {"type": ["string", "null"]},
+            "source_title": {"type": "string", "minLength": 1},
+            "source_entry": {"type": "string", "minLength": 1},
+            "verified_at": {"type": ["string", "null"]},
+            "record_id": {"type": ["string", "null"]},
+            "record_status": {"type": "string", "minLength": 1},
+            "current_transaction_quote": {"const": false}
+          }
+        },
+        "current_transaction_quote": {"const": false},
+        "message": {"type": "string", "minLength": 1}
       }
     },
     "profile_basis": {

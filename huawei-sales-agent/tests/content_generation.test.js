@@ -19,7 +19,7 @@ test('generates a reviewable public-account draft with exact-model IMA images', 
     const { input, result } = await matchExample(0);
     const candidate = result.candidates[0];
     const output = await runContentDraft({ schema_version: '1.0', match_input: input, candidate_id: candidate.candidate_id, platform: '公众号', image_limit: 4 });
-    assert.equal(output.schema_version, '1.1');
+    assert.equal(output.schema_version, '1.2');
     assert.equal(output.status, 'ready_for_review');
     assert.equal(output.product.resolved_name, 'HUAWEI MateBook 14（鸿蒙版）');
     assert.match(output.draft.title, /仓库与办公室轮用/);

@@ -8,8 +8,8 @@ const { ROOT, PipelineError } = require('./support');
 const DATA_ROOT = path.resolve(ROOT, '..', 'huawei-sales-agent-data');
 const INDEX_PATH = path.join(DATA_ROOT, 'datasets', 'cleaned', 'local_kb_index.json');
 const PRODUCT_ALIASES = Object.freeze({
-    'huaweimatebook14鸿蒙版': ['鸿蒙版'],
-    'huaweimatebook142024': ['酷睿ultra'],
+    'matebook14鸿蒙版': ['matebook14鸿蒙版'],
+    'matebook142024': ['matebook14酷睿ultra'],
 });
 
 function normalizeProduct(value) {
@@ -17,9 +17,14 @@ function normalizeProduct(value) {
 }
 
 function productMatches(document, product) {
-    if (document.product_names?.some(name => normalizeProduct(name) === normalizeProduct(product))) return true;
+    const names = [
+        ...(document.product_names || []),
+        document.raw_fields?.['规范产品名称'],
+        document.raw_fields?.['原始产品名称'],
+    ].filter(Boolean);
+    if (names.some(name => normalizeProduct(name) === normalizeProduct(product))) return true;
     const hint = PRODUCT_ALIASES[normalizeProduct(product)] || [];
-    const haystack = normalizeProduct(`${document.title || ''} ${(document.product_names || []).join(' ')}`);
+    const haystack = normalizeProduct(`${document.title || ''} ${names.join(' ')}`);
     return hint.some(alias => haystack.includes(normalizeProduct(alias)));
 }
 
@@ -30,6 +35,7 @@ async function localKnowledge(product) {
         const data = JSON.parse(fs.readFileSync(INDEX_PATH, 'utf8').replace(/^\uFEFF/, ''));
         const documents = (data.documents || []).filter(document => productMatches(document, product));
         const imageCandidates = (data.images || []).filter(image => productMatches(image, product));
+        const priceRecords = (data.price_records || []).filter(record => productMatches(record, product));
         if (!documents.length) throw new PipelineError('KNOWLEDGE_NOT_FOUND', '本地知识库未找到该代际型号资料，不以近似型号替代');
         return {
             status: 'ok',
@@ -39,6 +45,7 @@ async function localKnowledge(product) {
             source_archives: data.source_archives || [],
             documents,
             image_candidates: imageCandidates,
+            price_records: priceRecords,
             pricing_rules: data.pricing_rules || [],
             source_mode: 'local_zip',
         };
@@ -87,7 +94,7 @@ function extractFacts(knowledge, product, options = {}) {
     assertNoSourceConflict(knowledge.documents, product);
     const primary = documents[0];
     if (!primary || typeof primary.text !== 'string' || !primary.text.trim()) throw new PipelineError('KNOWLEDGE_NOT_FOUND', '没有可回溯的产品原文，不能使用检索高亮作为事实');
-    if (primary.product_names?.length && !primary.product_names.some(name => normalizeProduct(name) === normalizeProduct(product))) throw new PipelineError('SOURCE_CONFLICT', '原文关联型号与目标型号不同');
+    if (primary.product_names?.length && !productMatches(primary, product)) throw new PipelineError('SOURCE_CONFLICT', '原文关联型号与目标型号不同');
     const sections = primary.text.split(/(?=^## )/m).filter(section => /^## (?:操作系统|尺寸|屏幕|处理器|存储|内存|连接|电池)/.test(section));
     const globalLimits = primary.text.split(/^## /m)[0].split('\n').filter(line => /^>/.test(line) && line.trim().length > 2);
     const selected = sections.filter(section => section.length < 2200).slice(0, options.maxFacts || 4);
@@ -107,4 +114,4 @@ function imageCandidates(knowledge, product) {
     }));
 }
 
-module.exports = { localKnowledge, extractFacts, imageCandidates, sourceReference, normalizeProduct };
+module.exports = { localKnowledge, extractFacts, imageCandidates, sourceReference, normalizeProduct, productMatches };
