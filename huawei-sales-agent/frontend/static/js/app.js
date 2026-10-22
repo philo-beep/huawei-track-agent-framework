@@ -1,10 +1,16 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
+const state = { examples: [], matchExamples: [], csrf: null, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null };
 const statuses = { explicit: '明确输入', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '已阻塞', needs_clarification: '需要澄清', calculated_demo: '合成演算完成', invalid_input: '输入无效', demo_ready: '演示准备就绪', needs_attention: '需要处理' };
 const labels = { identity: '身份与角色', relationship: '新老客户关系', industry: '行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策链', preferences: '偏好', pain_points: '痛点', purchase_stage: '购买阶段', channels: '可触达渠道' };
 const profileDimensionLabels = { identity: '身份角色', industry: '行业', usage_scenario: '使用场景', needs: '需求目标', pain_points: '当前痛点', purchase_stage: '采购阶段', budget: '预算', conversation_habit: '对话习惯', platform_knowledge: '了解平台', preferences: '偏好' };
+const wizardMeta = {
+    1: { title: '客户画像', count: 'STEP 01 / 04', description: '每次只问一个问题，逐步形成有原话依据的客户画像。', short: '画像' },
+    2: { title: '产品匹配', count: 'STEP 02 / 04', description: '从客户条件出发，用产品证据、限制和逐条件覆盖筛选候选。', short: '选品' },
+    3: { title: '内容生成', count: 'STEP 03 / 04', description: '将候选转化为公众号、小红书或朋友圈的可审核内容准备稿。', short: '内容' },
+    4: { title: '报价与成交', count: 'STEP 04 / 04', description: '生成四级假设价格、演示方案与带人工确认边界的成交动作。', short: '成交' },
+};
 const profileDimensionIds = Object.keys(profileDimensionLabels);
 
 const readable = value => value === null || value === undefined ? '待确认 / 无' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -93,7 +99,66 @@ function setRunning(running) {
     byId('profile-restart-complete').disabled = running;
     state.examples.forEach((example, index) => { byId(`example-${index + 1}`).disabled = running; });
     if (!running) byId('resume-polling').hidden = true;
+    updateWizardChrome();
 }
+
+function wizardStepComplete(step) {
+    if (step === 1) return state.profileResult?.status === 'complete';
+    if (step === 2) return !byId('match-results').hidden && Boolean(state.matchMarkdown);
+    if (step === 3) return !byId('content-draft-results').hidden && Boolean(state.contentMarkdown);
+    if (step === 4) return byId('results').dataset.ready === 'true';
+    return false;
+}
+
+function updateWizardChrome() {
+    const step = state.wizardStep;
+    const meta = wizardMeta[step];
+    byId('wizard-stage-count').textContent = meta.count;
+    byId('wizard-stage-title').textContent = meta.title;
+    byId('wizard-stage-description').textContent = meta.description;
+    for (const button of document.querySelectorAll('.wizard-step')) {
+        const target = Number(button.dataset.stepTarget);
+        const active = target === step;
+        const complete = wizardStepComplete(target);
+        button.classList.toggle('is-active', active);
+        button.classList.toggle('is-complete', complete && !active);
+        button.disabled = state.running;
+        if (active) button.setAttribute('aria-current', 'step');
+        else button.removeAttribute('aria-current');
+        const stateLabel = button.querySelector('[data-step-state]');
+        if (stateLabel) stateLabel.textContent = active ? '当前' : complete ? '已完成' : '待进行';
+    }
+    byId('wizard-prev').disabled = state.running || step === 1;
+    const nextLabels = {
+        1: wizardStepComplete(1) ? '下一步：产品匹配' : '跳过画像，进入选品',
+        2: wizardStepComplete(2) ? '下一步：内容生成' : '直接进入内容生成',
+        3: wizardStepComplete(3) ? '下一步：报价与成交' : '直接进入报价与成交',
+        4: '返回客户画像',
+    };
+    byId('wizard-next').textContent = nextLabels[step];
+    byId('wizard-next').disabled = state.running;
+    byId('wizard-controls-note').textContent = `第 ${step} 步，共 4 步 · ${meta.title}`;
+}
+
+function showWizardStep(step, options = {}) {
+    const target = Number(step);
+    if (!wizardMeta[target]) return;
+    state.wizardStep = target;
+    document.querySelectorAll('[data-wizard-panel]').forEach(panel => {
+        const active = Number(panel.dataset.wizardPanel) === target;
+        const resultGate = panel.id === 'results' && panel.dataset.ready !== 'true';
+        panel.hidden = !active || resultGate;
+    });
+    updateWizardChrome();
+    if (options.scroll !== false) byId('wizard-top').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function goToNextWizardStep() {
+    if (state.running) return;
+    if (state.wizardStep === 4) showWizardStep(1);
+    else showWizardStep(state.wizardStep + 1);
+}
+
 
 function selectedSource() {
     return state.sourceStatus?.products?.find(product => product.product === byId('product').value);
@@ -191,8 +256,10 @@ async function refreshSourceStatus() {
 
 function clearResult() {
     byId('results').hidden = true;
+    delete byId('results').dataset.ready;
     state.markdown = '';
     byId('export-status').textContent = '';
+    updateWizardChrome();
 }
 
 function fillExample(index) {
@@ -241,6 +308,7 @@ async function api(url, options = {}) {
 async function startRun(event) {
     if (event) event.preventDefault();
     if (state.running || !state.csrf) return;
+    showWizardStep(4, { scroll: false });
     let request;
     try { request = collectInput(); } catch (error) { status(error.message, true); return; }
     clearResult();
@@ -343,7 +411,10 @@ function renderResult(result, markdown) {
     byId('full-markdown').textContent = markdown;
     byId('download-json').href = `/api/runs/${encodeURIComponent(state.jobId)}/export?format=json`;
     byId('download-markdown').href = `/api/runs/${encodeURIComponent(state.jobId)}/export?format=markdown`;
+    byId('results').dataset.ready = 'true';
+    showWizardStep(4, { scroll: false });
     byId('results').hidden = false;
+    updateWizardChrome();
 }
 
 function profileStatus(message, isError = false) {
@@ -426,6 +497,7 @@ function resetProfileInterview(options = {}) {
     byId('profile-conversation').replaceChildren(profileEmptyState());
     byId('profile-option-list').replaceChildren();
     renderProfileProgress(null);
+    updateWizardChrome();
     profileStatus(state.capabilities?.cloud_model_configured
         ? '尚未开始。首问由程序给出；客户回答后调用云端模型分析。'
         : '当前未配置云端模型，逐步画像不可用。', !state.capabilities?.cloud_model_configured);
@@ -462,6 +534,7 @@ function setProfileQuestion(question) {
 function renderProfileResult(result) {
     state.profileResult = result;
     state.profileTurn = result.turn;
+    updateWizardChrome();
     state.profileMax = result.max_turns;
     renderProfileProgress(result);
     byId('profile-model-status').textContent = result.runtime?.called
@@ -603,7 +676,7 @@ function fillMatchFromProfile() {
     clearMatchResult();
     renderCapabilities(state.capabilities || {});
     matchStatus('已带入逐步画像生成的脱敏信息。请核对未知项，再开始产品匹配。');
-    byId('match-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showWizardStep(2);
 }
 
 
@@ -622,6 +695,7 @@ function clearMatchResult() {
     byId('match-diagnostics').replaceChildren();
     state.matchMarkdown = '';
     clearContentResult();
+    updateWizardChrome();
 }
 
 function fillMatchExample(index) {
@@ -754,12 +828,14 @@ function clearContentResult() {
     state.contentJobId = null;
     state.contentPolling = false;
     state.contentMarkdown = '';
+    updateWizardChrome();
     contentStatus(`选择候选后可生成${byId('content-platform').value}内容草稿；不会自动发布。`);
 }
 
 async function startContentDraft(candidateId) {
     if (state.running || !state.csrf) return;
     if (!state.matchInput) { contentStatus('请先完成一次产品匹配，再生成图文。', true); return; }
+    showWizardStep(3, { scroll: false });
     clearContentResult();
     setRunning(true);
     state.startedAt = Date.now();
@@ -928,6 +1004,7 @@ function renderContentDraftResult(result, markdown) {
     byId('content-download-json').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=json`;
     byId('content-download-markdown').href = `/api/runs/${encodeURIComponent(state.contentJobId)}/export?format=markdown`;
     byId('content-draft-results').hidden = false;
+    updateWizardChrome();
     contentStatus(`强制核验完成：${result.verification.status_label}。${result.verification.safe_content_ready ? '可发布安全版本已生成，请仍由发布责任人做最终确认。' : '当前版本被阻塞，请先处理风险项。'}`);
 }
 function appendMatchText(container, label, values) {
@@ -990,7 +1067,7 @@ function renderProductMatchResult(result, markdown) {
         const actions = element('div'); actions.className = 'match-actions';
         if (sourceProducts.includes(candidate.product_name)) {
             const use = element('button', '用此候选进入四步流程'); use.type = 'button'; use.className = 'match-use-candidate';
-            use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); byId('input-fields').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+            use.addEventListener('click', () => { byId('product').value = candidate.product_name; renderSourceStatus(); status('已将候选带入四步流程；仍需重新核验资料并手动运行。'); showWizardStep(4); });
             actions.append(use);
         }
         const content = element('button', `生成${byId('content-platform').value}草稿`); content.type = 'button'; content.className = 'content-generate-candidate';
@@ -1008,7 +1085,12 @@ function renderProductMatchResult(result, markdown) {
     byId('match-download-markdown').href = `/api/runs/${encodeURIComponent(state.matchJobId)}/export?format=markdown`;
     byId('match-results').hidden = false;
     matchStatus('产品匹配结果已生成；请检查【待确认】项、限制和证据，不要仅依据排序分决策。', result.verification.recommended_count === 0);
+    updateWizardChrome();
 }
+
+for (const button of document.querySelectorAll('.wizard-step')) button.addEventListener('click', () => showWizardStep(Number(button.dataset.stepTarget)));
+byId('wizard-prev').addEventListener('click', () => { if (state.wizardStep > 1) showWizardStep(state.wizardStep - 1); });
+byId('wizard-next').addEventListener('click', goToNextWizardStep);
 
 byId('profile-start-form').addEventListener('submit', startGuidedProfile);
 byId('profile-answer-form').addEventListener('submit', submitProfileAnswer);
@@ -1065,6 +1147,7 @@ async function initialize() {
         setRunning(false);
         if (state.examples.length) fillExample(0);
         if (state.matchExamples.length) fillMatchExample(0);
+        showWizardStep(1, { scroll: false });
         await refreshSourceStatus();
     } catch (error) { status(`服务初始化失败：${error.message}。请稍后刷新页面。`, true); }
 }

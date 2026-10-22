@@ -319,3 +319,57 @@ pre { max-height: 600px; overflow: auto; margin: 11px 0 0; padding: 12px; white-
 }
 
 .source-grid .result-card { margin: 0; height: 100%; }
+
+/* Single-step sales wizard */
+.header-status { margin-left: auto; }
+.wizard-shell { margin: 22px 0 20px; }
+.wizard-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 26px; padding: 12px 4px 18px; }
+.wizard-intro-copy { min-width: 0; }
+.wizard-intro .eyebrow { margin-bottom: 9px; }
+.wizard-title-row { display: flex; align-items: flex-end; gap: 25px; }
+.wizard-title-row > div { flex: 0 0 auto; }
+.wizard-title-row > div > span { color: var(--red); font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
+.wizard-title-row h1 { margin: 2px 0 0; font-size: clamp(1.9rem, 3.5vw, 2.8rem); line-height: 1.15; letter-spacing: -.035em; }
+.wizard-title-row p { max-width: 620px; margin: 0 0 3px; color: var(--muted); font-size: .9rem; }
+.wizard-engine-status { flex: 0 0 260px; max-width: 260px; margin: 0; padding-left: 12px; border-left: 2px solid var(--line-strong); color: var(--muted); font-size: .7rem; line-height: 1.55; white-space: pre-line; }
+.wizard-steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 3px 16px rgba(17,24,39,.03); }
+.wizard-step { position: relative; min-width: 0; min-height: 72px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 11px; padding: 13px 15px; text-align: left; color: var(--muted); background: #fff; border: 0; border-right: 1px solid var(--line); cursor: pointer; transition: color .15s ease, background .15s ease; }
+.wizard-step:last-child { border-right: 0; }
+.wizard-step:hover { color: var(--ink); background: var(--surface-2); }
+.wizard-step-index { color: #a6acb5; font-size: .68rem; font-weight: 800; letter-spacing: .06em; }
+.wizard-step-copy { display: grid; min-width: 0; gap: 1px; }
+.wizard-step-copy strong { color: var(--ink-2); font-size: .84rem; }
+.wizard-step-copy small { color: var(--muted); font-size: .67rem; }
+.wizard-step-state { padding: 2px 6px; color: var(--muted); background: var(--surface-2); border-radius: 4px; font-size: .61rem; font-weight: 650; white-space: nowrap; }
+.wizard-step.is-active { color: var(--red-deep); background: var(--red-soft); box-shadow: inset 0 3px 0 var(--red); }
+.wizard-step.is-active .wizard-step-index, .wizard-step.is-active .wizard-step-copy strong { color: var(--red-deep); }
+.wizard-step.is-active .wizard-step-state { color: #fff; background: var(--red); }
+.wizard-step.is-complete:not(.is-active) .wizard-step-index { color: var(--green); }
+.wizard-step.is-complete:not(.is-active) .wizard-step-state { color: #126847; background: #e7f6ee; }
+.wizard-panel { animation: wizard-in .22s ease-out; }
+@keyframes wizard-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.wizard-controls { position: sticky; bottom: 14px; z-index: 35; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; margin: 16px 0 30px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,.96); box-shadow: 0 10px 30px rgba(17,24,39,.12); backdrop-filter: blur(14px); }
+.wizard-controls-note, #wizard-controls-note { color: var(--muted); font-size: .76rem; text-align: center; }
+.wizard-controls .button { min-width: 130px; }
+@media (max-width: 900px) {
+  .wizard-intro { display: block; }
+  .wizard-engine-status { max-width: none; margin-top: 13px; }
+  .wizard-title-row { display: block; }
+  .wizard-title-row p { margin-top: 8px; }
+}
+@media (max-width: 680px) {
+  .wizard-shell { margin-top: 14px; }
+  .wizard-steps { grid-template-columns: 1fr 1fr; }
+  .wizard-step:nth-child(2) { border-right: 0; }
+  .wizard-step:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .wizard-step { min-height: 66px; padding: 10px; }
+  .wizard-step-state { display: none; }
+  .wizard-controls { grid-template-columns: 1fr 1fr; bottom: 8px; }
+  #wizard-controls-note { grid-column: 1 / -1; grid-row: 1; text-align: left; }
+  .wizard-controls .button { width: 100%; min-width: 0; }
+}
+
+.source-details { margin: 4px 0 0; }
+.source-details > summary { color: var(--ink-2); font-size: .78rem; }
+.source-details .source-grid { margin-top: 12px; }
+.source-panel { padding-top: 22px; padding-bottom: 22px; }

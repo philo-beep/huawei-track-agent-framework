@@ -112,6 +112,9 @@ test('guided-profile HTTP route validates CSRF, creates a job and returns next q
     try {
         const page = await (await fetch(`${origin}/`)).text();
         assert.match(page, /profile-studio/);
+        assert.match(page, /id="wizard-nav"/);
+        assert.match(page, /data-wizard-panel="1"/);
+        assert.match(page, /id="wizard-next"/);
         const examplesResponse = await fetch(`${origin}/api/examples`);
         const examples = await examplesResponse.json();
         assert.equal(examples.capabilities.guided_profile, true);
