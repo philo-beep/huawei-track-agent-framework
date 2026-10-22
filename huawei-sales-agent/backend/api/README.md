@@ -12,7 +12,7 @@ B 后端接口工程师。
 - 公开 `POST /api/profile-steps` 逐题客户画像任务；每轮只接受脱敏对话，由 Agent 调用云端模型分析并返回下一问或完成画像，复用 `/api/runs/{id}` 查询与导出。
 - 公开 `POST /api/product-matches` 产品匹配任务；复用会话、CSRF、限流和 `/api/runs/{id}` 查询/导出边界。
 - 公开 `POST /api/content-drafts` 多平台内容任务，`platform` 仅接受公众号、小红书、朋友圈；服务端按 `match_input + candidate_id` 重新核验，不信任前端现成正文。
-- `GET /api/content-images/<sha256>` 只提供图片审稿清单中登记的附件；未知指纹返回 404。
+- `GET /api/content-images/<sha256>` 只提供图片审稿清单中登记的附件；未知指纹返回 404。`GET /api/runs/<job>/images.zip` 只允许任务所有者下载当前内容使用的审稿图片包，包内含来源、像素和授权状态。
 - 为 C 提供标准化 JSON、错误码和接口文档，为 A 的 Agent 模块提供稳定调用入口。
 - 与 `backend/main.py`、`backend/agent/cloud-server.js` 和 `backend/agent/contracts/` 保持一致。
 

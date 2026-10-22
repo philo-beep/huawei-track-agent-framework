@@ -13,6 +13,7 @@
 - `product_match.test.js`：产品匹配注册表、逐条件覆盖、逐字证据引文、预算、IMA、【待确认】和模型幻觉测试。
 - `content_generation.test.js`：多平台内容契约、事实回溯、精确型号图片、插入位置、六项发布前检查、授权调整和错误型号拒绝测试。
 - `creative_copy.test.js`：人群 / 任务 / 平台表达策略差异、原文参数锁定、直发正文与内部审核材料分离、配图顺序和授权边界。
+- `publication_readiness.test.js`：纯文本分块、PNG/JPEG 实际像素、三平台标题/正文/标签检查、标签计数和 ZIP 结构测试。
 - `blind_review.js`：生成 9 组 A/B 销售盲测包、代理预检报告、评分表和公众号 / 小红书 / 朋友圈文字可发样例。
 - `CREATIVE_COPY_STRATEGY.md`：受控创意文案的分层规则、人群 / 任务 / 平台矩阵和开源方法借鉴记录。
 - `sales_copy.test.js`：销售可见 Markdown 去技术化回归，阻止模型名、内部编号、JSON、门禁、排序分、英文字段和开发术语重新出现。
@@ -49,6 +50,7 @@
 node --test tests/guided_profile.test.js
 node --test tests/product_match.test.js
 node --test tests/content_generation.test.js
+node --test tests/publication_readiness.test.js
 node --test tests/sales_copy.test.js
 node --test tests/extension_regression.test.js
 node --test tests/release_verification.test.js

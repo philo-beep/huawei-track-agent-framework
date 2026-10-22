@@ -41,8 +41,13 @@
 - 草稿正文用 `<!-- IMAGE:... -->` 标注插入位置，并另附图片来源清单和插入建议。
 - 客户预算只与同型号公开价格快照做“待确认”比较，`current_transaction_quote=false`；不把快照写成成交报价。
 - 当前图片核验是 AI 辅助视觉核对，授权和人工终审尚未完成，因此输出固定为 `ready_for_review`、`publication_ready=false`；不得当作已获准发布的正式图文。
+- 生成结果同时返回公众号、小红书、朋友圈三套纯文本分块；标题、正文、标签可分别复制，任一平台也可整套复制。
+- 服务端读取图片实际像素和比例，按平台检查标题/正文字数、标签数量、图片数量与尺寸、排版结构；规则为本项目本地建议，不声称是平台官方 API。
+- 封面文案区分 2.35:1、3:4、1:1 三种版式；封面只使用已核对型号与任务词，不写绝对化效果承诺。
+- 当前 4 张精确型号图片仍是授权待补的审稿素材。`/api/runs/<job>/images.zip` 提供含图片、像素、比例、来源与授权状态的**内部审稿包**，不会把待授权素材标成“已授权图片包”。
+- 页面保留最近 5 次生成结果供本次登录内复用；“导出门店任务包”会一次导出三平台文案、封面文案、发布检查和图片清单。
 
-接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`；输出 v1.2 新增 `platform_profile`、`product.model_key` 与 `budget_assessment`。
+接口：`POST /api/content-drafts`、`GET /api/content-images/<sha256>`、`GET /api/runs/<job>/images.zip`、`GET /api/runs/<job>/export?format=json|markdown`。输入输出契约为 `backend/agent/contracts/content-generation-*.schema.json`；输出 v1.4 新增 `publication_readiness` 的三平台复制分块、封面文案、图片审稿包和发布检查。
 
 ## 发布前强制核验
 

@@ -48,6 +48,8 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(page, /content-copy-blocks/);
         assert.match(page, /content-platform-matrix/);
         assert.match(page, /content-download-images/);
+        assert.match(page, /content-download-task-pack/);
+        assert.match(page, /content-history-panel/);
         const scriptResponse = await fetch(`${origin}/static/js/app.js`);
         assert.equal(scriptResponse.status, 200);
         const script = await scriptResponse.text();
@@ -60,6 +62,8 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.match(script, /renderPublicationReadiness/);
         assert.match(script, /copyPlainText/);
         assert.match(script, /content-platform-matrix/);
+        assert.match(script, /downloadStoreTaskPack/);
+        assert.match(script, /rememberContentResult/);
         const auth = await authenticate(origin);
         const examples = auth.examples;
         const cookie = auth.cookie;

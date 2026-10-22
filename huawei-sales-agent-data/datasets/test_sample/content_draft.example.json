@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.3",
+  "schema_version": "1.4",
   "status": "ready_for_review",
-  "synthetic": false,
-  "generated_at": "2026-10-22T12:48:19.761Z",
+  "synthetic": true,
+  "generated_at": "2026-10-22T13:13:51.690Z",
   "platform": "公众号",
   "platform_profile": {
     "id": "wechat_article",
@@ -91,15 +91,24 @@
     "lead": "轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。",
     "body_markdown": "<!-- IMAGE:after_title -->\n> **配图 1｜封面主视觉**\n> 插入位置：标题和导语之后\n![HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。](/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82)\n> 图片：hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n<!-- IMAGE:after_requirements -->\n> **配图 2｜使用场景**\n> 插入位置：任务说明之后\n![文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。](/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b)\n> 图片：hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg\n> 说明：文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n<!-- IMAGE:after_facts -->\n> **配图 3｜机身细节**\n> 插入位置：资料摘录之后\n![机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。](/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b)\n> 图片：vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png\n> 说明：机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n<!-- IMAGE:before_cta -->\n> **配图 4｜行动引导前配图**\n> 插入位置：行动引导之前\n![HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。](/api/content-images/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d)\n> 图片：hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。",
     "cta": "如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。",
-    "tags": []
+    "tags": [
+      "华为笔记本",
+      "移动办公",
+      "办公电脑"
+    ]
   },
   "publish_copy": {
     "status": "text_only_ready",
     "text_ready": true,
     "title": "仓库与办公室轮用，别只看轻不轻",
-    "markdown": "# 仓库与办公室轮用，别只看轻不轻\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n",
-    "character_count": 705,
-    "tags": [],
+    "body": "轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n• 重量： 约 1.33 kg（圆键盘含电池）\n• 屏幕分辨率： 2880 × 1920，243 PPI\n• 电池容量： 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n哪些事还不能替你下结论\n\n• 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n• 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n• 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n资料来源：HUAWEI MateBook 14（鸿蒙版） 产品资料。",
+    "markdown": "# 仓库与办公室轮用，别只看轻不轻\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n资料来源：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n",
+    "character_count": 741,
+    "tags": [
+      "华为笔记本",
+      "移动办公",
+      "办公电脑"
+    ],
     "fact_excerpts": [
       {
         "heading": "尺寸与重量",
@@ -165,7 +174,719 @@
         "publication_ready": false
       }
     ],
-    "source_note": "资料来源为华为官网公开产品页；具体配置、软件适配、库存与报价以实际确认结果为准。"
+    "source_note": "资料来源：HUAWEI MateBook 14（鸿蒙版） 产品资料。"
+  },
+  "publication_readiness": {
+    "version": "1.0",
+    "rules_checked_at": "2026-10-22",
+    "platform_id": "wechat_article",
+    "copy_blocks": [
+      {
+        "id": "title",
+        "label": "标题",
+        "text": "仓库与办公室轮用，别只看轻不轻",
+        "character_count": 15,
+        "status": "pass",
+        "counter": "15/64 字",
+        "note": "直接复制到平台标题栏。"
+      },
+      {
+        "id": "body",
+        "label": "正文",
+        "text": "轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n• 重量： 约 1.33 kg（圆键盘含电池）\n• 屏幕分辨率： 2880 × 1920，243 PPI\n• 电池容量： 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n哪些事还不能替你下结论\n\n• 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n• 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n• 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n资料来源：HUAWEI MateBook 14（鸿蒙版） 产品资料。",
+        "character_count": 690,
+        "status": "pass",
+        "counter": "690/20000 字",
+        "note": "已去除 Markdown、图片标记和内部字段，可直接粘贴。"
+      },
+      {
+        "id": "tags",
+        "label": "标签",
+        "text": "#华为笔记本 #移动办公 #办公电脑",
+        "character_count": 18,
+        "status": "pass",
+        "counter": "3/5 个",
+        "note": "直接复制到正文末尾或标签栏。"
+      }
+    ],
+    "cover_copy": {
+      "eyebrow": "选办公本，先核对再决定",
+      "headline": "仓库与办公室轮用，别只看轻不轻",
+      "support": "HUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用",
+      "badge": "资料先核对 · 条件再确认",
+      "footer": "公开资料整理｜配置、兼容与报价以实际确认结果为准",
+      "audience_hint": "采购与行政决策者",
+      "copy_text": "选办公本，先核对再决定\n仓库与办公室轮用，别只看轻不轻\nHUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用\n资料先核对 · 条件再确认\n公开资料整理｜配置、兼容与报价以实际确认结果为准",
+      "image_id": "image-9f9470747d7e3c40",
+      "image_caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+      "suggested_layout": "2.35:1 横版；左侧标题，右侧保留产品主体与留白。",
+      "safety_note": "封面只使用已核对产品名称和任务词；不使用“最强”“必买”“保证兼容”等表述。"
+    },
+    "image_pack": {
+      "status": "review_only_rights_pending",
+      "authorized_count": 0,
+      "total_count": 4,
+      "note": "当前 4 张均为精确型号审稿图，其中 4 张仍需发布授权；图片包仅供内部审稿。",
+      "cover_image": "image-9f9470747d7e3c40",
+      "items": [
+        {
+          "order": 1,
+          "image_id": "image-9f9470747d7e3c40",
+          "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+          "download_url": "/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
+          "width": 817,
+          "height": 892,
+          "aspect_ratio": "817:892",
+          "file_size_bytes": 569412,
+          "dimension_label": "817×892",
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "order": 2,
+          "image_id": "image-85fadb0cbceb8632",
+          "file_name": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+          "download_url": "/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
+          "width": 1048,
+          "height": 588,
+          "aspect_ratio": "262:147",
+          "file_size_bytes": 76576,
+          "dimension_label": "1048×588",
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "order": 3,
+          "image_id": "image-b2a991f2763fd7d6",
+          "file_name": "vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+          "download_url": "/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b",
+          "width": 428,
+          "height": 428,
+          "aspect_ratio": "1:1",
+          "file_size_bytes": 13290,
+          "dimension_label": "428×428",
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        },
+        {
+          "order": 4,
+          "image_id": "image-e320384c91d75f72",
+          "file_name": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+          "download_url": "/api/content-images/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
+          "width": 817,
+          "height": 892,
+          "aspect_ratio": "817:892",
+          "file_size_bytes": 533666,
+          "dimension_label": "817×892",
+          "rights_status": "official_public_reference_only_permission_pending",
+          "publication_ready": false
+        }
+      ]
+    },
+    "checks": {
+      "overall_status": "warning",
+      "summary": {
+        "pass_count": 4,
+        "warning_count": 1,
+        "fail_count": 0
+      },
+      "items": [
+        {
+          "id": "title_length",
+          "label": "标题长度",
+          "status": "pass",
+          "count": 15,
+          "value": "15/64 字",
+          "summary": "长度在发布建议范围内。",
+          "limit": 64,
+          "recommendation": "建议不超过 30 字"
+        },
+        {
+          "id": "body_length",
+          "label": "正文字数",
+          "status": "pass",
+          "count": 690,
+          "value": "690/20000 字",
+          "summary": "长度在发布建议范围内。",
+          "limit": 20000,
+          "recommendation": "建议至少 300 字"
+        },
+        {
+          "id": "tag_count",
+          "label": "标签数量",
+          "status": "pass",
+          "count": 3,
+          "value": "3/5 个",
+          "summary": "标签数量在发布建议范围内。",
+          "limit": 5,
+          "recommendation": "建议 3 个以内"
+        },
+        {
+          "id": "image_checks",
+          "label": "图片尺寸与数量",
+          "status": "warning",
+          "count": 4,
+          "limit": 20,
+          "recommended": "1080×1440",
+          "cover_ratio": "2.35:1",
+          "items": [
+            {
+              "image_id": "image-9f9470747d7e3c40",
+              "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+              "width": 817,
+              "height": 892,
+              "aspect_ratio": "817:892",
+              "file_size_bytes": 569412,
+              "dimension_label": "817×892",
+              "status": "warning",
+              "summary": "低于 1080×1440 建议尺寸"
+            },
+            {
+              "image_id": "image-85fadb0cbceb8632",
+              "file_name": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+              "width": 1048,
+              "height": 588,
+              "aspect_ratio": "262:147",
+              "file_size_bytes": 76576,
+              "dimension_label": "1048×588",
+              "status": "warning",
+              "summary": "低于 1080×1440 建议尺寸"
+            },
+            {
+              "image_id": "image-b2a991f2763fd7d6",
+              "file_name": "vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+              "width": 428,
+              "height": 428,
+              "aspect_ratio": "1:1",
+              "file_size_bytes": 13290,
+              "dimension_label": "428×428",
+              "status": "warning",
+              "summary": "低于 1080×1440 建议尺寸"
+            },
+            {
+              "image_id": "image-e320384c91d75f72",
+              "file_name": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+              "width": 817,
+              "height": 892,
+              "aspect_ratio": "817:892",
+              "file_size_bytes": 533666,
+              "dimension_label": "817×892",
+              "status": "warning",
+              "summary": "低于 1080×1440 建议尺寸"
+            }
+          ],
+          "summary": "共 4 张；像素和比例已逐张读取，封面建议 2.35:1。",
+          "recommendation": "建议封面 2.35:1、1080×1440 以上"
+        },
+        {
+          "id": "layout_structure",
+          "label": "排版结构",
+          "status": "pass",
+          "count": 6,
+          "value": "标题 → 导语 → 任务与场景 → 官网原文摘录 → 待确认边界 → 下一步沟通",
+          "summary": "当前正文已按平台阅读结构分段。",
+          "recommendation": "正文用小标题和短段落分段，手机阅读更顺畅。 封面建议单独裁为 2.35:1；正文图保留原始比例。"
+        }
+      ],
+      "layout": {
+        "structure": [
+          "标题",
+          "导语",
+          "任务与场景",
+          "官网原文摘录",
+          "待确认边界",
+          "下一步沟通"
+        ],
+        "tips": [
+          "正文用小标题和短段落分段，手机阅读更顺畅。",
+          "封面建议单独裁为 2.35:1；正文图保留原始比例。"
+        ],
+        "status": "pass"
+      },
+      "note": "以上为本地发布前建议，平台规则可能调整；发布时仍以对应编辑器提示为准。"
+    },
+    "platform_matrix": [
+      {
+        "platform": "公众号",
+        "platform_id": "wechat_article",
+        "selected": true,
+        "status": "warning",
+        "summary": {
+          "pass_count": 4,
+          "warning_count": 1,
+          "fail_count": 0
+        },
+        "copy_blocks": [
+          {
+            "id": "title",
+            "label": "标题",
+            "text": "仓库与办公室轮用，别只看轻不轻",
+            "character_count": 15,
+            "status": "pass",
+            "counter": "15/64 字",
+            "note": "直接复制到平台标题栏。"
+          },
+          {
+            "id": "body",
+            "label": "正文",
+            "text": "轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n• 重量： 约 1.33 kg（圆键盘含电池）\n• 屏幕分辨率： 2880 × 1920，243 PPI\n• 电池容量： 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n哪些事还不能替你下结论\n\n• 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n• 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n• 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n资料来源：HUAWEI MateBook 14（鸿蒙版） 产品资料。",
+            "character_count": 690,
+            "status": "pass",
+            "counter": "690/20000 字",
+            "note": "已去除 Markdown、图片标记和内部字段，可直接粘贴。"
+          },
+          {
+            "id": "tags",
+            "label": "标签",
+            "text": "#华为笔记本 #移动办公 #办公电脑",
+            "character_count": 18,
+            "status": "pass",
+            "counter": "3/5 个",
+            "note": "直接复制到正文末尾或标签栏。"
+          }
+        ],
+        "cover_copy": {
+          "eyebrow": "选办公本，先核对再决定",
+          "headline": "仓库与办公室轮用，别只看轻不轻",
+          "support": "HUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用",
+          "badge": "资料先核对 · 条件再确认",
+          "footer": "公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "audience_hint": "采购与行政决策者",
+          "copy_text": "选办公本，先核对再决定\n仓库与办公室轮用，别只看轻不轻\nHUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用\n资料先核对 · 条件再确认\n公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "image_id": "image-9f9470747d7e3c40",
+          "image_caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+          "suggested_layout": "2.35:1 横版；左侧标题，右侧保留产品主体与留白。",
+          "safety_note": "封面只使用已核对产品名称和任务词；不使用“最强”“必买”“保证兼容”等表述。"
+        },
+        "checks": {
+          "overall_status": "warning",
+          "summary": {
+            "pass_count": 4,
+            "warning_count": 1,
+            "fail_count": 0
+          },
+          "items": [
+            {
+              "id": "title_length",
+              "label": "标题长度",
+              "status": "pass",
+              "count": 15,
+              "value": "15/64 字",
+              "summary": "长度在发布建议范围内。",
+              "limit": 64,
+              "recommendation": "建议不超过 30 字"
+            },
+            {
+              "id": "body_length",
+              "label": "正文字数",
+              "status": "pass",
+              "count": 690,
+              "value": "690/20000 字",
+              "summary": "长度在发布建议范围内。",
+              "limit": 20000,
+              "recommendation": "建议至少 300 字"
+            },
+            {
+              "id": "tag_count",
+              "label": "标签数量",
+              "status": "pass",
+              "count": 3,
+              "value": "3/5 个",
+              "summary": "标签数量在发布建议范围内。",
+              "limit": 5,
+              "recommendation": "建议 3 个以内"
+            },
+            {
+              "id": "image_checks",
+              "label": "图片尺寸与数量",
+              "status": "warning",
+              "count": 4,
+              "limit": 20,
+              "recommended": "1080×1440",
+              "cover_ratio": "2.35:1",
+              "items": [
+                {
+                  "image_id": "image-9f9470747d7e3c40",
+                  "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+                  "width": 817,
+                  "height": 892,
+                  "aspect_ratio": "817:892",
+                  "file_size_bytes": 569412,
+                  "dimension_label": "817×892",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                },
+                {
+                  "image_id": "image-85fadb0cbceb8632",
+                  "file_name": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+                  "width": 1048,
+                  "height": 588,
+                  "aspect_ratio": "262:147",
+                  "file_size_bytes": 76576,
+                  "dimension_label": "1048×588",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                },
+                {
+                  "image_id": "image-b2a991f2763fd7d6",
+                  "file_name": "vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+                  "width": 428,
+                  "height": 428,
+                  "aspect_ratio": "1:1",
+                  "file_size_bytes": 13290,
+                  "dimension_label": "428×428",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                },
+                {
+                  "image_id": "image-e320384c91d75f72",
+                  "file_name": "hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png",
+                  "width": 817,
+                  "height": 892,
+                  "aspect_ratio": "817:892",
+                  "file_size_bytes": 533666,
+                  "dimension_label": "817×892",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                }
+              ],
+              "summary": "共 4 张；像素和比例已逐张读取，封面建议 2.35:1。",
+              "recommendation": "建议封面 2.35:1、1080×1440 以上"
+            },
+            {
+              "id": "layout_structure",
+              "label": "排版结构",
+              "status": "pass",
+              "count": 6,
+              "value": "标题 → 导语 → 任务与场景 → 官网原文摘录 → 待确认边界 → 下一步沟通",
+              "summary": "当前正文已按平台阅读结构分段。",
+              "recommendation": "正文用小标题和短段落分段，手机阅读更顺畅。 封面建议单独裁为 2.35:1；正文图保留原始比例。"
+            }
+          ],
+          "layout": {
+            "structure": [
+              "标题",
+              "导语",
+              "任务与场景",
+              "官网原文摘录",
+              "待确认边界",
+              "下一步沟通"
+            ],
+            "tips": [
+              "正文用小标题和短段落分段，手机阅读更顺畅。",
+              "封面建议单独裁为 2.35:1；正文图保留原始比例。"
+            ],
+            "status": "pass"
+          },
+          "note": "以上为本地发布前建议，平台规则可能调整；发布时仍以对应编辑器提示为准。"
+        }
+      },
+      {
+        "platform": "小红书",
+        "platform_id": "xiaohongshu_note",
+        "selected": false,
+        "status": "warning",
+        "summary": {
+          "pass_count": 3,
+          "warning_count": 2,
+          "fail_count": 0
+        },
+        "copy_blocks": [
+          {
+            "id": "title",
+            "label": "标题",
+            "text": "仓库与办公室轮用，这台笔记本先核对什么？",
+            "character_count": 20,
+            "status": "warning",
+            "counter": "20/20 字",
+            "note": "直接复制到平台标题栏。"
+          },
+          {
+            "id": "body",
+            "label": "正文",
+            "text": "先别急着看参数。一台电脑每天要在几个地点之间来回，先问清怎么带、带什么、到哪里接什么。这次把“仓库与办公室轮用，需要移动办公”拆成一份能直接照着核对的清单。\n\n01｜先把任务列出来\n\n• 要完成：仓库与办公室轮用，需要移动办公\n• 候选型号：HUAWEI MateBook 14（鸿蒙版）\n• 已知条件：移动办公、办公\n• 还要确认：软件兼容性待确认\n\n设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n02｜官网能对上的几项\n\n• 重量：约 1.33 kg（圆键盘含电池）\n• 屏幕分辨率：2880 × 1920，243 PPI\n\n资料参考：HUAWEI MateBook 14（鸿蒙版） 产品资料。参数按原文摘录，不做二次推断。\n\n03｜这几件事别急着下结论\n\n• 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n• 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n• 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n也在做同样的选择？把你的使用场景、常用软件版本和文件格式留在评论区，我先帮你列核对项。",
+            "character_count": 515,
+            "status": "pass",
+            "counter": "515/1000 字",
+            "note": "已去除 Markdown、图片标记和内部字段，可直接粘贴。"
+          },
+          {
+            "id": "tags",
+            "label": "标签",
+            "text": "#华为笔记本 #移动办公 #办公电脑 #选型核对",
+            "character_count": 24,
+            "status": "pass",
+            "counter": "4/10 个",
+            "note": "直接复制到正文末尾或标签栏。"
+          }
+        ],
+        "cover_copy": {
+          "eyebrow": "先把任务列出来",
+          "headline": "移动办公，先看每天怎么带着走",
+          "support": "HUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用",
+          "badge": "资料先核对 · 条件再确认",
+          "footer": "公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "audience_hint": "采购与行政决策者",
+          "copy_text": "先把任务列出来\n移动办公，先看每天怎么带着走\nHUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用\n资料先核对 · 条件再确认\n公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "image_id": "image-9f9470747d7e3c40",
+          "image_caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+          "suggested_layout": "3:4 竖版；上方 1/3 放大标题，下方留白放型号与边界。",
+          "safety_note": "封面只使用已核对产品名称和任务词；不使用“最强”“必买”“保证兼容”等表述。"
+        },
+        "checks": {
+          "overall_status": "warning",
+          "summary": {
+            "pass_count": 3,
+            "warning_count": 2,
+            "fail_count": 0
+          },
+          "items": [
+            {
+              "id": "title_length",
+              "label": "标题长度",
+              "status": "warning",
+              "count": 20,
+              "value": "20/20 字",
+              "summary": "未超上限，但超过 18 字 的舒适阅读建议。",
+              "limit": 20,
+              "recommendation": "建议不超过 18 字"
+            },
+            {
+              "id": "body_length",
+              "label": "正文字数",
+              "status": "pass",
+              "count": 515,
+              "value": "515/1000 字",
+              "summary": "长度在发布建议范围内。",
+              "limit": 1000,
+              "recommendation": "建议至少 220 字"
+            },
+            {
+              "id": "tag_count",
+              "label": "标签数量",
+              "status": "pass",
+              "count": 4,
+              "value": "4/10 个",
+              "summary": "标签数量在发布建议范围内。",
+              "limit": 10,
+              "recommendation": "建议 4 个以内"
+            },
+            {
+              "id": "image_checks",
+              "label": "图片尺寸与数量",
+              "status": "warning",
+              "count": 3,
+              "limit": 18,
+              "recommended": "1080×1440",
+              "cover_ratio": "3:4",
+              "items": [
+                {
+                  "image_id": "image-9f9470747d7e3c40",
+                  "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+                  "width": 817,
+                  "height": 892,
+                  "aspect_ratio": "817:892",
+                  "file_size_bytes": 569412,
+                  "dimension_label": "817×892",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                },
+                {
+                  "image_id": "image-85fadb0cbceb8632",
+                  "file_name": "hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg",
+                  "width": 1048,
+                  "height": 588,
+                  "aspect_ratio": "262:147",
+                  "file_size_bytes": 76576,
+                  "dimension_label": "1048×588",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                },
+                {
+                  "image_id": "image-b2a991f2763fd7d6",
+                  "file_name": "vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png",
+                  "width": 428,
+                  "height": 428,
+                  "aspect_ratio": "1:1",
+                  "file_size_bytes": 13290,
+                  "dimension_label": "428×428",
+                  "status": "warning",
+                  "summary": "低于 1080×1440 建议尺寸"
+                }
+              ],
+              "summary": "共 3 张；像素和比例已逐张读取，封面建议 3:4。",
+              "recommendation": "建议封面 3:4、1080×1440 以上"
+            },
+            {
+              "id": "layout_structure",
+              "label": "排版结构",
+              "status": "pass",
+              "count": 7,
+              "value": "短标题 → 任务开场 → 编号清单 → 参数摘录 → 待确认边界 → 互动引导 → 标签",
+              "summary": "当前正文已按平台阅读结构分段。",
+              "recommendation": "首图优先 3:4 竖版；文字不要压到画面边缘。 正文用空行和编号拆段，发布前把标签放在最后一段。"
+            }
+          ],
+          "layout": {
+            "structure": [
+              "短标题",
+              "任务开场",
+              "编号清单",
+              "参数摘录",
+              "待确认边界",
+              "互动引导",
+              "标签"
+            ],
+            "tips": [
+              "首图优先 3:4 竖版；文字不要压到画面边缘。",
+              "正文用空行和编号拆段，发布前把标签放在最后一段。"
+            ],
+            "status": "pass"
+          },
+          "note": "以上为本地发布前建议，平台规则可能调整；发布时仍以对应编辑器提示为准。"
+        }
+      },
+      {
+        "platform": "朋友圈",
+        "platform_id": "moments_short_post",
+        "selected": false,
+        "status": "warning",
+        "summary": {
+          "pass_count": 3,
+          "warning_count": 1,
+          "fail_count": 0
+        },
+        "copy_blocks": [
+          {
+            "id": "title",
+            "label": "标题",
+            "text": "HUAWEI MateBook 14（鸿蒙版）｜仓库与办公室轮用",
+            "character_count": 32,
+            "status": "info",
+            "counter": "32 字",
+            "note": "朋友圈没有独立标题，建议只在内部留档。"
+          },
+          {
+            "id": "body",
+            "label": "正文",
+            "text": "这次在核对“仓库与办公室轮用，需要移动办公”，看的是 HUAWEI MateBook 14（鸿蒙版）。移动办公最容易漏掉的，不是重量，而是离开固定工位以后文件和外设怎么接。\n\n先看的不是“哪台更强”，而是每天要做什么：移动办公、办公。还需要重点确认：软件兼容性待确认。\n\n官网资料里能直接确认的是 重量：约 1.33 kg（圆键盘含电池）。数值照录原文，但纸面资料还不等于你的软件和实际体验都合适。\n\n但兼容、实际续航、完整配置和报价都还要按具体条件确认，不能拿一条官网参数替读者做决定。\n\n也在选办公本的话，直接把常用软件和使用场景发我，我先帮你排一遍。",
+            "character_count": 278,
+            "status": "pass",
+            "counter": "278/2000 字",
+            "note": "已去除 Markdown、图片标记和内部字段，可直接粘贴。"
+          },
+          {
+            "id": "tags",
+            "label": "标签",
+            "text": "#华为笔记本 #移动办公",
+            "character_count": 12,
+            "status": "pass",
+            "counter": "2/3 个",
+            "note": "直接复制到正文末尾或标签栏。"
+          }
+        ],
+        "cover_copy": {
+          "eyebrow": "选办公本，先看真实任务",
+          "headline": "HUAWEI MateBook 14（鸿蒙…",
+          "support": "HUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用",
+          "badge": "不着急下结论",
+          "footer": "公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "audience_hint": "采购与行政决策者",
+          "copy_text": "选办公本，先看真实任务\nHUAWEI MateBook 14（鸿蒙…\nHUAWEI MateBook 14（鸿蒙版）｜移动办公与轮换使用\n不着急下结论\n公开资料整理｜配置、兼容与报价以实际确认结果为准",
+          "image_id": "image-9f9470747d7e3c40",
+          "image_caption": "HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。",
+          "suggested_layout": "1:1 方图；标题居中，右下角放“条件再确认”。",
+          "safety_note": "封面只使用已核对产品名称和任务词；不使用“最强”“必买”“保证兼容”等表述。"
+        },
+        "checks": {
+          "overall_status": "warning",
+          "summary": {
+            "pass_count": 3,
+            "warning_count": 1,
+            "fail_count": 0
+          },
+          "items": [
+            {
+              "id": "title_length",
+              "label": "标题长度",
+              "status": "info",
+              "count": 32,
+              "value": "32 字",
+              "summary": "该平台无需单独填写标题，标题块可用于内部识别。",
+              "limit": 64,
+              "recommendation": "无需单独标题"
+            },
+            {
+              "id": "body_length",
+              "label": "正文字数",
+              "status": "pass",
+              "count": 278,
+              "value": "278/2000 字",
+              "summary": "长度在发布建议范围内。",
+              "limit": 2000,
+              "recommendation": "建议至少 80 字"
+            },
+            {
+              "id": "tag_count",
+              "label": "标签数量",
+              "status": "pass",
+              "count": 2,
+              "value": "2/3 个",
+              "summary": "标签数量在发布建议范围内。",
+              "limit": 3,
+              "recommendation": "建议 2 个以内"
+            },
+            {
+              "id": "image_checks",
+              "label": "图片尺寸与数量",
+              "status": "warning",
+              "count": 1,
+              "limit": 9,
+              "recommended": "1080×1080",
+              "cover_ratio": "1:1",
+              "items": [
+                {
+                  "image_id": "image-9f9470747d7e3c40",
+                  "file_name": "hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png",
+                  "width": 817,
+                  "height": 892,
+                  "aspect_ratio": "817:892",
+                  "file_size_bytes": 569412,
+                  "dimension_label": "817×892",
+                  "status": "warning",
+                  "summary": "低于 1080×1080 建议尺寸"
+                }
+              ],
+              "summary": "共 1 张；像素和比例已逐张读取，封面建议 1:1。",
+              "recommendation": "建议封面 1:1、1080×1080 以上"
+            },
+            {
+              "id": "layout_structure",
+              "label": "排版结构",
+              "status": "pass",
+              "count": 4,
+              "value": "一行任务 → 一条原文核对 → 待确认边界 → 轻松的行动引导",
+              "summary": "当前正文已按平台阅读结构分段。",
+              "recommendation": "朋友圈没有独立标题，短标题只用于内部识别。 首图建议 1:1；多图时保持同一套画面风格。"
+            }
+          ],
+          "layout": {
+            "structure": [
+              "一行任务",
+              "一条原文核对",
+              "待确认边界",
+              "轻松的行动引导"
+            ],
+            "tips": [
+              "朋友圈没有独立标题，短标题只用于内部识别。",
+              "首图建议 1:1；多图时保持同一套画面风格。"
+            ],
+            "status": "pass"
+          },
+          "note": "以上为本地发布前建议，平台规则可能调整；发布时仍以对应编辑器提示为准。"
+        }
+      }
+    ]
   },
   "image_sources": [
     {
@@ -188,6 +909,10 @@
       ],
       "sha256": "9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82",
       "mime_type": "image/png",
+      "width": 817,
+      "height": 892,
+      "aspect_ratio": "817:892",
+      "file_size_bytes": 569412,
       "model_match_status": "exact_product_match_verified",
       "visual_review_status": "assisted_visual_pass_pending_human",
       "rights_status": "official_public_reference_only_permission_pending",
@@ -218,6 +943,10 @@
       ],
       "sha256": "85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b",
       "mime_type": "image/jpeg",
+      "width": 1048,
+      "height": 588,
+      "aspect_ratio": "262:147",
+      "file_size_bytes": 76576,
       "model_match_status": "exact_product_match_verified",
       "visual_review_status": "assisted_visual_pass_pending_human",
       "rights_status": "official_public_reference_only_permission_pending",
@@ -248,6 +977,10 @@
       ],
       "sha256": "b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b",
       "mime_type": "image/png",
+      "width": 428,
+      "height": 428,
+      "aspect_ratio": "1:1",
+      "file_size_bytes": 13290,
       "model_match_status": "exact_product_match_verified",
       "visual_review_status": "assisted_visual_pass_pending_human",
       "rights_status": "official_public_reference_only_permission_pending",
@@ -278,6 +1011,10 @@
       ],
       "sha256": "e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d",
       "mime_type": "image/png",
+      "width": 817,
+      "height": 892,
+      "aspect_ratio": "817:892",
+      "file_size_bytes": 533666,
       "model_match_status": "exact_product_match_verified",
       "visual_review_status": "assisted_visual_pass_pending_human",
       "rights_status": "official_public_reference_only_permission_pending",
@@ -351,7 +1088,7 @@
   "verification": {
     "schema_version": "1.0",
     "policy_version": "mandatory-release-verification-v1",
-    "checked_at": "2026-10-22T12:48:19.758Z",
+    "checked_at": "2026-10-22T13:13:51.685Z",
     "overall_status": "downgraded",
     "status_label": "降级",
     "publication_ready": false,
@@ -445,7 +1182,11 @@
         "lead": "轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。",
         "body_markdown": "## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。",
         "cta": "如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。",
-        "tags": [],
+        "tags": [
+          "华为笔记本",
+          "移动办公",
+          "办公电脑"
+        ],
         "image_ids": []
       },
       "rendered_markdown": "# 仓库与办公室轮用，别只看轻不轻\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n## 发布说明\n\n- 从可发布版本移除全部图片和图片标记；授权完成后再单独复核。\n"
@@ -459,7 +1200,7 @@
       "软件兼容性、完整销售配置与当前成交报价仍需客户及官方资料确认"
     ]
   },
-  "article_markdown": "# 仓库与办公室轮用，别只看轻不轻\n\n> 平台：公众号；内容结构：分层长文：场景 → 任务清单 → 原文核对 → 使用限制 → 下一步沟通；建议资料依据不超过 3 项；建议图片不超过 4 张。\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n<!-- IMAGE:after_title -->\n> **配图 1｜封面主视觉**\n> 插入位置：标题和导语之后\n![HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。](/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82)\n> 图片：hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n<!-- IMAGE:after_requirements -->\n> **配图 2｜使用场景**\n> 插入位置：任务说明之后\n![文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。](/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b)\n> 图片：hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg\n> 说明：文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n<!-- IMAGE:after_facts -->\n> **配图 3｜机身细节**\n> 插入位置：资料摘录之后\n![机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。](/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b)\n> 图片：vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png\n> 说明：机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n<!-- IMAGE:before_cta -->\n> **配图 4｜行动引导前配图**\n> 插入位置：行动引导之前\n![HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。](/api/content-images/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d)\n> 图片：hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n## 预算核对\n\n> 当前状态：客户未提供。客户未提供预算；不推断预算充足性，也不输出交易报价。\n\n---\n\n## 发布前检查结果\n\n> 总体结论：需要调整；原稿可直接发布：否；稳妥版本：可用。\n\n| 检查项 | 结果 | 说明 |\n| --- | --- | --- |\n| 产品型号 | 通过 | 发布型号“HUAWEI MateBook 14（鸿蒙版）”与 3 条产品资料中的具体型号一致。 |\n| 产品参数 | 通过 | 3 项产品参数与型号、原文和使用限制一致。 |\n| 价格与报价 | 通过 | 未发现金额、成交价或折扣承诺；当前没有可宣称的最新交易报价。 |\n| 图片来源 | 需要调整 | 4张图片型号与来源通过，但4张缺少公开发布授权；安全版本已移除图片。 |\n| 表达边界 | 通过 | 未发现绝对化、成交、兼容性或效果承诺。 |\n| 资料来源 | 通过 | 3 项产品资料与 4 张图片均保留了可核对的资料来源。 |\n\n## 需要处理的问题\n\n- 图片公开发布授权未完成｜4张图片仅通过型号/来源辅助核验，尚未完成正式发布授权。｜怎么处理：从可发布版本移除全部图片和图片标记；授权完成后再单独复核。\n\n## 图片来源清单\n\n> 图片只用于内部审稿；公开发布授权和人工终审仍需确认。\n\n| # | 画面说明 | 资料来源 | 状态 |\n| --- | --- | --- | --- |\n| 1 | HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 2 | 文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 3 | 机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 4 | HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n\n## 资料来源\n\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n\n## 可发布安全版本\n\n> 发布前检查结论：需要调整；通过 5 项、需要调整 1 项、不通过 0 项。以下版本已移除不合适内容，但仍须由发布负责人最终确认。\n\n# 仓库与办公室轮用，别只看轻不轻\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n## 发布说明\n\n- 从可发布版本移除全部图片和图片标记；授权完成后再单独复核。\n\n## 使用边界\n\n- 产品资料只来自上列可核对内容，没有把摘要或未经核对的信息补成产品参数。\n- 客户画像只用于匹配任务与沟通角度，不推断预算、身份或采购权限。\n- 未生成正式报价，未承诺软件兼容、咨询量或成交转化。\n- 生成时间：2026/10/22 20:48。\n",
+  "article_markdown": "# 仓库与办公室轮用，别只看轻不轻\n\n> 平台：公众号；内容结构：分层长文：场景 → 任务清单 → 原文核对 → 使用限制 → 下一步沟通；建议资料依据不超过 3 项；建议图片不超过 4 张。\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n<!-- IMAGE:after_title -->\n> **配图 1｜封面主视觉**\n> 插入位置：标题和导语之后\n![HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。](/api/content-images/9f9470747d7e3c406b87c31ecd5d51f1f3542626001ed8b00b04c5db8973de82)\n> 图片：hwpc_matebook-14-harmonyos_原野绿多彩配色_04.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n<!-- IMAGE:after_requirements -->\n> **配图 2｜使用场景**\n> 插入位置：任务说明之后\n![文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。](/api/content-images/85fadb0cbceb8632b00301aa07db8b815469e0107b8c89b5d91baab15a9c281b)\n> 图片：hwpc_matebook-14-harmonyos_手写笔创作场景_07.jpg\n> 说明：文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n<!-- IMAGE:after_facts -->\n> **配图 3｜机身细节**\n> 插入位置：资料摘录之后\n![机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。](/api/content-images/b2a991f2763fd7d646e6a362b48536e3949c197137f097ad06b5fcb6fb3e321b)\n> 图片：vmall_matebook-14-harmonyos_轻薄原野绿侧面细节_04.png\n> 说明：机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n<!-- IMAGE:before_cta -->\n> **配图 4｜行动引导前配图**\n> 插入位置：行动引导之前\n![HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。](/api/content-images/e320384c91d75f723fb785fce8505c9ce099980cf4330e37d08d75430f32650d)\n> 图片：hwpc_matebook-14-harmonyos_多彩配色外观_01_7e0eedb6.png\n> 说明：HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。\n> 来源：产品资料库“任德耀新建华为PC知识库”\n> 状态：具体型号匹配已核验；公开发布授权与人工终审仍待确认。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n## 预算核对\n\n> 当前状态：客户未提供。客户未提供预算；不推断预算充足性，也不输出交易报价。\n\n---\n\n## 发布前检查结果\n\n> 总体结论：需要调整；原稿可直接发布：否；稳妥版本：可用。\n\n| 检查项 | 结果 | 说明 |\n| --- | --- | --- |\n| 产品型号 | 通过 | 发布型号“HUAWEI MateBook 14（鸿蒙版）”与 3 条产品资料中的具体型号一致。 |\n| 产品参数 | 通过 | 3 项产品参数与型号、原文和使用限制一致。 |\n| 价格与报价 | 通过 | 未发现金额、成交价或折扣承诺；当前没有可宣称的最新交易报价。 |\n| 图片来源 | 需要调整 | 4张图片型号与来源通过，但4张缺少公开发布授权；安全版本已移除图片。 |\n| 表达边界 | 通过 | 未发现绝对化、成交、兼容性或效果承诺。 |\n| 资料来源 | 通过 | 3 项产品资料与 4 张图片均保留了可核对的资料来源。 |\n\n## 需要处理的问题\n\n- 图片公开发布授权未完成｜4张图片仅通过型号/来源辅助核验，尚未完成正式发布授权。｜怎么处理：从可发布版本移除全部图片和图片标记；授权完成后再单独复核。\n\n## 图片来源清单\n\n> 图片只用于内部审稿；公开发布授权和人工终审仍需确认。\n\n| # | 画面说明 | 资料来源 | 状态 |\n| --- | --- | --- | --- |\n| 1 | HUAWEI MateBook 14（鸿蒙版）原野绿外观示意；配色与配置请以实际销售版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 2 | 文档处理场景示意；应用、版本与屏幕内容请以实际设备和授权版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 3 | 机身侧面与接口位置示意；接口配置与销售版本请按官网规格复核。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n| 4 | HUAWEI MateBook 14（鸿蒙版）樱粉金外观示意；配色与配置请以实际销售版本为准。 | 华为PC产品资料库｜华为公开产品素材 | 型号一致；发布授权待确认 |\n\n## 资料来源\n\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n- HUAWEI MateBook 14（鸿蒙版） 产品资料｜https://consumer.huawei.com/cn/harmonyos-computer/matebook-14-harmonyos-version/\n\n## 可发布安全版本\n\n> 发布前检查结论：需要调整；通过 5 项、需要调整 1 项、不通过 0 项。以下版本已移除不合适内容，但仍须由发布负责人最终确认。\n\n# 仓库与办公室轮用，别只看轻不轻\n\n轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。对要负责采购的人来说，最需要的是把条件、风险和待确认项放在同一张清单上。这次围绕“仓库与办公室轮用，需要移动办公”整理。\n\n## 先把任务说清楚\n\n这次要处理的是“仓库与办公室轮用，需要移动办公”，候选型号是 HUAWEI MateBook 14（鸿蒙版）。设备会跟着人换位置，重量只是起点，接口、续航条件和文件流转更值得先问。\n\n已知条件：移动办公、办公。仍需要重点确认：软件兼容性待确认。\n\n换成制造企业采购负责人的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。\n\n## 资料里能先确认什么\n\n下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n- **重量：** 约 1.33 kg（圆键盘含电池）\n- **屏幕分辨率：** 2880 × 1920，243 PPI\n- **电池容量：** 70 Wh（额定容量）\n\n资料出处：HUAWEI MateBook 14（鸿蒙版） 产品资料。\n\n## 哪些事还不能替你下结论\n\n- 软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。\n- 实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。\n- 颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。\n\n## 下一步沟通\n\n如果你正在核对“仓库与办公室轮用，需要移动办公”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。\n\n## 发布说明\n\n- 从可发布版本移除全部图片和图片标记；授权完成后再单独复核。\n\n## 使用边界\n\n- 产品资料只来自上列可核对内容，没有把摘要或未经核对的信息补成产品参数。\n- 客户画像只用于匹配任务与沟通角度，不推断预算、身份或采购权限。\n- 未生成正式报价，未承诺软件兼容、咨询量或成交转化。\n- 生成时间：2026/10/22 21:13。\n",
   "diagnostics": [
     {
       "code": "RELEASE_DOWNGRADED",
@@ -471,7 +1212,11 @@
     },
     {
       "code": "PLATFORM_APPLIED",
-      "message": "内容已按公众号结构准备；产品资料只使用已核对内容，图片还需人工确认。"
+      "message": "内容已按公众号结构准备；标题、正文和标签可分别复制。"
+    },
+    {
+      "code": "PUBLICATION_READINESS",
+      "message": "平台发布检查：通过 4 项、需调整 1 项、不通过 0 项。"
     },
     {
       "code": "BUDGET_ASSESSMENT",
