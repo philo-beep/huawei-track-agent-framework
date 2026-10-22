@@ -61,7 +61,7 @@ test('normal input covers the complete 2 models x 3 platforms matrix', async (t)
     for (const platform of PLATFORMS) {
       await t.test(`${model.label} / ${platform}`, async () => {
         const output = await runContentDraft({ schema_version: '1.0', match_input: input, candidate_id: candidates[model.key].candidate_id, platform });
-        assert.equal(output.schema_version, '1.2');
+        assert.equal(output.schema_version, '1.3');
         assert.equal(output.status, 'ready_for_review');
         assert.equal(output.platform, platform);
         assert.equal(output.platform_profile.label, platform);

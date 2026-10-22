@@ -77,7 +77,7 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(contentJob.kind, 'content-draft');
         const completedContent = await waitJob(origin, contentJob.id, cookie);
         assert.equal(completedContent.status, 'completed');
-        assert.equal(completedContent.result.schema_version, '1.2');
+        assert.equal(completedContent.result.schema_version, '1.3');
         assert.equal(completedContent.result.status, 'ready_for_review');
         assert.equal(completedContent.result.platform, '公众号');
         assert.equal(completedContent.result.platform_profile.id, 'wechat_article');
@@ -88,13 +88,15 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(completedContent.result.verification.items.length, 6);
         assert.equal(completedContent.result.verification.risk_items[0].risk_level, 'downgrade');
         assert.deepEqual(completedContent.result.verification.safe_content.content.image_ids, []);
-        assert.match(completedContent.markdown, /发布前检查结果/);
-        assert.match(completedContent.markdown, /需要处理的问题/);
-        assert.match(completedContent.markdown, /图片来源清单/);
-        assert.match(completedContent.markdown, /!\[[^\]]+\]\(\/api\/content-images\/[a-f0-9]{64}\)/);
+        assert.match(completedContent.markdown, /## 下一步沟通/);
+        assert.doesNotMatch(completedContent.markdown, /发布前检查|需要处理的问题|图片来源清单|<!--\s*IMAGE:/);
+        assert.match(completedContent.result.article_markdown, /发布前检查结果/);
+        assert.match(completedContent.result.article_markdown, /图片来源清单/);
         const exportResponse = await fetch(`${origin}/api/runs/${contentJob.id}/export?format=markdown`, { headers: { Cookie: cookie } });
         assert.equal(exportResponse.status, 200);
-        assert.match(await exportResponse.text(), /建议|配图/);
+        const exportedMarkdown = await exportResponse.text();
+        assert.match(exportedMarkdown, /## 下一步沟通/);
+        assert.doesNotMatch(exportedMarkdown, /<!--\s*IMAGE:/);
         const imageUrl = completedContent.result.image_sources[0].asset_url;
         const imageResponse = await fetch(`${origin}${imageUrl}`, { headers: { Cookie: cookie } });
         assert.equal(imageResponse.status, 200);
@@ -139,7 +141,7 @@ test('content-draft API accepts all three supported platforms through real HTTP'
                 const contentJob = await contentResponse.json();
                 const completedContent = await waitJob(origin, contentJob.id, cookie);
                 assert.equal(completedContent.status, 'completed');
-                assert.equal(completedContent.result.schema_version, '1.2');
+                assert.equal(completedContent.result.schema_version, '1.3');
                 assert.equal(completedContent.result.platform, platform);
                 assert.equal(completedContent.result.status, 'ready_for_review');
                 assert.ok(completedContent.result.citations.length >= 1);
