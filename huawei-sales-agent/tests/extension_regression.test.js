@@ -67,7 +67,7 @@ test('normal input covers the complete 2 models x 3 platforms matrix', async (t)
         assert.equal(output.platform_profile.label, platform);
         assert.equal(output.product.model_key, model.key);
         assert.ok(output.citations.length >= 1);
-        assert.equal(output.citations.length, PLATFORM_SPECS[platform].max_facts);
+        assert.ok(output.citations.length <= PLATFORM_SPECS[platform].max_facts, 'Only relevant features should be included; the platform maximum is not a quota');
         assert.ok(output.citations.every(citation => model.key === 'matebook-14-harmonyos' ? /鸿蒙版|harmony/i.test(citation.source_title) : /酷睿\s*Ultra|2024/i.test(citation.source_title)));
         assert.equal(output.verification.items.length, 6);
         assert.ok(output.verification.items.every(item => item.status !== 'fail'));

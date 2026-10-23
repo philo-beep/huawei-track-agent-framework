@@ -1,0 +1,7 @@
+{
+  "name": "huaxiao-personal-purchase-demo-recording",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Role E demo production scripts; existing business code is read only.",
+  "dependencies": { "playwright": "1.62.1" }
+}

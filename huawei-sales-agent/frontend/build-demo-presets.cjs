@@ -8,7 +8,7 @@ const crypto = require('node:crypto');
 global.fetch = async () => { throw new Error('Preset preparation must not access the network'); };
 const { runGuidedProfile } = require('../backend/agent/guided-profile');
 const { runProductMatch, renderProductMatchMarkdown } = require('../backend/agent/product-match');
-const { runContentDraft, renderContentDraftMarkdown } = require('../backend/agent/content-generation');
+const { runContentDraft, renderContentDraftMarkdown, readReviewedImage } = require('../backend/agent/content-generation');
 const { runCloud, cloudMarkdown } = require('../backend/agent/cloud-runner');
 
 const definitions = [
@@ -27,7 +27,6 @@ const definitions = [
       ['conversation_habit', '为了方便客户内部沟通，资料用什么方式呈现？', '请用文字给一份风险清单。', { conversation_habit: '文字给一份风险清单' }],
       ['pain_points', '客户现在最担心什么，下一步准备怎么推进？', '担心原有软件兼容性，正在比较，试用通过后再提交采购审批。', { pain_points: ['原有软件兼容性'], purchase_stage: '正在比较' }],
     ],
-    art: ['仓库 ↔ 办公室', '需求 · 条件 · 风险', '打开 → 编辑 → 导出', '确认配置，再约试用'],
   },
   {
     id: 'creator', label: '自由职业 · 内容创作',
@@ -44,19 +43,12 @@ const definitions = [
       ['conversation_habit', '客户希望怎样了解候选设备？', '希望用短段落和清单沟通。', { conversation_habit: '短段落和清单沟通' }],
       ['pain_points', '交稿环节最担心什么，客户目前准备走到哪一步？', '担心文件格式和软件版本，正在比较，先带样稿到店试用，再决定购买。', { pain_points: ['文件格式和软件版本'], purchase_stage: '正在比较' }],
     ],
-    art: ['通勤 · 咖啡馆 · 家', '先列每天的写稿任务', '改稿 → 保存 → 导出', '带一份样稿，试一次'],
   },
 ];
 
-function illustration(title, index, label) {
-  const colors = ['#f7e6df', '#e4eee9', '#e4e9f3', '#f3e9d6'];
-  // Original vector scenario card. No external photos, trademarks, or device appearance.
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800"><rect width="1200" height="800" rx="36" fill="${colors[index]}"/><circle cx="1040" cy="120" r="240" fill="#fff" opacity=".5"/><text x="84" y="115" font-family="sans-serif" font-size="25" fill="#785b53">华销智策 / ${label}</text><rect x="180" y="180" width="840" height="370" rx="26" fill="#fff"/><rect x="225" y="230" width="440" height="24" rx="12" fill="#ce3347"/><rect x="225" y="290" width="690" height="16" rx="8" fill="#d3d9df"/><rect x="225" y="335" width="570" height="16" rx="8" fill="#d3d9df"/><circle cx="845" cy="445" r="55" fill="#e7eee9"/><path d="m820 445 17 17 33-36" fill="none" stroke="#397358" stroke-width="12" stroke-linecap="round"/><text x="84" y="650" font-family="sans-serif" font-size="48" font-weight="bold" fill="#273447">${title}</text><text x="84" y="720" font-family="sans-serif" font-size="24" fill="#6c747f">原创演示插图 · 非产品实拍 · 不代表软件兼容或使用效果</text></svg>`;
-  return { svg, uri: 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64') };
-}
-
 async function build() {
   const scenarios = [];
+  const productImages = {};
   for (const definition of definitions) {
     const messages = [];
     const dimensions = [];
@@ -87,35 +79,17 @@ async function build() {
     for (const [platform, count] of [['公众号', 4], ['小红书', 3], ['朋友圈', 1]]) {
       const result = await runContentDraft({ schema_version: '1.0', match_input: input, candidate_id: candidate.candidate_id, platform, image_limit: count });
       if (result.status === 'blocked') throw new Error('Preset content is blocked');
-      // Keep the captured audit record. Display and package owned scenario illustrations only.
       result.demo_only = true;
-      result.demo_illustrations = definition.art.slice(0, count).map((title, index) => {
-        const art = illustration(title, index, definition.label);
-        return { image_id: `demo-${definition.id}-${index}`, marker: ['after_title', 'after_requirements', 'after_facts', 'before_cta'][index], caption: title,
-          asset_url: art.uri, svg: art.svg, rights_status: '项目原创演示插图', source_name: '华销智策项目原创', original_url: null,
-          width: 1200, height: 800, demo_illustration: true };
-      });
-      // Never embed or silently substitute pending-rights product photography.
-      result.image_sources = [];
-      const scrub = value => typeof value === 'string' ? value.replace(/!\[[^\]]*\]\(\/api\/content-images\/[^)]+\)/g, '').replace(/\/api\/content-images\/[a-f0-9]+/g, '[原审稿图未打包]') : Array.isArray(value) ? value.map(scrub) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, scrub(item)])) : value;
-      const captured = scrub(result);
-      captured.draft.body_markdown = captured.draft.body_markdown.replace(/^> 图片：[^\n]*(?:\n>[^\n]*)*/gm, '');
-      const updateIllustrationChecks = (readiness, selectedPlatform) => {
-        const limit = selectedPlatform === '朋友圈' ? 1 : selectedPlatform === '小红书' ? 3 : 4;
-        if (readiness.cover_copy) readiness.cover_copy.image_caption = `项目原创场景图：${definition.art[0]}（非产品实拍）`;
-        const check = readiness.checks?.items?.find(item => item.id === 'image_checks');
-        if (check) {
-          check.label = '原创插图尺寸与数量';
-          check.status = 'warning';
-          check.summary = `${limit} 张原创场景图，预置尺寸 1200×800（3:2）；平台封面比例需按建议人工裁切。`;
-          check.items = definition.art.slice(0, limit).map((title, index) => ({ order: index + 1, file_name: `${definition.id}-${index + 1}.svg`, dimension_label: '1200×800', aspect_ratio: '3:2' }));
-        }
-      };
-      updateIllustrationChecks(captured.publication_readiness, platform);
-      for (const variant of captured.publication_readiness.platform_matrix) updateIllustrationChecks(variant, variant.platform);
-      captured.publication_readiness.image_pack = { total_count: count, note: '项目原创场景插图；非产品实拍。原稿发布检查为录制时快照。', items: captured.demo_illustrations.map(image => ({ file_name: image.image_id + '.svg', width: 1200, height: 800, rights_status: image.rights_status, dimension_label: '1200×800' })) };
-      captured.insertion_plan = captured.demo_illustrations.map(image => ({ position: image.marker, caption: image.caption, instruction: '插入项目原创场景图；非产品实拍' }));
-      const markdown = `> 离线预置演示；资料与检查均为录制时快照。配图使用项目原创场景示意，非产品实拍。\n\n${renderContentDraftMarkdown(captured)}`;
+      for (const image of result.image_sources) {
+        const asset = readReviewedImage(image.sha256);
+        const bytes = fs.readFileSync(asset.filePath);
+        if (crypto.createHash('sha256').update(bytes).digest('hex') !== image.sha256) throw new Error('Original product image hash mismatch');
+        productImages[image.sha256] = { mime_type: image.mime_type, data_url: `data:${image.mime_type};base64,${bytes.toString('base64')}` };
+      }
+      // Store each original once; keep its source, model and pending publication rights.
+      const localize = value => typeof value === 'string' ? value.replace(/\/api\/content-images\/([a-f0-9]{64})/g, 'demo-product:$1') : Array.isArray(value) ? value.map(localize) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localize(item)])) : value;
+      const captured = localize(result);
+      const markdown = `> 离线预置演示；资料与检查为录制时快照。配图为对应型号产品原图，公开发布授权待确认。\n\n${renderContentDraftMarkdown(captured)}`;
       contents[platform] = { result: captured, markdown };
     }
     const marketingInput = { product: 'HUAWEI MateBook 14 鸿蒙版', platform: definition.defaultPlatform, audience: definition.audience, scenario: definition.scenario, raw_request: input.profile.raw_request };
@@ -132,8 +106,8 @@ async function build() {
       candidateId: candidate.candidate_id, contents, sales: { input: marketingInput, result: sales, markdown: salesMarkdown } });
   }
   const payload = { version: '1', recorded_at: new Date().toISOString(), synthetic: true, model_called: false,
-    notice: '随页面打包的预置结果。客户均为合成样例，产品资料和发布检查为录制时快照；图片是项目原创场景插图，非产品实拍。', scenarios };
-  payload.fingerprint = crypto.createHash('sha256').update(JSON.stringify(scenarios)).digest('hex');
+    notice: '随页面打包的预置结果。客户均为合成样例，故事为设想场景；产品资料和发布检查为录制时快照，配图为对应型号产品原图，公开发布授权待确认。', product_images: productImages, scenarios };
+  payload.fingerprint = crypto.createHash('sha256').update(JSON.stringify({ scenarios, productImages })).digest('hex');
   const htmlPath = path.join(__dirname, 'index.html');
   const html = fs.readFileSync(htmlPath, 'utf8');
   const block = `<script type="application/json" id="demo-presets">${JSON.stringify(payload).replace(/</g, '\\u003c')}</script>`;
@@ -141,4 +115,4 @@ async function build() {
   process.stdout.write(`Captured ${scenarios.length} scenarios, ${scenarios.reduce((sum, scenario) => sum + scenario.rounds.length, 0)} rounds, six platform drafts; ${Buffer.byteLength(block)} bytes. Network calls: 0.\n`);
 }
 if (require.main === module) build().catch(error => { process.stderr.write(error.stack + '\n'); process.exitCode = 1; });
-module.exports = { definitions, illustration };
+module.exports = { definitions };

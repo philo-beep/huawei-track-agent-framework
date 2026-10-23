@@ -100,14 +100,14 @@ test('content-draft API regenerates match evidence and serves reviewed IMA image
         assert.equal(completedContent.result.verification.items.length, 6);
         assert.equal(completedContent.result.verification.risk_items[0].risk_level, 'downgrade');
         assert.deepEqual(completedContent.result.verification.safe_content.content.image_ids, []);
-        assert.match(completedContent.markdown, /## 下一步沟通/);
+        assert.match(completedContent.markdown, /## 把选择放回你的日常/);
         assert.doesNotMatch(completedContent.markdown, /发布前检查|需要处理的问题|图片来源清单|<!--\s*IMAGE:/);
         assert.match(completedContent.result.article_markdown, /发布前检查结果/);
         assert.match(completedContent.result.article_markdown, /图片来源清单/);
         const exportResponse = await fetch(`${origin}/api/runs/${contentJob.id}/export?format=markdown`, { headers: { Cookie: cookie } });
         assert.equal(exportResponse.status, 200);
         const exportedMarkdown = await exportResponse.text();
-        assert.match(exportedMarkdown, /## 下一步沟通/);
+        assert.match(exportedMarkdown, /## 把选择放回你的日常/);
         assert.doesNotMatch(exportedMarkdown, /<!--\s*IMAGE:/);
         const imageUrl = completedContent.result.image_sources[0].asset_url;
         const imageResponse = await fetch(`${origin}${imageUrl}`, { headers: { Cookie: cookie } });

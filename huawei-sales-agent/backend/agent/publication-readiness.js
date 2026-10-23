@@ -14,7 +14,7 @@ const PLATFORM_RULES = Object.freeze({
     body: { unit: '字', recommended_min: 300, max: 20000 },
     tags: { unit: '个', recommended: 3, max: 5 },
     images: { unit: '张', max: 20, max_file_mb: 10, recommended_width: 1080, recommended_height: 1440, cover_ratio: '2.35:1' },
-    structure: ['标题', '导语', '任务与场景', '官网原文摘录', '待确认边界', '下一步沟通'],
+    structure: ['标题', '故事开场', '日常动作', '相关功能讲解', '生活收尾'],
     tips: ['正文用小标题和短段落分段，手机阅读更顺畅。', '封面建议单独裁为 2.35:1；正文图保留原始比例。'],
   },
   '小红书': {
@@ -24,7 +24,7 @@ const PLATFORM_RULES = Object.freeze({
     body: { unit: '字', recommended_min: 220, max: 1000 },
     tags: { unit: '个', recommended: 4, max: 10 },
     images: { unit: '张', max: 18, max_file_mb: 20, recommended_width: 1080, recommended_height: 1440, cover_ratio: '3:4' },
-    structure: ['短标题', '任务开场', '编号清单', '参数摘录', '待确认边界', '互动引导', '标签'],
+    structure: ['短标题', '生活片段', '相关功能', '自然互动', '标签'],
     tips: ['首图优先 3:4 竖版；文字不要压到画面边缘。', '正文用空行和编号拆段，发布前把标签放在最后一段。'],
   },
   '朋友圈': {
@@ -34,7 +34,7 @@ const PLATFORM_RULES = Object.freeze({
     body: { unit: '字', recommended_min: 80, max: 2000 },
     tags: { unit: '个', recommended: 2, max: 3 },
     images: { unit: '张', max: 9, max_file_mb: 20, recommended_width: 1080, recommended_height: 1080, cover_ratio: '1:1' },
-    structure: ['一行任务', '一条原文核对', '待确认边界', '轻松的行动引导'],
+    structure: ['日常瞬间', '一项相关功能', '轻松收尾'],
     tips: ['朋友圈没有独立标题，短标题只用于内部识别。', '首图建议 1:1；多图时保持同一套画面风格。'],
   },
 });
@@ -161,23 +161,12 @@ function truncate(value, max) {
 }
 
 function buildCoverCopy({ platform, strategy, product, title, images }) {
-  const taskLabel = strategy?.task?.label || '办公选型核对';
   const audience = strategy?.audience?.label || '办公用户';
-  const eyebrow = platform === '小红书' ? '先把任务列出来' : platform === '朋友圈' ? '选办公本，先看真实任务' : '选办公本，先核对再决定';
-  const taskHeadlines = {
-    mobility: '移动办公，先看每天怎么带着走',
-    teaching: '备课展示，先理顺文件流程',
-    comparison: '比电脑，先放同一张任务清单',
-    batch: '批量采购，先列清确认项',
-    compatibility: '软件能不能用，先核版本',
-    general: '选办公本，先看任务再看参数',
-  };
-  const headline = platform === '小红书'
-    ? (taskHeadlines[strategy?.task?.id] || truncate(title, 18))
-    : truncate(title, 22);
-  const support = `${product?.product_name || product?.resolved_name || '候选型号'}｜${taskLabel}`;
-  const badge = platform === '朋友圈' ? '不着急下结论' : '资料先核对 · 条件再确认';
-  const footer = '公开资料整理｜配置、兼容与报价以实际确认结果为准';
+  const eyebrow = platform === '小红书' ? '我的日常，也有它的位置' : platform === '朋友圈' ? '把灵感留在今天' : '一台电脑，走进你的一天';
+  const headline = truncate(title, platform === '小红书' ? 18 : 22);
+  const support = `${product?.product_name || product?.resolved_name || '候选型号'}｜一起看看日常怎么用`;
+  const badge = '给日常找个合拍的伙伴';
+  const footer = '产品资料来自华为公开资料；具体配置以实际销售版本为准';
   const coverImage = (images || []).find(item => item.position === 'cover') || (images || [])[0] || null;
   return {
     eyebrow,
@@ -192,7 +181,7 @@ function buildCoverCopy({ platform, strategy, product, title, images }) {
     suggested_layout: platform === '小红书'
       ? '3:4 竖版；上方 1/3 放大标题，下方留白放型号与边界。'
       : platform === '朋友圈'
-        ? '1:1 方图；标题居中，右下角放“条件再确认”。'
+        ? '1:1 方图；标题居中，保留产品原图主体和留白。'
         : '2.35:1 横版；左侧标题，右侧保留产品主体与留白。',
     safety_note: '封面只使用已核对产品名称和任务词；不使用“最强”“必买”“保证兼容”等表述。',
   };

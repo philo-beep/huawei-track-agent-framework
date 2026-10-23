@@ -1,7 +1,7 @@
 'use strict';
 
 const byId = identifier => document.getElementById(identifier);
-const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentResult: null, contentHistory: [], contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null, copyFeedbackTimer: null };
+const state = { examples: [], matchExamples: [], csrf: null, access: { canRun: false, user: null }, running: false, polling: false, jobId: null, markdown: '', matchJobId: null, matchPolling: false, matchMarkdown: '', contentJobId: null, contentPolling: false, contentMarkdown: '', contentResult: null, contentHistory: [], contentPlatform: '公众号', matchInput: null, startedAt: 0, sourceStatus: null, sourceLoading: false, sourceError: '', sourceTimer: null, capabilities: null, wizardStep: 1, profileMessages: [], profileTurn: 0, profileMax: 8, profileJobId: null, profilePolling: false, profileResult: null, profileStarted: false, profileQuestion: null, copyFeedbackTimer: null, contentViewOpen: false, contentViewFeedbackTimer: null };
 const statuses = { explicit: '客户明确说明', inferred: '推断，待核对', pending: '待确认', ready: '准备稿已生成', blocked: '需先处理', needs_clarification: '需要补充信息', calculated_demo: '演示测算完成', demo_ready: '销售准备稿已生成', needs_attention: '需要确认', partial: '部分完成', failed: '未完成', missing_basis: '缺少价格依据', basis_sufficient: '依据齐全', cannot_determine: '暂时无法判断', not_provided: '客户未提供', not_evaluated: '尚未判断', not_executed: '尚未执行', pending_assignment: '待指定负责人', pending_confirmation: '待确认', preparation_only: '仅作准备', programmatic_constrained_preparation: '按已核对资料准备', invalid_input: '填写内容需调整' };
 const labels = { identity: '客户角色', relationship: '新老客户关系', industry: '客户行业', company_size: '组织规模', needs: '核心需求', budget: '预算与数量', decision_chain: '决策参与人', preferences: '客户偏好', pain_points: '当前痛点', purchase_stage: '采购阶段', channels: '可联系渠道' };
 const profileDimensionLabels = { identity: '客户角色', industry: '客户行业', usage_scenario: '使用场景', needs: '客户需求', pain_points: '客户痛点', purchase_stage: '采购阶段', budget: '客户预算', conversation_habit: '沟通偏好', platform_knowledge: '方案了解程度', preferences: '客户偏好' };
@@ -189,18 +189,32 @@ function showCopyFeedback(message, isError = false) {
     state.copyFeedbackTimer = setTimeout(() => { feedback.textContent = ''; feedback.classList.remove('error'); }, 4200);
 }
 
+function showContentViewFeedback(message, isError = false) {
+    const feedback = byId('content-view-feedback');
+    if (!feedback) return;
+    clearTimeout(state.contentViewFeedbackTimer);
+    state.contentViewFeedbackTimer = null;
+    feedback.textContent = message;
+    feedback.classList.toggle('error', isError);
+    if (message) state.contentViewFeedbackTimer = setTimeout(() => { feedback.textContent = ''; feedback.classList.remove('error'); }, 4200);
+}
+
 function bindCopyButton(button, value, label) {
     button.addEventListener('click', async () => {
         if (button.disabled) return;
         button.disabled = true;
         const previous = button.textContent;
+        const inContentView = Boolean(byId('content-view-dialog')?.open);
         try {
             await copyPlainText(value);
             button.textContent = '已复制';
             showCopyFeedback(`已复制${label}，可以直接粘贴。`);
+            if (inContentView) showContentViewFeedback(`已复制${label}，可以直接粘贴。`);
         } catch (error) {
+            const message = `${label}未能自动复制：${plainText(error.message)}。请选中预览文字手动复制。`;
             button.textContent = '请手动复制';
-            showCopyFeedback(`${label}未能自动复制：${plainText(error.message)}。请选中预览文字手动复制。`, true);
+            showCopyFeedback(message, true);
+            if (inContentView) showContentViewFeedback(message, true);
         } finally {
             setTimeout(() => { button.disabled = false; button.textContent = previous; }, 1600);
         }
@@ -1139,6 +1153,7 @@ function contentStatus(message, isError = false) {
 }
 
 function clearContentResult() {
+    closeContentView();
     byId('content-draft-results').hidden = true;
     byId('content-copy-blocks').replaceChildren();
     byId('content-cover-copy').replaceChildren();
@@ -1294,11 +1309,11 @@ function renderVerificationResult(verification) {
 function createContentImagePreview(image, options = {}) {
     const figure = element('figure'); figure.className = 'content-image-card draft-inline-image';
     if (image.image_id) figure.dataset.imageId = image.image_id;
-    const picture = element('img'); picture.src = image.asset_url; picture.alt = plainText(image.caption);
+    const picture = element('img'); picture.src = image.asset_url?.startsWith('demo-product:') ? demoBundle.product_images?.[image.sha256]?.data_url || '' : image.asset_url; picture.alt = plainText(image.caption);
     picture.loading = options.lazy === false ? 'eager' : 'lazy'; picture.decoding = 'async';
     const caption = element('figcaption');
     const rights = String(image.rights_status || '').includes('pending') ? '发布授权待确认' : plainText(image.rights_status);
-    caption.append(element('strong', plainText(image.caption)), element('span', image.demo_illustration ? '项目原创场景插图 · 非产品实拍' : `型号核对：一致；图片状态：${rights}`));
+    caption.append(element('strong', plainText(image.caption)), element('span', `产品原图 · 型号核对：一致；图片状态：${rights}`));
     const original = safeSourceLink(image.original_url, '查看图片来源'); if (original) caption.append(original);
     picture.addEventListener('error', () => {
         figure.classList.add('image-load-error');
@@ -1354,6 +1369,78 @@ function fallbackCopyBlocks(result) {
     ];
 }
 
+function contentCopyBlocks(result) {
+    const blocks = result?.publication_readiness?.copy_blocks;
+    if (Array.isArray(blocks) && blocks.length === 3) return blocks;
+    return fallbackCopyBlocks(result || {});
+}
+
+function contentCopyText(result) {
+    return contentCopyBlocks(result).map(block => String(block.text || '').trim()).filter(Boolean).join('\n\n');
+}
+
+function populateContentView(focusedBlockId = null) {
+    if (!state.contentResult) return;
+    const result = state.contentResult;
+    const blocks = contentCopyBlocks(result);
+    const product = result.product?.resolved_name || result.product?.product_name || '候选产品';
+    byId('content-view-title').textContent = `${plainText(result.platform || '内容')}完整文案`;
+    byId('content-view-meta').textContent = `${plainText(product)} · 共 ${blocks.length} 个可复制块 · 全文可滚动阅读`;
+    const container = byId('content-view-body');
+    container.replaceChildren();
+    let focusedBlock = null;
+    let focusedLabel = '';
+    blocks.forEach((block, index) => {
+        const section = element('section');
+        section.className = `content-view-block ${block.status || 'pass'}`;
+        section.dataset.blockId = block.id;
+        section.tabIndex = -1;
+        const headingId = `content-view-block-${index}-title`;
+        section.setAttribute('aria-labelledby', headingId);
+        const head = element('div'); head.className = 'content-view-block-head';
+        const heading = element('div');
+        const blockHeading = element('h3', block.label || '内容'); blockHeading.id = headingId;
+        heading.append(blockHeading, element('span', block.counter || `${block.character_count || 0} 字`));
+        const copy = element('button', block.text ? `复制${block.label || '本段'}` : '暂无可复制内容');
+        copy.type = 'button'; copy.className = 'content-view-copy'; copy.disabled = !block.text;
+        bindCopyButton(copy, block.text, block.label || '本段内容');
+        head.append(heading, copy);
+        const content = element('pre', block.text || '当前没有可复制内容');
+        const note = element('p', block.note || '复制前请快速通读一次。'); note.className = 'content-view-note';
+        section.append(head, content, note);
+        container.append(section);
+        if (focusedBlockId && block.id === focusedBlockId) { focusedBlock = section; focusedLabel = block.label || '所选文案'; }
+    });
+    if (focusedBlock) {
+        focusedBlock.classList.add('is-focused');
+        byId('content-view-meta').textContent = `${plainText(product)} · 正在查看${plainText(focusedLabel)}`;
+        focusedBlock.focus();
+        focusedBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function openContentView(blockId = null) {
+    if (!state.contentResult) return;
+    populateContentView(blockId);
+    showContentViewFeedback('');
+    const dialog = byId('content-view-dialog');
+    if (!state.contentViewOpen) {
+        if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+        else dialog.setAttribute('open', '');
+        state.contentViewOpen = true;
+        if (!blockId) byId('content-view-close').focus();
+    }
+}
+
+function closeContentView() {
+    const dialog = byId('content-view-dialog');
+    if (!dialog) return;
+    if (dialog.open && typeof dialog.close === 'function') dialog.close();
+    else dialog.removeAttribute('open');
+    state.contentViewOpen = false;
+    showContentViewFeedback('');
+}
+
 function renderPublicationReadiness(result) {
     const containers = ['content-copy-blocks', 'content-platform-matrix', 'content-cover-copy', 'content-platform-checks'];
     for (const identifier of containers) byId(identifier)?.replaceChildren();
@@ -1371,7 +1458,10 @@ function renderPublicationReadiness(result) {
         const actions = element('div'); actions.className = 'copy-block-actions';
         const copy = element('button', block.text ? `复制${block.label}` : '暂无可复制内容'); copy.type = 'button'; copy.disabled = !block.text;
         bindCopyButton(copy, block.text, block.label);
-        actions.append(copy);
+        const view = element('button', '查看全文'); view.type = 'button'; view.className = 'secondary'; view.disabled = !block.text;
+        view.setAttribute('aria-haspopup', 'dialog');
+        view.addEventListener('click', () => openContentView(block.id));
+        actions.append(copy, view);
         card.append(head, preview, note, actions);
         byId('content-copy-blocks').append(card);
     }
@@ -1511,6 +1601,7 @@ function downloadStoreTaskPack() {
 }
 
 function renderContentDraftResult(result, markdown, options = {}) {
+    closeContentView();
     state.contentResult = result;
     renderPublicationReadiness(result);
     renderVerificationResult(result.verification);
@@ -1523,7 +1614,7 @@ function renderContentDraftResult(result, markdown, options = {}) {
     const article = element('article'); article.className = 'content-draft-copy';
     article.append(element('h3', plainText(result.draft.title)), element('p', plainText(result.draft.lead)));
     const body = element('div'); body.className = 'content-body-with-images';
-    appendDraftBodyWithImages(body, result.draft.body_markdown, result.demo_illustrations || result.image_sources);
+    appendDraftBodyWithImages(body, result.draft.body_markdown, result.image_sources);
     article.append(body, element('strong', '下一步沟通'), element('p', plainText(result.draft.cta)));
     article.append(element('p', `内容标签：${result.draft.tags.map(tag => plainText(tag)).join('、')}`));
     byId('content-draft').append(article);
@@ -1842,11 +1933,10 @@ function demoShowContent(platform) {
     clearContentResult();
     renderContentDraftResult(snapshot.result, snapshot.markdown, { fromHistory: true });
     demoDownloads('content-download-', snapshot);
-    setDemoDownload('content-download-images', { note: '原创场景示意图，非产品实拍。svg 字段可另存为同名 .svg 文件。', images: snapshot.result.demo_illustrations }, `${demoReplay.scenario.id}-${platform}-illustrations.json`);
-    byId('content-download-images').textContent = '下载原创插图与清单';
-    byId('content-summary').textContent = `预置${platform}图文 · ${snapshot.result.demo_illustrations.length} 张原创场景插图（非产品实拍） · 标题/正文/标签可复制。下方发布核验为原稿录制时快照，不能视为当前核验。`;
-    byId('content-verification-summary').prepend(element('p', `原稿审稿记录 · 录制于 ${formatDate(demoBundle.recorded_at)}。原审稿产品图未打包；当前展示项目原创场景插图。`));
-    byId('content-image-sources').replaceChildren(element('p', '当前插图由项目原创，随页面内嵌保存；未使用第三方产品照片。非产品外观、配置或兼容性证据。'));
+    setDemoDownload('content-download-images', { note: '对应型号产品原图；data_url 为原始文件的 Base64，可按 file_name 保存。公开发布授权待确认。', images: snapshot.result.image_sources.map(image => ({ ...image, data_url: demoBundle.product_images[image.sha256].data_url })) }, `${demoReplay.scenario.id}-${platform}-product-images.json`);
+    byId('content-download-images').textContent = '下载产品原图与清单';
+    byId('content-summary').textContent = `预置${platform}消费者故事 · ${snapshot.result.image_sources.length} 张对应型号产品原图 · 标题/正文/标签可复制。发布核验为录制时快照，原图公开发布授权待确认。`;
+    byId('content-verification-summary').prepend(element('p', `原稿审稿记录 · 录制于 ${formatDate(demoBundle.recorded_at)}。故事为设想场景，配图保留产品原貌，公开发布授权待确认。`));
     contentStatus(`预置${platform}图文已读取；未调用生成服务。`);
     showWizardStep(3);
     demoReplay.phase = 'content';
@@ -1996,14 +2086,35 @@ byId('refresh-source-status').addEventListener('click', async () => {
 byId('resume-polling').addEventListener('click', () => { byId('resume-polling').hidden = true; state.polling = true; pollRun(); });
 byId('content-copy-all').addEventListener('click', async () => {
     if (!state.contentResult) return;
-    const readiness = state.contentResult.publication_readiness;
-    const blocks = readiness?.copy_blocks || fallbackCopyBlocks(state.contentResult);
-    const text = blocks.map(block => block.text).filter(Boolean).join('\n\n');
+    const text = contentCopyText(state.contentResult);
     try {
         await copyPlainText(text);
         showCopyFeedback('已复制整套内容；现在按平台编辑器顺序粘贴即可。');
     } catch (error) {
         showCopyFeedback(`未能自动复制：${plainText(error.message)}。请在复制块中手动选择文字。`, true);
+    }
+});
+byId('content-view-all').setAttribute('aria-haspopup', 'dialog');
+byId('content-view-all').addEventListener('click', () => openContentView());
+byId('content-view-close').addEventListener('click', closeContentView);
+byId('content-view-close-bottom').addEventListener('click', closeContentView);
+byId('content-view-dialog').addEventListener('cancel', () => { state.contentViewOpen = false; showContentViewFeedback(''); });
+byId('content-view-dialog').addEventListener('close', () => { state.contentViewOpen = false; });
+byId('content-view-dialog').addEventListener('click', event => {
+    const dialog = byId('content-view-dialog');
+    if (event.target !== dialog || typeof dialog.getBoundingClientRect !== 'function') return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeContentView();
+});
+byId('content-view-copy-all').addEventListener('click', async () => {
+    const text = contentCopyText(state.contentResult);
+    if (!text) { showContentViewFeedback('当前没有可复制内容。', true); return; }
+    try {
+        await copyPlainText(text);
+        showContentViewFeedback('已复制全部文案，可以直接粘贴。');
+        showCopyFeedback('已从全文查看中复制全部文案。');
+    } catch (error) {
+        showContentViewFeedback(`未能自动复制：${plainText(error.message)}。请选中全文手动复制。`, true);
     }
 });
 byId('content-download-images').addEventListener('click', () => {
@@ -2048,6 +2159,7 @@ async function initialize(sessionOverride = null) {
 
 window.addEventListener('huawei:authenticated', event => { initialize(event.detail); });
 window.addEventListener('huawei:session-ended', () => {
+    closeContentView();
     exitDemo({ refresh: false });
     state.csrf = null;
     state.running = false;

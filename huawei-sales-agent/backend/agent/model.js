@@ -27,9 +27,10 @@ function parseJsonText(raw) {
     }
 }
 
-async function generateJson(system, prompt, maxTokens = 900) {
+async function generateJson(system, prompt, maxTokens = 900, options = {}) {
     const started = Date.now();
     const config = modelConfig();
+    const temperature = Number.isFinite(options.temperature) ? Math.min(1, Math.max(0, options.temperature)) : 0.1;
     if (!config.configured) throw new PipelineError('MODEL_NOT_CONFIGURED', '云端模型凭据或地址未配置；未自动切换其他模型');
     if (config.provider === 'ollama') {
         const baseUrl = text('OLLAMA_BASE_URL', 'http://127.0.0.1:11434').replace(/\/+$/, '');
@@ -39,7 +40,7 @@ async function generateJson(system, prompt, maxTokens = 900) {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 signal: AbortSignal.timeout(config.timeoutMs),
-                body: JSON.stringify({ model: ollamaModel, system, prompt, stream: false, format: 'json', keep_alive: 0, options: { temperature: 0.1, seed: 42, num_ctx: 4096, num_predict: Math.min(maxTokens + 600, 2400) } }),
+                body: JSON.stringify({ model: ollamaModel, system, prompt, stream: false, format: 'json', keep_alive: 0, options: { temperature, ...(temperature <= 0.1 ? { seed: 42 } : {}), num_ctx: 4096, num_predict: Math.min(maxTokens + 600, 2400) } }),
             });
             if (!response.ok) throw new PipelineError('MODEL_UNAVAILABLE', '本地Qwen服务未就绪或指定模型不可用，不切换云端');
             const data = await response.json();
@@ -68,7 +69,7 @@ async function generateJson(system, prompt, maxTokens = 900) {
                     { role: 'system', content: system },
                     { role: 'user', content: prompt },
                 ],
-                temperature: 0.1,
+                temperature,
                 max_tokens: maxOutputTokens,
                 response_format: { type: 'json_object' },
                 stream: false,

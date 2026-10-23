@@ -109,97 +109,71 @@ const PLATFORM_STYLES = Object.freeze({
   '公众号': {
     id: 'wechat_article',
     label: '公众号',
-    tone: '顾问式长文，克制、具体、允许把边界讲透',
-    structure: '场景开场 → 任务拆解 → 原文摘录 → 待确认事项 → 对话式行动引导',
+    tone: '面向消费者，温暖自然，用动作和细节讲故事',
+    structure: '设想场景 → 人物动作 → 相关功能与感受关注点 → 生活收尾',
     format_rule: '短段落和小标题；参数只摘与任务相关的一条，不整段倾倒原文',
   },
   '小红书': {
     id: 'xiaohongshu_note',
     label: '小红书',
-    tone: '轻口语、像同事发来的核对清单，不用命令式销售口吻',
-    structure: '场景钩子 → 先列任务 → 可收藏的资料卡 → 避坑提醒 → 评论区互动',
+    tone: '面向消费者，轻松有画面，像朋友聊生活',
+    structure: '生活片段 → 两个相关功能 → 回到生活 → 自然互动',
     format_rule: '短句、短段落、少量符号；标题和首屏先说读者遇到的问题',
   },
   '朋友圈': {
     id: 'moments_short_post',
     label: '朋友圈',
-    tone: '第一人称、熟人对话、不端着',
-    structure: '近况开场 → 一条资料 → 一条边界 → 私聊式行动引导',
+    tone: '面向消费者，轻松对话，不编造亲测经历',
+    structure: '设想片段 → 一项相关功能 → 生活收尾',
     format_rule: '一到三段；不堆参数，不使用长标题或大段清单',
   },
 });
 
-const TITLE_VARIANTS = Object.freeze({
-  mobility: [
-    ctx => ctx.shortScenario + '，这台笔记本先核对什么？',
-    ctx => ctx.shortScenario + '，别只看轻不轻',
-    ctx => ctx.audience.label + '选移动办公本，先把任务摊开',
-  ],
-  teaching: [
-    ctx => ctx.shortScenario + '，选本先看哪几件事？',
-    ctx => '备课和课堂展示的文件流程，比屏幕参数更该先问',
-    ctx => ctx.audience.label + '选办公本，别让文件流转卡住',
-  ],
-  compatibility: [
-    ctx => ctx.shortScenario + '，先别把“能用”说太早',
-    ctx => '软件和文件条件没对上，参数再漂亮也白搭',
-    ctx => ctx.audience.label + '核对办公电脑，先问清软件条件',
-  ],
-  comparison: [
-    ctx => ctx.shortScenario + '，先别只比处理器',
-    ctx => '两台电脑怎么比？先把同一套任务摆出来',
-    ctx => ctx.audience.label + '做选型，参数表之外还要看什么',
-  ],
-  batch: [
-    ctx => ctx.shortScenario + '，采购前先核对这几项',
-    ctx => '团队换电脑，数量之外还要确认什么',
-    ctx => ctx.audience.label + '准备办公设备，先别急着定型号',
-  ],
-  general: [
-    ctx => ctx.shortScenario + '，先核对什么？',
-    ctx => '选办公电脑，先把任务放进参数之前',
-    ctx => ctx.audience.label + '的办公设备核对清单',
-  ],
+// These are imagined moments, never testimonials or claims about a real customer.
+const STORY_SCENES = Object.freeze({
+  teaching: {
+    title: '上课铃响之前，把灵感留在课件里',
+    opening: '想象一下：上课前，你还想给课件添一张图。桌边摊着教案，刚想到的例子舍不得删，手已经伸向了电脑。',
+    action: '把这一页放大，再把旁边的讲义翻出来。备课时那些细小的改动，最后都会变成课堂上更好讲的一句话。',
+    ending: '等你合上电脑走进教室，留在脑子里的，应该是怎么把这一课讲得有趣。',
+  },
+  mobility: {
+    title: '换一个地方，接着把事情做好',
+    opening: '想象一下：手边的文稿还差一段，你已经该换个地方了。把电脑合上、装进包，到了下一张桌子，再把刚才的思路接回来。',
+    action: '座位会换，手里的事情还在继续。你要带走的除了文件，还有那句没写完的话，以及刚刚理清的思路。',
+    ending: '等下一次出门，包里放的是一台陪你做事的电脑，心里装的是今天想完成的事。',
+  },
+  comparison: {
+    title: '把电脑放回你的日常，再做选择',
+    opening: '想象一下：两台电脑摆在桌上，你打开的却是自己那份改了一半的文稿。纸上密密麻麻的参数，终于有了一个具体的问题：哪台更适合陪你把它写完？',
+    action: '打开熟悉的文件，改一段文字，再看看排版。你每天重复的小动作，恰好能帮你找到真正值得比较的地方。',
+    ending: '试完再合上电脑，这次选择，就有了属于你自己的理由。',
+  },
+  compatibility: {
+    title: '一份熟悉的文件，带你认识新电脑',
+    opening: '想象一下：你带着一份常用文稿来看看新电脑。那些反复调过的字体、留着批注的段落，才是你最在意的东西。',
+    action: '先从这份文件开始：打开它，改一句，再试着保存和导出。把熟悉的工作走一遍，你才能知道新伙伴是否合拍。',
+    ending: '等熟悉的工作有了答案，再决定要不要让它加入你的日常。',
+  },
+  batch: {
+    title: '从一张办公桌，想一想团队的日常',
+    opening: '不妨设想一个普通的早晨：同事陆续坐下，有人打开文稿，有人准备开会。选电脑这件事，也从这些小动作里慢慢有了方向。',
+    action: '挑一份大家常用的文件，看看日常会怎样打开、修改和分享。不同岗位的习惯，也值得各自试一试。',
+    ending: '让每天用它的人先坐下来试试，这个选择才会更贴近大家的工作。',
+  },
+  general: {
+    title: '给今天的灵感，找一张能展开的桌子',
+    opening: '想象一下：你刚坐下，脑子里那句话还热乎着。杯子放到一旁，打开文稿，先把它记下来，今天的工作就这样开始了。',
+    action: '写一段，停一下，再回头改一改。电脑在日常里的存在感，往往就藏在这些很小的动作中。',
+    ending: '等这一页写完，合上电脑，今天又有一件想做的事落了地。',
+  },
+  creator: {
+    title: '咖啡还温着，刚才那句灵感也在',
+    opening: '想象一下：你在咖啡馆靠窗坐下，杯子还温着，手机里留着路上想到的那句话。把电脑打开，先接住它，稿子可以再往前走一小段。',
+    action: '光标停在最后一行，你把一句话删掉，换成更贴近心意的表达。外面的人继续赶路，你也有自己的节奏：改稿、整理，再把作品带回家。',
+    ending: '等稿子告一段落，咖啡也许凉了，好在那个想表达的意思，已经留了下来。',
+  },
 });
-
-const OPENER_VARIANTS = Object.freeze({
-  mobility: [
-    '一台电脑每天要在几个地点之间来回，先问清怎么带、带什么、到哪里接什么。',
-    '移动办公最容易漏掉的，不是重量，而是离开固定工位以后文件和外设怎么接。',
-    '轮换使用不是把电脑装进包里就结束了，真正麻烦的是每次换位置后的工作衔接。',
-  ],
-  teaching: [
-    '备课和上课不是同一个动作，选本前要先看课件、视频和展示文件怎么流转。',
-    '课堂场景里，最怕的不是参数不够漂亮，而是临到展示才发现文件或外设没准备好。',
-    '教研老师选电脑，先把备课、修改和课堂展示这串动作走一遍。',
-  ],
-  compatibility: [
-    '软件能不能装、文件能不能开、外设能不能接，是三个需要分别核对的问题。',
-    '一句笼统的“兼容”解决不了真实工作，软件名称、版本和文件格式都要落到具体条件。',
-    '选电脑时最该先问的不是跑分，而是你每天离不开的那套软件和文件流程。',
-  ],
-  comparison: [
-    '两台电脑放在一起比，最怕各自拿不同场景的参数互相证明。',
-    '比参数之前，先把每天相同的任务放到一张清单里，差异才有意义。',
-    '型号越多越容易看花眼，先把不能妥协的条件圈出来再比。',
-  ],
-  batch: [
-    '团队采购不是把单台选择乘以数量，配置、交付和后续管理都要一起核对。',
-    '数量一多，最容易忽略的是配置是否统一、交付条件是否说得清。',
-    '批量换设备前，先确认大家每天做的事情是不是同一类。',
-  ],
-  general: [
-    '选办公电脑，不一定从参数表开始，更稳的顺序是先看每天要完成什么。',
-    '同样的配置，放在不同任务里，优先级会完全不同。',
-    '先把使用场景说清楚，再看哪些公开资料真的能回答问题。',
-  ],
-});
-
-const BOUNDARY_LINES = Object.freeze([
-  '软件兼容要按名称、版本、文件格式和外设逐项确认，看到型号资料不等于已经验证兼容。',
-  '实际续航、发热和手感会受使用方式影响，公开资料不能替代真实体验。',
-  '颜色、键盘、内存和存储等完整销售配置仍需确认；价格、库存和交付条件不能从公开参数里推出来。',
-]);
 
 const TAG_SETS = Object.freeze({
   mobility: ['华为笔记本', '移动办公', '办公电脑', '选型核对'],
@@ -228,11 +202,6 @@ function text(value) {
   return plainText(String(value || '').replace(/\s+/g, ' ').trim()).replace(/\s+/g, ' ');
 }
 
-function listText(values, fallback) {
-  if (!Array.isArray(values) || !values.length) return fallback || '';
-  return [...new Set(values.map(text).filter(Boolean))].join('、');
-}
-
 function hashPick(seed, length) {
   if (!length) return 0;
   const digest = crypto.createHash('sha256').update(String(seed)).digest();
@@ -240,8 +209,10 @@ function hashPick(seed, length) {
 }
 
 function audienceFor(profile) {
-  const haystack = [profile.audience, profile.industry, profile.raw_request].filter(Boolean).join(' ');
-  return AUDIENCE_STYLES.find(item => item.pattern.test(haystack)) || AUDIENCE_STYLES[AUDIENCE_STYLES.length - 1];
+  const specific = AUDIENCE_STYLES.filter(item => item.id !== 'general');
+  return specific.find(item => item.pattern.test(profile.audience || ''))
+    || specific.find(item => item.pattern.test([profile.industry, profile.raw_request].filter(Boolean).join(' ')))
+    || AUDIENCE_STYLES[AUDIENCE_STYLES.length - 1];
 }
 
 function taskFor(profile) {
@@ -254,7 +225,7 @@ function taskFor(profile) {
 
 function shortScenario(profile) {
   const raw = text(profile.scenario) || '本次办公任务';
-  return raw.split(/[，,。；;]/)[0].replace(/需要移动办公$/, '').slice(0, 32) || '本次办公任务';
+  return raw.split(/[，,。；;]/)[0].replace(/需要移动办公$/, '').replace(/的?选型核对|核对/g, '').slice(0, 32) || '本次办公任务';
 }
 
 function factHeading(fact) {
@@ -322,118 +293,63 @@ function buildHighlights(facts) {
   return (facts || []).map(highlightFor).filter(Boolean);
 }
 
+function sceneFor(strategy, context) {
+  const sceneText = [context.profile.scenario, ...(context.profile.needs || [])].join(' ');
+  if (/咖啡|写稿|创作|改稿/.test(sceneText) && strategy.audience.id === 'individual') return STORY_SCENES.creator;
+  return STORY_SCENES[strategy.task.id] || STORY_SCENES.general;
+}
+
 function titleFor(platform, strategy, context) {
-  const variants = TITLE_VARIANTS[strategy.task.id];
-  const picked = variants[strategy.variant.title % variants.length](context);
-  if (platform === '朋友圈') return context.product.product_name + '｜' + context.shortScenario;
-  if (platform === '小红书' && picked.length > 30) return context.shortScenario + '｜先列任务，再看资料';
-  return picked;
+  const scene = sceneFor(strategy, context);
+  if (platform === '朋友圈') return scene.title;
+  if (platform === '小红书') return scene.title + '｜选本日常';
+  return context.shortScenario + '：' + scene.title;
 }
 
 function leadFor(platform, strategy, context) {
-  const opener = OPENER_VARIANTS[strategy.task.id][strategy.variant.opener % OPENER_VARIANTS[strategy.task.id].length];
-  if (platform === '公众号') {
-    return text(opener + strategy.audience.lead_tail + '这次围绕“' + context.scenario + '”整理。');
-  }
-  if (platform === '小红书') {
-    return '先别急着看参数。' + opener + '这次把“' + context.scenario + '”拆成一份能直接照着核对的清单。';
-  }
-  return '这次在核对“' + context.scenario + '”，看的是 ' + context.product.product_name + '。' + opener;
+  return sceneFor(strategy, context).opening;
 }
 
 function sceneBlock(platform, strategy, context) {
-  const needs = listText(context.profile.needs, '任务条件还没完全写清');
-  const pain = listText(context.profile.pain_points, '还没有列出待确认项');
-  if (platform === '朋友圈') {
-    return {
-      id: 'context',
-      markdown: '先看的不是“哪台更强”，而是每天要做什么：' + needs + '。还需要重点确认：' + pain + '。',
-    };
-  }
-  if (platform === '小红书') {
-    return {
-      id: 'context',
-      markdown: '01｜先把任务列出来\n\n' +
-        '• 要完成：' + context.scenario + '\n' +
-        '• 候选型号：' + context.product.product_name + '\n' +
-        '• 已知条件：' + needs + '\n' +
-        '• 还要确认：' + pain + '\n\n' +
-        strategy.task.detail + '。',
-    };
-  }
-  const audience = text(context.profile.audience) || strategy.audience.label;
-  return {
-    id: 'context',
-    markdown: '## 先把任务说清楚\n\n' +
-      '这次要处理的是“' + context.scenario + '”，候选型号是 ' + context.product.product_name + '。' + strategy.task.detail + '。\n\n' +
-      '已知条件：' + needs + '。仍需要重点确认：' + pain + '。\n\n' +
-      '换成' + audience + '的日常动作，就是先看软件、文件、外设和携带频率，而不是先给型号下结论。',
-  };
+  const scene = sceneFor(strategy, context);
+  if (platform === '朋友圈') return { id: 'context', markdown: '把 ' + context.product.product_name + ' 放进这样的日常，你会先在意什么？' };
+  const heading = platform === '公众号' ? '## 把它放进你的一天\n\n' : platform === '小红书' ? '01｜把它放进日常\n\n' : '';
+  return { id: 'context', markdown: heading + scene.action + ' 这时，可以来认识一下 ' + context.product.product_name + '。' };
 }
 
-function factBlock(platform, highlights) {
-  if (!highlights.length) {
-    return {
-      id: 'facts',
-      markdown: platform === '公众号' ? '## 资料还不足以支撑当前判断\n\n没有找到可直接引用的官网原文，先不补写参数。' : '目前没有可直接引用的官网原文，先不补写参数。',
-    };
-  }
-  const sources = [...new Set(highlights.map(item => item.source_title))];
-  if (platform === '朋友圈') {
-    const first = highlights[0];
-    return {
-      id: 'facts',
-      markdown: '官网资料里能直接确认的是 ' + first.label + '：' + first.value + '。数值照录原文，但纸面资料还不等于你的软件和实际体验都合适。',
-    };
-  }
-  if (platform === '小红书') {
-    return {
-      id: 'facts',
-      markdown: '02｜官网能对上的几项\n\n' +
-        highlights.map(item => '• ' + item.label + '：' + item.value).join('\n') + '\n\n' +
-        '资料参考：' + sources.join('、') + '。参数按原文摘录，不做二次推断。',
-    };
-  }
-  return {
-    id: 'facts',
-    markdown: '## 资料里能先确认什么\n\n' +
-      '下面只摘与当前任务相关的原文项，参数值不改写，也不把公开资料当成实测体验。\n\n' +
-      highlights.map(item => '- **' + item.label + '：** ' + item.value).join('\n') + '\n\n' +
-      '资料出处：' + sources.join('、') + '。',
-  };
+function featureStory(item, context) {
+  const heading = item.heading;
+  if (/尺寸|重量/.test(heading)) return ['出门时，先想想肩上的包', '从桌边到下一站，电脑也得跟着装进包。它的重量是 ' + item.value + '。如果你常带电脑出门，这个数字值得和自己的背包一起掂量；到店装进去、背一背，比隔着屏幕想象更直观。'];
+  if (/屏幕/.test(heading)) return ['坐下来，把这一页看仔细', (context.audience.id === 'educator' ? '给课件配图时，你把画面放大，想看看那处细节能不能讲清楚。' : '改稿时，你会来回读同一行字，把光标挪回去，再斟酌一个词。') + '它的' + item.label + '是 ' + item.value + '。分辨率说的是画面像素的多少；文字大小和看起来是否舒服，还是用你熟悉的文稿亲眼看看。'];
+  if (/电池/.test(heading)) return ['换个座位，事情还想接着做', '出门前，你可能会看看包里有没有电源。它标注的' + item.label + '是 ' + item.value + '。容量是认识电池的一个起点；能用多久，还要看屏幕亮度和你当天打开的软件。'];
+  if (/内存/.test(heading)) return ['文稿旁边，还想放几份参考', '写东西时，常常要在文稿和参考材料之间切换。它的内存选项是 ' + item.value + '。内存可以理解为工作时暂放资料的空间，具体选哪档，要结合你常开的软件和实际销售配置。'];
+  if (/存储/.test(heading)) return ['把改过的版本，好好留下来', '交稿以后，素材和旧版本也许还要留着。它的存储选项是 ' + item.value + '。这部分空间用来放文件；选多大，可以先看看自己现在积攒了多少资料。'];
+  if (/操作系统/.test(heading)) return ['新电脑，也要接得上旧习惯', '打开电脑后，你每天打交道的还有系统。这里标注的是 ' + item.value + '。选之前，带上常用的软件和一份样稿，试着打开、修改、保存，再导出一次；软件兼容要按实际版本确认。'];
+  if (/处理器/.test(heading)) return ['你想做的事，才是挑配置的起点', '它使用的处理器是 ' + item.value + '。处理器负责执行程序中的运算；日常体验还和软件、内存等条件有关，用自己的任务试试会更具体。'];
+  return ['顺着日常，多认识它一点', item.label + '：' + item.value + '。选购时，把这一项放回自己的使用习惯里看看。'];
 }
 
-function boundaryBlock(platform, strategy) {
+function factBlock(platform, highlights, context) {
+  if (!highlights.length) return { id: 'facts', markdown: '这次还没有足够的产品资料来介绍相关功能，先带着常用文件去看看实机。' };
+  const stories = highlights.map(item => featureStory(item, context));
   if (platform === '朋友圈') {
-    return {
-      id: 'boundary',
-      markdown: '但兼容、实际续航、完整配置和报价都还要按具体条件确认，不能拿一条官网参数替读者做决定。',
-    };
+    const item = highlights[0];
+    return { id: 'facts', markdown: '这里先看与你日常有关的一点：' + item.label + '，' + item.value + '。' };
   }
-  if (platform === '小红书') {
-    return {
-      id: 'boundary',
-      markdown: '03｜这几件事别急着下结论\n\n' +
-        '• ' + BOUNDARY_LINES[0] + '\n' +
-        '• ' + BOUNDARY_LINES[1] + '\n' +
-        '• ' + BOUNDARY_LINES[2],
-    };
-  }
-  return {
-    id: 'boundary',
-    markdown: '## 哪些事还不能替你下结论\n\n' +
-      BOUNDARY_LINES.map(item => '- ' + item).join('\n'),
-  };
+  return { id: 'facts', markdown: stories.map(([title, body], index) =>
+    (platform === '公众号' ? '## ' + title : '0' + (index + 2) + '｜' + title) + '\n\n' + body).join('\n\n') };
+}
+
+function boundaryBlock(platform, strategy, context) {
+  const scene = sceneFor(strategy, context);
+  if (platform === '朋友圈') return { id: 'boundary', markdown: '带着常用文稿试一试；软件兼容和实际体验，也要和自己的习惯对上。' };
+  return { id: 'boundary', markdown: scene.ending + (strategy.task.id === 'compatibility' ? '' : ' 选购前，记得试一下常用软件和文件，软件兼容要以实际版本和设备为准。') };
 }
 
 function ctaFor(platform, strategy, context) {
-  if (platform === '小红书') {
-    return '也在做同样的选择？把你的使用场景、常用软件版本和文件格式留在评论区，我先帮你列核对项。';
-  }
-  if (platform === '朋友圈') {
-    return '也在选办公本的话，直接把常用软件和使用场景发我，我先帮你排一遍。';
-  }
-  return '如果你正在核对“' + context.scenario + '”，把常用软件和版本、主要文件格式、外设，以及需要携带的频率发来。我们先按条件列清单，再确认演示和报价。';
+  if (platform === '朋友圈') return '你会带它去哪儿，写下什么？';
+  if (platform === '小红书') return '你的电脑最常陪你出现在哪里？也聊聊你最在意的那个小细节。';
+  return '下次看实机时，带上你常用的那份文件。试着把一天里的小任务做一遍，看看它是不是你想找的伙伴。';
 }
 
 function tagsFor(platform, task) {
@@ -501,8 +417,8 @@ function composeCreativeDraft(input) {
     lead: leadFor(platform, strategy, context),
     blocks: [
       sceneBlock(platform, strategy, context),
-      factBlock(platform, highlights),
-      boundaryBlock(platform, strategy),
+      factBlock(platform, highlights, context),
+      boundaryBlock(platform, strategy, context),
     ],
     cta: ctaFor(platform, strategy, context),
     tags: tagsFor(platform, strategy.task),
@@ -526,7 +442,7 @@ function renderPublishMarkdown(input) {
   if (platform === '小红书') {
     return [title, '', lead, '', ...blocks.flatMap(block => [block, '']), cta, '', sourceNote, '', input.tags.map(tag => '#' + tag).join(' ')].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
   }
-  return ['# ' + title, '', lead, '', ...blocks.flatMap(block => [block, '']), '## 下一步沟通', '', cta, '', sourceNote].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
+  return ['# ' + title, '', lead, '', ...blocks.flatMap(block => [block, '']), '## 把选择放回你的日常', '', cta, '', sourceNote].filter((line, index, rows) => !(line === '' && rows[index - 1] === '')).join('\n').trim() + '\n';
 }
 
 module.exports = {

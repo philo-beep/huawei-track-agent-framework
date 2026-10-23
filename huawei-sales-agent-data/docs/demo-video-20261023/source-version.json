@@ -1,0 +1,9 @@
+{
+  "base_commit": "007d8a509cca5cac3c633b860620fa62e403f777",
+  "files": {
+    "huawei-sales-agent/frontend/index.html": "a1dd4388cea0e8614fef0dd83ad78b4321c9905662cba6dad567ee78537a77a5",
+    "huawei-sales-agent/frontend/static/js/app.js": "f8787d6943976125ead922d1744365203c834f9c552179841ec8133807bf6bca",
+    "huawei-sales-agent/frontend/static/js/auth.js": "f55000f85cceb3bcbd41aa33d43cc675de3a3c01628b8f708724fc0f0a9d2d09",
+    "huawei-sales-agent/frontend/static/css/styles.css": "19b889d48047e9246a977687146bf5863bfa6ecc467bac150d44f669a612f5fe"
+  }
+}

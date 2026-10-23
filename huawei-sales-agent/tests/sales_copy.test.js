@@ -11,8 +11,10 @@ const { runContentDraft, renderContentDraftMarkdown } = require('../backend/agen
 const forbidden = /云端模型|模型|\bIMA\b|\bJSON\b|\bMarkdown\b|发布门禁|门禁|诊断|规则引擎|引擎|排序分|证据|事实|字段|数组|字节|UTF-8|令牌|会话|dimensions|decisions|CTA|\bID\b|\bSHA-?256\b|\bfact-|\bofficial-|\bSKU\b|\bnull\b|\bready\b|\bunknown\b|\bconfigured\b|\bcalled\b|\b[a-z][a-z0-9]*_[a-z0-9_]+\b/i;
 
 test('sales-facing markdown avoids developer-only wording', async () => {
-    const cloud = await runCloud(require('./test_cases.json').cases.find(item => item.id === 'vague-budget').payload);
+    const cloud = await runCloud({ ...require('./test_cases.json').cases.find(item => item.id === 'vague-budget').payload, use_cloud_model: false, use_ima: false, use_web_research: false });
     const matchInput = productMatchExamples()[0].input;
+    matchInput.mode = 'local';
+    matchInput.use_cloud_model = false;
     const match = await runProductMatch(matchInput);
     const candidate = match.candidates.find(item => item.product_name === 'HUAWEI MateBook 14 鸿蒙版') || match.candidates[0];
     const content = await runContentDraft({ schema_version: '1.0', match_input: matchInput, candidate_id: candidate.candidate_id, platform: '公众号', image_limit: 4 });
@@ -24,7 +26,7 @@ test('sales-facing markdown avoids developer-only wording', async () => {
     assert.match(documents[0], /## 报价状态/);
     assert.match(documents[0], /正式成交报价：待确认/);
     assert.match(documents[1], /## 推荐候选/);
-    assert.match(documents[2], /## 下一步沟通/);
+    assert.match(documents[2], /## 把选择放回你的日常/);
     assert.match(content.article_markdown, /## 发布前检查结果/);
 });
 test('sales-facing errors avoid developer-only wording', () => {
